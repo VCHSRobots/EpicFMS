@@ -214,7 +214,7 @@ void setup() {
   // this same interrupt can trigger it.
 
   PCICR |= 4;    // Turns on PCINT[23:16] (all 8 pins)
-  PCMSK2 = 0xF0; // With above, turns on interrupt Change for pins D5-D7 only.
+  PCMSK2 = 0x00F0; // With above, turns on interrupt Change for pins D5-D7 only.
 
   // Now we are ready.., so: 
   turn_on_all_emitters();
@@ -267,6 +267,7 @@ void loop() {
     digitalWrite(disp2_pin, LOW);
     digitalWrite(disp3_pin, HIGH);
     digitalWrite(disp4_pin, HIGH);
+    delay(100);
   }
   if (run_mode == RM_BLINK) {
     digitalWrite(disp1_pin, HIGH);
@@ -278,8 +279,8 @@ void loop() {
     digitalWrite(disp2_pin, HIGH);
     digitalWrite(disp3_pin, LOW);
     digitalWrite(disp4_pin, HIGH);
+    delay(100);
   }
-  delay(100);
 }
 
 // ISR -- here is the interrupt handler.  We assume
@@ -291,7 +292,7 @@ ISR(PCINT2_vect) {
   // on any one of the detectors.  If we don't find
   // that, ignore this interrupt.
   if (digitalRead(ir1_pin) == LOW && digitalRead(ir2_pin) == LOW &&
-    digitalRead(ir3_pin) == LOW && digitalRead(ir3_pin) == LOW) return; 
+    digitalRead(ir3_pin) == LOW && digitalRead(ir4_pin) == LOW) return; 
   hit_time = micros();
   hit_count++;
   ready_for_hit = false;
