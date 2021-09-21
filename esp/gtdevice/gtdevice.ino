@@ -43,10 +43,12 @@
 
 // !!!!!!!!!!!!!!!! TODO: the actual code needs to be writen!
 
+#include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+#include <SPI.h>
 
 #ifndef STASSID
 #define STASSID "BBHWiFiLink"
@@ -57,44 +59,14 @@ const char* ssid = STASSID;
 const char* password = STAPSK;
 
 ESP8266WebServer server(80);
+char cmdbuf[30] = "EpicFMS Cmd\r";
+char recbuf[30];
+char lineout[100];
+long lastcmdtime = 0;
+long cmdcount = 0;
 
 const int led = 13;
 int cnt = 0;
-
-void handleRoot() {
-  digitalWrite(led, 1);
-  char line[100];
-  sprintf(line, "Hello from epic Server\r\n");
-  server.send(200, "text/plain", line);
-  digitalWrite(led, 0);
-}
-
-void handleFMS() {
-  digitalWrite(led, 1);
-  char line[100];
-  cnt++;
-  String a1 = server.arg("gamestatus");
-  sprintf(line, "Hello from epic FMS counter. Game Status=%s, Count=%d\r\n", a1.c_str(), cnt);
-  server.send(200, "text/plain", line);
-  digitalWrite(led, 0);
-}
-
-void handleNotFound() {
-  digitalWrite(led, 1);
-  String message = "File Not Found\n\n";
-  message += "URI: ";
-  message += server.uri();
-  message += "\nMethod: ";
-  message += (server.method() == HTTP_GET) ? "GET" : "POST";
-  message += "\nArguments: ";
-  message += server.args();
-  message += "\n";
-  for (uint8_t i = 0; i < server.args(); i++) {
-    message += " " + server.argName(i) + ": " + server.arg(i) + "\n";
-  }
-  server.send(404, "text/plain", message);
-  digitalWrite(led, 0);
-}
 
 void setup(void) {
   pinMode(led, OUTPUT);
@@ -209,9 +181,27 @@ void setup(void) {
 
   server.begin();
   Serial.println("HTTP server started");
+
+  SPI.begin();
+  Serial.println("SPI cmds started.");
+  lastcmdtime = millis();
 }
 
 void loop(void) {
   server.handleClient();
   MDNS.update();
+  if (millis() - lastcmdtime > 2000) {
+    lastcmdtime = millis();
+    memcpy(recbuf, "00000000", 8);
+    Serial.println("Sending Cmd.");
+    for (unsigned int i=0; i < sizeof cmdbuf; i++) {
+      recbuf[i] = SPI.transfer(cmdbuf[i]);
+      if (cmdbuf[i] == '\r') break;
+    }
+    sprintf(lineout, "Rec: %d %d %d %d %d %d %d %d", 
+      recbuf[0], recbuf[1], recbuf[2], recbuf[3], 
+      recbuf[4], recbuf[5], recbuf[6], recbuf[7]);
+    Serial.println(lineout);
+    cmdcount++;
+  }
 }

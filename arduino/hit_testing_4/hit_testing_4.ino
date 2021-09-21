@@ -18,19 +18,39 @@
 // However, for now, if the POST fails, then the binary
 // display shows a flashing pattern that indicates an 
 // error.  To clear the error, the sketch must be restarted.
+//
+// SPI Message Structure:
+// The input message should have the following 
+//    Byte 0:  '1010 xxxx   -- Where xxxx is the version of the message
+//    Byte 1:  cmd          -- The command. Meaning listed below.
+//    Bytes 2-N:  0000 0000 -- Remaining bytes, sent for reading.
 
+// The output SPI message always has the following content:
+//    Byte 0:  1011 xxxx   -- Where xxxx is the version of the message
+//    Byte 1:  status      -- A status byte, with varous meaning, see below.
+//    Byte 2:  batv        -- Battery voltage, LSB = 0.1 volts
+//    Byte 3:  count1      -- MSByte of hit count
+//    Byte 4:  count0      -- LSByte of hit count 
+//
+// Currently the SPI message is 5 bytes long.  See the #defines
+// in the code for cmd and status.  As of now, there is only
+// one version of the messages, xxxx = 0001.  
+//
+
+#include <Arduino.h>
+#include "SPI.h"
 
 // *** Assign the pins 
 // These pins go high on detection.
 // DO NOT CHANGE the irx_pin constants without rewriting the interrupt enable code in setup()!
-const int ir1_pin = 7;
-const int ir2_pin = 6;
-const int ir3_pin = 5;
-const int ir4_pin = 4;
+const int ir1_pin = 4;
+const int ir2_pin = 5;
+const int ir3_pin = 6;
+const int ir4_pin = 7;
 // These pins control the emitters.
-const int emitter1_pin = 12;
-const int emitter2_pin = 11;
-const int emitter3_pin = 10;
+const int emitter1_pin = 2;
+const int emitter2_pin = 3;
+const int emitter3_pin = 8;
 const int emitter4_pin = 9;
 // These pins implement a binary LED display.
 const int disp1_pin = A2; 
@@ -43,6 +63,17 @@ const int disp4_pin = A5;
 #define RM_DANCE 1  // used to indicate an error in the mapping sequence.
 #define RM_BLINK 2  // Used to indicate an error in the ring check
 
+// Define the SPI message
+#define SPI_MSG_LEN 5 
+#define SPI_STATUS_OKAY      0        // All normal, counting enabled.
+#define SPI_STATUS_POSTING   1        // Means the post is running 
+#define SPI_STATUS_POST_ERR1 2        // Post mapping error -- counting not enabled
+#define SPI_STATUS_POST_ERR2 3        // Post ring error -- counting not enabled
+#define SPI_CMD_NOOP         0        // Command is a no-op
+#define SPI_CMD_CLEAR_ERRORS 1        // Clear all errors, retry post
+#define SPI_CMD_CLEAR_COUNTS 2        // Clear hit count
+#define SPI_FRIST_BYTE       0b11010001 // First Byte to Send
+
 // Define the variable for the logic
 volatile unsigned long hit_count = 0;
 volatile unsigned long hit_time = 0;
@@ -50,127 +81,17 @@ volatile bool ready_for_hit = true;
 int raw_emitter_pins[4] = {emitter1_pin, emitter2_pin, emitter3_pin, emitter4_pin};
 int raw_detector_pins[4] = {ir1_pin, ir2_pin, ir3_pin, ir4_pin};
 int emitter_indexes[4];  // Holds the indexes of the pins for the emitters in order.
-int run_mode = RM_NORMAL;  // See the RM defines above
-char lineout[100];
+byte spi_msg[SPI_MSG_LEN];          // Holds the output SPI message. 
+unsigned long spi_hitcount = 0;    // Holds snapshot of hit_count
+byte spi_run_mode = 0;             // Holds snapshot of run_mode 
+byte run_mode = RM_NORMAL;         // See the RM defines above
+byte bat_volts = 70;               // Battery voltage -- in 0.1v increments
+char lineout[100];                 // For output to debug termainal
 
-void turn_off_all_emitters() {
-  for (int i = 0; i < 4; i++) digitalWrite(raw_emitter_pins[i], LOW);
-  delay(1);
-}
-
-void turn_on_all_emitters() {
-  for (int i = 0; i < 4; i++) digitalWrite(raw_emitter_pins[i], HIGH);
-  delay(1);
-}
-
-void turn_on_emitter(int index) {
-  digitalWrite(raw_emitter_pins[index], HIGH);
-  delay(1);
-}
-
-// do_mapping() -- attempts to pair the emitters
-// and collectors.  If error, returns false.
-bool do_mapping() {
-  for (int ichan =  0; ichan < 4; ichan++) {
-    turn_off_all_emitters();
-    // If all the emitters are off, then this simulates a detection, therefore
-    // if any channel is not detecting, then something is wrong.
-    for (int k = 0; k < 4; k++) {
-      int reading = digitalRead(raw_detector_pins[k]);
-      if (reading == LOW) {
-        sprintf(lineout, "In do_mapping. Failed at raw_detector_pins. reading=%d, k=%d, raw_detector_pins[k] = %d", reading, k, raw_detector_pins[k]);
-        Serial.println(lineout);  
-        return false;
-      }
-    }
-    // Good. Now turn the beam on for the channel we are working on, and
-    // look for a "non-detection."  If we count more than one non-detection,
-    // something is wrong.  Or if the pin that the non-detection is active,
-    // and its already been used for a differnet channel, that is also an error.
-    turn_on_emitter(ichan);
-    int non_detect_count = 0;
-    int index_of_non_detect = -1;
-    for (int j = 0; j < 4; j++) {
-      if (digitalRead(raw_detector_pins[j]) == LOW) {
-        non_detect_count++;
-        if (non_detect_count > 1) {
-          // Too many detections for this channel.
-          sprintf(lineout, "In do_mapping. Too many detections for one channel.  Chan=%d."); Serial.println(lineout);
-          sprintf(lineout, "Reading j=%d index.  The index already taken = %d.", j, index_of_non_detect); 
-          Serial.println(lineout);
-          return false;  
-        }
-        index_of_non_detect = j;
-        for (int k = 0; k < ichan - 1; k++) {
-          if (emitter_indexes[k] == index_of_non_detect) return false;  // Emitter index already used.
-        }  
-        emitter_indexes[ichan] = index_of_non_detect;
-      }
-    }
-  }
-  return true;  // The emitter_indexes table should be filled up correctly.
-}
-
-// do_ring_check() -- fires the emitters one at a time and makes sure that their corresponding 
-// detector sees the beam.  Returns false on error.
-bool do_ring_check() {
-  for (int ichan = 0; ichan < 4; ichan++) {
-    turn_off_all_emitters();
-    // Turn on one emitter, make sure it's detector sees the beam and none of the others do.
-    turn_on_emitter(ichan);
-    int nfound = 0;
-    int index_found = -1;
-    for (int k = 0; k < 4; k++) {
-      if (digitalRead(raw_detector_pins[k]) == LOW) {
-        nfound++;
-        index_found = k;
-      }
-    }
-    if (nfound != 1) {
-      // Either nothing was found, or more than one detector was found. 
-      // Bad either way.
-      sprintf(lineout, "In ring_check. Expected to find one beam. Found=%d", nfound); 
-      Serial.println(lineout);
-      return false;
-    }
-    if (index_found != emitter_indexes[ichan]) {
-      sprintf(lineout, "In ring_check. Index found doesn't match mapping. Index found = %d.", index_found);
-      Serial.println(lineout);
-      sprintf(lineout, "Working on channel = %d. Mapping = %d, %d, %d, %d.", ichan, 
-        emitter_indexes[0], emitter_indexes[1], emitter_indexes[2], emitter_indexes[3]);
-      Serial.println(lineout);
-      // Wrong index found.  Something wrong.
-      return false;
-    } 
-  }
-  return true;
-}
-
-// do_self_check() -- Returns true if hardware seems okay.
-bool do_self_check() {
-  Serial.println("Starting Self Test.");
-  bool okay = do_mapping();
-  if (!okay) { 
-    run_mode = RM_DANCE;
-    Serial.println("Mapping failed.");
-    return;
-  }
-  sprintf(lineout, "Mapping Successful. Index are: %d, %d, %d, %d.",
-    emitter_indexes[0], emitter_indexes[1], emitter_indexes[2], emitter_indexes[3]);
-  Serial.println(lineout);
- 
-  okay = do_ring_check();
-  if (!okay) {
-    run_mode = RM_BLINK;
-    Serial.println("Ring_check failed.");
-    return;
-  }
-  Serial.println("Ring_check successful.");
-  Serial.println("Self Test complete: Hardware seems functional.");
-  Serial.println("");
-  run_mode = RM_NORMAL;
-  return true;
-}
+// Define variables for SPI
+char cmdbuf[30];
+volatile byte cmdindx;
+volatile byte cmdprocess;
 
 // ++++++++ setup() 
 void setup() {
@@ -215,40 +136,30 @@ void setup() {
 
   PCICR |= 4;    // Turns on PCINT[23:16] (all 8 pins)
   PCMSK2 = 0x00F0; // With above, turns on interrupt Change for pins D5-D7 only.
+  cmdindx = 0;
+  cmdprocess = false;
+  SPI.attachInterrupt();
 
   // Now we are ready.., so: 
   turn_on_all_emitters();
 
-  Serial.println("Starting normal operation.");
-}
+  Serial.println("Setting up SPI.");
+  pinMode(MISO, OUTPUT);  // We are the slave, so drive this pin to send our data.
+  SPCR |= _BV(SPE);  // turn on SPI in slave mode
+  spi_msg[0] = SPI_FRIST_BYTE;
 
-// display_hit_count() -- writes the modulo of the input
-// the the display LEDs.
-void display_hit_count(int c) {
-  if (c & 0x0001) {
-    digitalWrite(disp1_pin, HIGH);
-  } else {
-    digitalWrite(disp1_pin, LOW);
-  }
-  if (c & 0x0002) {
-    digitalWrite(disp2_pin, HIGH);
-  } else {
-    digitalWrite(disp2_pin, LOW);
-  }
-  if (c & 0x0004) {
-    digitalWrite(disp3_pin, HIGH);
-  } else {
-    digitalWrite(disp3_pin, LOW);
-  }
-    if (c & 0x0008) {
-    digitalWrite(disp4_pin, HIGH);
-  } else {
-    digitalWrite(disp4_pin, LOW);
-  }
+  Serial.println("Starting normal operation.");
 }
 
 // loop() -- main loop.
 void loop() {
+  if (cmdprocess) {
+    sprintf(lineout, "Cmd Received: %s.  Hit Count = %ld", cmdbuf, hit_count);
+    Serial.println(lineout);
+    cmdprocess = false;
+    // Load out the transmission reg here?
+    SPDR = spi_msg[0];
+  }
   if (run_mode == RM_NORMAL) {
     if (!ready_for_hit) {
       if (micros() - hit_time > 20000) {
@@ -298,3 +209,23 @@ ISR(PCINT2_vect) {
   ready_for_hit = false;
 }
 
+ISR(SPI_STC_vect) {
+  if (cmdprocess) return;  // If we haven't finished processing last, then ignore
+  byte c = SPDR;  // read byte from SPI Data Register
+  if (cmdindx == 0) {
+    spi_msg[1] = run_mode;
+    spi_msg[2] = bat_volts;
+    memcpy(spi_msg + 3, hit_count, 2); 
+  }
+  if (cmdindx < SPI_MSG_LEN) {
+    SPDR = spi_msg[cmdindx + 1];  // Send back data
+  }
+  if(cmdindx < sizeof cmdbuf) {
+    cmdbuf[cmdindx++] = c;
+    if(c == '\r') {
+      cmdprocess = true;
+      cmdbuf[cmdindx] = 0;
+      cmdindx = 0;
+    }
+  }
+}
