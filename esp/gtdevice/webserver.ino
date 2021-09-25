@@ -3,7 +3,6 @@
 void handleRoot() {
   digitalWrite(led, 1);
   char line[100];
-  sprintf(line, "Hello from epic Server. Cmd Count=%ld\r\n", cmdcount);
   server.send(200, "text/plain", line);
   digitalWrite(led, 0);
 }

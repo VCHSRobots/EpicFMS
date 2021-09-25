@@ -48,12 +48,27 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
+#include <Adafruit_NeoPixel.h>
 #include <SPI.h>
 
 #ifndef STASSID
 #define STASSID "BBHWiFiLink"
 #define STAPSK  "hockeypuck"
 #endif
+
+#define NEOPIN1 D1   // This should be D1 
+#define NEOPIN2 D2   // This should be D2
+//#define COUNTGPIO 0  // THis should be D3
+//#define COUNTGPIO 2  // This should be D4
+//#define COUNTGPIO 14   // THis should be D5
+#define COUNTGPIO 12  // This should be D6
+
+#define NPIXELS 6
+
+Adafruit_NeoPixel pixels1 = Adafruit_NeoPixel(NPIXELS, NEOPIN1, NEO_RGB + NEO_KHZ800);
+Adafruit_NeoPixel pixels2 = Adafruit_NeoPixel(NPIXELS, NEOPIN2, NEO_RGB + NEO_KHZ800);
+
+volatile long hit_count = 0;
 
 const char* ssid = STASSID;
 const char* password = STAPSK;
@@ -72,9 +87,12 @@ void setup(void) {
   pinMode(led, OUTPUT);
   digitalWrite(led, 0);
   Serial.begin(115200);
+  Serial.println(" ");  
+  Serial.println("Epic Game Slave Device For Moving Target.");
+  Serial.println("Version 0.5, Sept 2021.");
+  Serial.println("Starting WiFi.");
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  Serial.println("");
 
   // Wait for connection
   while (WiFi.status() != WL_CONNECTED) {
@@ -185,11 +203,33 @@ void setup(void) {
   SPI.begin();
   Serial.println("SPI cmds started.");
   lastcmdtime = millis();
+
+  pixels1.begin(); 
+  pixels2.begin();
+  change_color();
+  Serial.println("Neo pixels Started.");
+
+  Serial.println("Setting up Interrupt.");
+  sprintf(lineout, "Interrupt GPIO = %d", COUNTGPIO);
+  Serial.println(lineout);
+  pinMode(COUNTGPIO, INPUT);
+  attachInterrupt(COUNTGPIO, isr_counter, RISING);
+  //show_pins();
+}
+
+
+long last_hit_count = 0;
+ICACHE_RAM_ATTR void isr_counter() {
+  hit_count++;
 }
 
 void loop(void) {
   server.handleClient();
   MDNS.update();
+  if (last_hit_count != hit_count) {
+    last_hit_count = hit_count;
+    change_color();
+  }
   if (millis() - lastcmdtime > 2000) {
     lastcmdtime = millis();
     memcpy(recbuf, "00000000", 8);
@@ -201,6 +241,8 @@ void loop(void) {
     sprintf(lineout, "Rec: %d %d %d %d %d %d %d %d", 
       recbuf[0], recbuf[1], recbuf[2], recbuf[3], 
       recbuf[4], recbuf[5], recbuf[6], recbuf[7]);
+    Serial.println(lineout);
+    sprintf(lineout, "Hit_Count = %ld", hit_count);
     Serial.println(lineout);
     cmdcount++;
   }
