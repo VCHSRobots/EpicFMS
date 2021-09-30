@@ -1,0 +1,96 @@
+{#  scoreboard.html -- Renders Scoreboard page for EPIC Fms
+    dlb, Sept 2021
+#}
+<!DOCTYPE html>
+    <script>
+        function loadScore() {
+            fetch("rawscore")
+                .then(function(response) {
+                    return response.json();
+                })
+                .then(function (data) {
+                    fill_score_board(data);
+                })
+                .catch(function (err) {
+                    console.log('error: ' + err);
+                });
+        }
+        function init_loading() {
+            setInterval(loadScore, 1000)
+        }
+        function fill_score_board(data) {
+            var i = data["GameTimeToGo"];
+            document.getElementsByName("blueteamname").innerHTML = 'Blue Team = ' + data["BlueTeamName"];
+            document.getElementsByName("redteamname").innerHTML = 'Red Team = ' + data["RedTeamName"];
+            document.getElementById("timetogo").innerHTML = 'Time = ' + i;
+        } 
+    </script>
+     
+    <html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>EPIC BASEBALL GAME</title>
+        <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+        <style>
+            #screen_area {width: 1024 px;}
+            .content_area {width: 900 px;} 
+        </style>
+    </head>
+    <body onload="init_loading()">
+        <div id="mainframe">
+            <div id="bannersplit">
+                <div id="epiclogo"><img src="../static/img/epiclogo.png" width="200" height="200"></div>
+                <div id="titlesplit">
+                    <div id="maintitle">BASEBALL GAME</div>
+                    <div id="gamemode">dummy</div>
+                </div>
+                <div id="clockframe">
+                    <div id="timetogo">Time XX</div>
+                </div>  
+            </div>
+            <div style="clear: both;"></div>
+            <div id="teamsframe">
+                <div id="blueframe">
+                    <div id="bluetitle" class="teamtitle">Blue Team</div>
+                    <div id="blueteamname" class="teamname">dummy</div>
+                    <div id="bluescorearea">
+                        <div id="blueteamscore" class="totalscore">289</div>
+                        <div id=blueautoindicator>
+                            <div id="bluearrowpathdiv" class="autopath"><img src="../static/img/arrowpath.png" class="arrowpath"></div>
+                            <div id="blueautocm" class="checkmarkdiv"><img src="../static/img/checkmark.png" class="checkmarkimg"></div>
+                        </div>
+                    </div>  
+                    <div id="bluebasket" class="basketdiv"><img src="../static/img/baskettarget.png" class="basketimg"></div>
+                    <div id="bluemoving" class="movingdiv"><img src="../static/img/movingtarget.png" class="movingimg"></div>
+                    <div id="bluesliding" class="slidingdiv"><img src="../static/img/slidingtarget.png" class="slidingimg"></div>
+                    <div id="bluebasketcm" class="checkmarkdiv"><img src="../static/img/checkmark.png" class="checkmarkimg"></div>
+                    <div id="bluemovingcm" class="checkmarkdiv"><img src="../static/img/checkmark.png" class="checkmarkimg"></div>
+                    <div id="bluesliding1cm" class="checkmarkdiv"><img src="../static/img/checkmark.png" class="checkmarkimg"></div>
+                    <div id="bluesliding2cm" class="checkmarkdiv"><img src="../static/img/checkmark.png" class="checkmarkimg"></div>
+                    <div id="bluesliding3cm" class="checkmarkdiv"><img src="../static/img/checkmark.png" class="checkmarkimg"></div>
+                </div>
+                <div id="teamspacer"></div>
+                <div id="redframe">
+                    <div id="redtitle" class="teamtitle">Red Team</div>
+                    <div id="redteamname" class="teamname">dummy</div>
+                    <div id="redscorearea">
+                        <div id="redteamscore" class="totalscore">53</div>
+                        <div id="redautoindicator">
+                            <div id="redarrowpathdiv" class="autopath"><img src="../static/img/arrowpath.png" class="arrowpath"></div>
+                            <div id="redautocm" class="checkmarkdiv"><img src="../static/img/checkmark.png" class="checkmarkimg"></div>
+                        </div>
+                    </div>  
+                    <div id="redbasket" class="basketdiv"><img src="../static/img/baskettarget.png" class="basketimg"></div>
+                    <div id="redmoving" class="movingdiv"><img src="../static/img/movingtarget.png" class="movingimg"></div>
+                    <div id="redsliding" class=slidingdiv><img src="../static/img/slidingtarget.png" class="slidingimg"></div>
+                    <div id="redbasketcm" class="checkmarkdiv"><img src="../static/img/checkmark.png" class="checkmarkimg"></div>
+                    <div id="redmovingcm" class="checkmarkdiv"><img src="../static/img/checkmark.png" class="checkmarkimg"></div>
+                    <div id="redsliding1cm" class="checkmarkdiv"><img src="../static/img/checkmark.png" class="checkmarkimg"></div>
+                    <div id="redsliding2cm" class="checkmarkdiv"><img src="../static/img/checkmark.png" class="checkmarkimg"></div>
+                    <div id="redsliding3cm" class="checkmarkdiv"><img src="../static/img/checkmark.png" class="checkmarkimg"></div>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+
