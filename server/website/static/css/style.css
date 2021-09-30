@@ -6,30 +6,35 @@ body {
 
  .info_line {display: block; font-size: 45pt;}
  #mainframe {display: block; background-color:#491818; 
-    width: 1200px; height: 800px; margin: 0 auto;}
+    width: 1200px; height: 850px; margin: 0 auto;}
  #bannersplit {display: block; width: 100%; height: 240px;}
  #epiclogo {float: left; width: 210px; padding: 10px; }
  #titlesplit {float: left; width: 770px; height: 130px;}
  #maintitle {display: block; width: 770px; text-align: center; font-size: 50pt; color: white;}
  #gamemode {display: block; width: 770px; text-align: center; font-size: 30pt;}
- #clockframe {float: left; width: 180px; font-size: 30pt; color: green;}
- #teamsframe {display: block; width: 1052px; height: 570px; margin: 0 auto;}
+ #clockframe {float: left; width: 180px; font-size: 30pt; color: orange;}
+ #teamsframe {display: block; width: 1150px; height: 580px; margin: 0 auto;}
+ 
+#bluewinframe {float: left; width: 501px; height: 551px; border: 10px; 
+    margin-left: 50px; border-color: white; border-style: dotted;}
+#teamspacer {float: left; width: 30px; height: 50px;}    
+#redwinframe {float: left; width: 501px; height: 551px; border: 10px; border-color: white; border-style: dotted;}
+
  #blueframe {float: left; width: 500px; height: 550px; border: 5px; border-color: orange; 
     background-color: #c0c0ff; }
  #redframe {float: left; width: 500px; height: 550px; border: 5px; border-color: orange; 
     background-color: #ffc0c0; }
-#teamspacer {float: left; width: 50px; height: 50px;}
+
 #bluetitle {display: block; width: 100%; text-align: center; font-size: 40pt; color: blue}
 #blueteamname {display: block; width: 100%; text-align: center; font-size: 30pt; color: blue}
 #redtitle {display: block; width: 100%; text-align: center; font-size: 40pt; color: red}
 #redteamname {display: block; width: 100%; text-align: center; font-size: 30pt; color: red}
 
-#bluescorearea {display: block; width: 100%;}
+#bluescorearea {display: block; width: 100%; }
+#redscorearea {display: block; width: 100%; }
 
 .totalscore {float: left; margin-left: 100px; width: 300px; height: 120px; text-align: center; font-size: 80pt; color: black}
 .autopath {float: left; width: 9px;}
-#blueautocm {float: left;}
-#redaautocm {float: left;}
 
 .basketdiv {float: left; margin-left: 30px; width: 150px; height: 100px;}
 .movingdiv {float: left; width: 150px; height: 100px;}
@@ -40,18 +45,30 @@ img.slidingimg {width: 100px;}
 
 img.checkmarkimg {width: 30px;}
 img.arrowpath {width: 90px;}
+img.redx {width: 30px;}
+img.errframe1 { width: 60px; height: 180px;}
+img.errframe2 { width: 60px; height: 180px;}
+img.errframe3 { width: 100px; height: 180px;}
 #bluearrorpathdiv {float: left; position: relative; left: 50px; top: -10px;}
-#blueautocm {display: block; position: relative; left: 10px; top: -50px; width: 50px; height: 50px;}
+#blueautofail {float: left; display: block; position: relative; left: 0px; top: 20px; visibility: visible;}
+#blueautocm {float: left; display: block; position: relative; left: 10px; top: 10px; width: 50px; height: 50px;}
 #bluebasketcm {float: left; position: relative; left: 90px; top: -80px; width: 50px; height: 50px;}
 #bluemovingcm {float: left; position: relative; left: 180px; top: -80px; width: 50px; height: 50px;}
 #bluesliding1cm {float: left; position: relative; left: 330px; top: -80px; width: 50px; height: 50px;}
 #bluesliding2cm {float: left; position: relative; left: 280px; top: -30px; width: 50px; height: 50px;}
 #bluesliding3cm {float: left; position: relative; left: 230px; top: 25px; width: 50px; height: 50px;}
+#bluebasketerr {float: left; position: relative; left: 35px; top: -150px; width: 100px; height: 200px;}
+#bluemovingerr {float: left; position: relative; left: 80px; top: -150px; width: 100px; height: 200px;}
+#blueslidingerr {float: left; position: relative; left: 130px; top: -150px; width: 100px; height: 200px;}
 
 #redarrorpathdiv {float: left; position: relative; left: 50px; top: -10px;}
-#redautocm {display: block; position: relative; left: 10px; top: -50px; width: 50px; height: 50px;}
+#redautofail {float: left; display: block; position: relative; left: 0px; top: 20px; visibility: visible;}
+#redautocm {float: left; display: block; position: relative; left: 10px; top: 10px; width: 50px; height: 50px;}
 #redbasketcm {float: left; position: relative; left: 90px; top: -80px; width: 50px; height: 50px;}
 #redmovingcm {float: left; position: relative; left: 180px; top: -80px; width: 50px; height: 50px;}
 #redsliding1cm {float: left; position: relative; left: 330px; top: -80px; width: 50px; height: 50px;}
 #redsliding2cm {float: left; position: relative; left: 280px; top: -30px; width: 50px; height: 50px;}
 #redsliding3cm {float: left; position: relative; left: 230px; top: 25px; width: 50px; height: 50px;}
+#redbasketerr {float: left; position: relative; left: 35px; top: -150px; width: 100px; height: 200px;}
+#redmovingerr {float: left; position: relative; left: 80px; top: -150px; width: 100px; height: 200px;}
+#redslidingerr {float: left; position: relative; left: 130px; top: -150px; width: 100px; height: 200px;}
