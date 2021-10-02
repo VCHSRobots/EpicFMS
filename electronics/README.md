@@ -5,4 +5,4 @@ the custom PCB boards that were manufactured for the hit counters.
 
 ### Schematic for the Moving Target Unit
 
-![Cannot find it](MovingTargetUnit_Schematic.PNG)
+![Cannot find it](MovingTargetUnit_Schematic.png)
