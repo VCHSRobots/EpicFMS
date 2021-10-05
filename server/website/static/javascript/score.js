@@ -5,7 +5,7 @@ function loadScore() {
         .then(function(response) {
             return response.json();
         })
-        .then(function (data) {
+        .then(function (data) { 
             fill_score_board(data);
         })
         .catch(function (err) {

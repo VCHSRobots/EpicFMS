@@ -51,22 +51,35 @@
 #include <Adafruit_NeoPixel.h>
 #include <SPI.h>
 
+#define MOVING_TARGET_UNIT
+//#define SLIDER_TARGET_UNIT
+//#define BASKET_UNIT
+
 #ifndef STASSID
 #define STASSID "BBHWiFiLink"
 #define STAPSK  "hockeypuck"
 #endif
 
-#define NEOPIN1 D1   // This should be D1 
-#define NEOPIN2 D2   // This should be D2
-//#define COUNTGPIO 0  // THis should be D3
-//#define COUNTGPIO 2  // This should be D4
-//#define COUNTGPIO 14   // THis should be D5
-#define COUNTGPIO 12  // This should be D6
+// Setup For MOVING TARGET UNIT PCB
+#define PIN_NC0    16  // D0 -- No Connection
+#define PIN_NEO1    5  // D1 -- Neo Pixel Strip 1
+#define PIN_NEO2    4  // D2 -- Neo Pixel Strip 2
+#define PIN_SERVO   4  // D2 -- On some devices, servo connected here
+#define PIN_IRD4    0  // D3 -- IR Detector 4
+#define PIN_IRD3    2  // D4 -- IR Detector 4
+#define PIN_IRD2   14  // D5 -- IR Detector 4
+#define PIN_IRD1   12  // D6 -- IR Detector 4
+#define PIN_IRE4   13  // D7 -- IR Detector 4
+#define PIN_IRE3   15  // D8 -- IR Detector 4
+#define PIN_IRE2    3  // D9/RX -- IR Detector 4
+#define PIN_IRE1    1  // D10/TX -- IR Detector 4
+#define PIN_HRST   10  // SD3 -- Hit Reset Switch
+#define PIN_GMODE   9  // SD2 -- Game Mode Switch
 
-#define NPIXELS 6
+#define NPIXELS 12
 
-Adafruit_NeoPixel pixels1 = Adafruit_NeoPixel(NPIXELS, NEOPIN1, NEO_RGB + NEO_KHZ800);
-Adafruit_NeoPixel pixels2 = Adafruit_NeoPixel(NPIXELS, NEOPIN2, NEO_RGB + NEO_KHZ800);
+Adafruit_NeoPixel pixels1 = Adafruit_NeoPixel(NPIXELS, PIN_NEO1, NEO_RGB + NEO_KHZ800);
+Adafruit_NeoPixel pixels2 = Adafruit_NeoPixel(NPIXELS, PIN_NEO2, NEO_RGB + NEO_KHZ800);
 
 volatile long hit_count = 0;
 
@@ -79,13 +92,9 @@ char recbuf[30];
 char lineout[100];
 long lastcmdtime = 0;
 long cmdcount = 0;
-
-const int led = 13;
 int cnt = 0;
 
 void setup(void) {
-  pinMode(led, OUTPUT);
-  digitalWrite(led, 0);
   Serial.begin(115200);
   Serial.println(" ");  
   Serial.println("Epic Game Slave Device For Moving Target.");
@@ -209,29 +218,39 @@ void setup(void) {
   change_color();
   Serial.println("Neo pixels Started.");
 
-  Serial.println("Setting up Interrupt.");
-  sprintf(lineout, "Interrupt GPIO = %d", COUNTGPIO);
-  Serial.println(lineout);
-  pinMode(COUNTGPIO, INPUT);
-  attachInterrupt(COUNTGPIO, isr_counter, RISING);
-  //show_pins();
-}
 
+//  pinMode(PIN_IRD1, INPUT);
+//  pinMode(PIN_IRD2, INPUT);
+//  pinMode(PIN_IRD3, INPUT);
+//  pinMode(PIN_IRD4, INPUT);
+//  pinMode(PIN_IRE1, OUTPUT);
+//  pinMode(PIN_IRE2, OUTPUT);
+//  pinMode(PIN_IRE3, OUTPUT);
+//  pinMode(PIN_IRE4, OUTPUT);
+//  digitalWrite(PIN_IRE1, HIGH);
+//  digitalWrite(PIN_IRE2, HIGH);
+//  digitalWrite(PIN_IRE3, HIGH);
+//  digitalWrite(PIN_IRE4, HIGH);
+  Serial.println("IR Emitters and Detectors Setup.");
+  
+  Serial.println("Setting up Interrupts.");
+  sprintf(lineout, "Interrupt GPIO = %d", PIN_GMODE);
+  Serial.println(lineout);
+  pinMode(PIN_GMODE, INPUT);
+  attachInterrupt(PIN_GMODE, isr_counter, RISING);
+  sprintf(lineout, "Interrupt GPIO = %d", PIN_HRST);
+  Serial.println(lineout);
+  pinMode(PIN_HRST, INPUT);
+  attachInterrupt(PIN_HRST, isr_counter, RISING);
+  show_pins();
+}
 
 long last_hit_count = 0;
 ICACHE_RAM_ATTR void isr_counter() {
   hit_count++;
 }
 
-void loop(void) {
-  server.handleClient();
-  MDNS.update();
-  if (last_hit_count != hit_count) {
-    last_hit_count = hit_count;
-    change_color();
-  }
-  if (millis() - lastcmdtime > 2000) {
-    lastcmdtime = millis();
+void send_spi_cmd() {
     memcpy(recbuf, "00000000", 8);
     Serial.println("Sending Cmd.");
     for (unsigned int i=0; i < sizeof cmdbuf; i++) {
@@ -244,6 +263,21 @@ void loop(void) {
     Serial.println(lineout);
     sprintf(lineout, "Hit_Count = %ld", hit_count);
     Serial.println(lineout);
+}
+
+void loop(void) {
+  server.handleClient();
+  MDNS.update();
+  if (last_hit_count != hit_count) {
+    last_hit_count = hit_count;
+    change_color();
+  }
+  if (millis() - lastcmdtime > 2000) {
+    lastcmdtime = millis();
     cmdcount++;
+    int ir = analogRead(A0);
+    sprintf(lineout, "Analog Reading = %d", ir);
+    Serial.println(lineout);
+    //sent_spi_cmd();
   }
 }
