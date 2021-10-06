@@ -41,8 +41,6 @@
 // That is, the server knows each ESP8266 mac addresses, and 
 // can associate which ESP8266 is connected to which game piece.
 
-// !!!!!!!!!!!!!!!! TODO: the actual code needs to be writen!
-
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <WiFiClient.h>
@@ -56,11 +54,13 @@
 //#define BASKET_UNIT
 
 #ifndef STASSID
-#define STASSID "BBHWiFiLink"
-#define STAPSK  "hockeypuck"
+//#define STASSID "BBHWiFiLink"
+//#define STAPSK  "hockeypuck"
+#define STASSID "epicfms"
+#define STAPSK  "epic4fms"
 #endif
 
-// Setup For MOVING TARGET UNIT PCB
+// Setup For MOVING TARGET UNIT PCB -- VERSION 1 of the PCB
 #define PIN_NC0    16  // D0 -- No Connection
 #define PIN_NEO1    5  // D1 -- Neo Pixel Strip 1
 #define PIN_NEO2    4  // D2 -- Neo Pixel Strip 2
@@ -81,8 +81,6 @@
 Adafruit_NeoPixel pixels1 = Adafruit_NeoPixel(NPIXELS, PIN_NEO1, NEO_RGB + NEO_KHZ800);
 Adafruit_NeoPixel pixels2 = Adafruit_NeoPixel(NPIXELS, PIN_NEO2, NEO_RGB + NEO_KHZ800);
 
-volatile long hit_count = 0;
-
 const char* ssid = STASSID;
 const char* password = STAPSK;
 
@@ -93,6 +91,10 @@ char lineout[100];
 long lastcmdtime = 0;
 long cmdcount = 0;
 int cnt = 0;
+volatile long hit_count = 0;
+volatile long last_hit_count = 0;
+volatile long hit_count_time_m1 = millis();
+volatile long hit_count_time_m2 = millis();
 
 void setup(void) {
   Serial.begin(115200);
@@ -237,16 +239,30 @@ void setup(void) {
   sprintf(lineout, "Interrupt GPIO = %d", PIN_GMODE);
   Serial.println(lineout);
   pinMode(PIN_GMODE, INPUT);
-  attachInterrupt(PIN_GMODE, isr_counter, RISING);
+  attachInterrupt(PIN_GMODE, isr_counter_m1, FALLING);
   sprintf(lineout, "Interrupt GPIO = %d", PIN_HRST);
   Serial.println(lineout);
   pinMode(PIN_HRST, INPUT);
-  attachInterrupt(PIN_HRST, isr_counter, RISING);
+  attachInterrupt(PIN_HRST, isr_counter_m2, FALLING);
   show_pins();
 }
 
-long last_hit_count = 0;
-ICACHE_RAM_ATTR void isr_counter() {
+
+ICACHE_RAM_ATTR void isr_counter_m1() {
+  // Only count transistions from high to low, and after
+  // suitable debouce time.
+  if (millis() - hit_count_time_m1 < 50) return;
+  if (digitalRead(PIN_GMODE) == HIGH) return;
+  hit_count_time_m1 = millis();
+  hit_count++;
+}
+
+ICACHE_RAM_ATTR void isr_counter_m2() {
+  // Only count transistions from high to low, and after
+  // suitable debouce time.
+  if (millis() - hit_count_time_m2 < 50) return;
+  if (digitalRead(PIN_HRST) == HIGH) return;
+  hit_count_time_m2 = millis();
   hit_count++;
 }
 

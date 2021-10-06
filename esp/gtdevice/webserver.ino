@@ -3,17 +3,18 @@
 void handleRoot() {
   //digitalWrite(led, 1);
   char line[100];
+  sprintf(line, "Epic FMS Target Unit.");
   server.send(200, "text/plain", line);
   //digitalWrite(led, 0);
 }
 
 void handleFMS() {
   //digitalWrite(led, 1);
-  char line[100];
-  cnt++;
+  char json[100];
   String a1 = server.arg("gamestatus");
-  sprintf(line, "Hello from epic FMS counter. Game Status=%s, Count=%d\r\n", a1.c_str(), cnt);
-  server.send(200, "text/plain", line);
+  sprintf(json,"{\"hit_count\" = %d }", hit_count);
+  //sprintf(json, "Hello from epic FMS counter. Game Status=%s, Count=%ld\r\n", a1.c_str(), hit_count);
+  server.send(200, "text/json", json);
   //digitalWrite(led, 0);
 }
 
