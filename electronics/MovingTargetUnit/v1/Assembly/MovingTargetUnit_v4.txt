@@ -1,0 +1,19 @@
+Partlist exported from C:/Users/dalbr/Documents/EAGLE/projects/Epic FMS/MovingTargetUnit_v4.sch at 9/25/2021 1:24 AM
+
+Qty Value            Device            Package             Parts                    Description                                     
+4   100              R1206(3216METRIC) R1206               R14, R15, R16, R17       Standard Resistor -- Various Sizes and Wattages 
+2   100uf            CAP1206           C1206               C3, C4                                                                   
+6   10K              R1206(3216METRIC) R1206               R2, R3, R4, R5, R12, R13 Standard Resistor -- Various Sizes and Wattages 
+1   10K              TRIMPOT-SM        TRIMPOT_3361P       P1                                                                       
+2   1uf              CAP1206           C1206               C1, C2                                                                   
+1   2K               R1206(3216METRIC) R1206               R11                      Standard Resistor -- Various Sizes and Wattages 
+4   330              R1206(3216METRIC) R1206               R6, R7, R8, R9           Standard Resistor -- Various Sizes and Wattages 
+1   3K               R1206(3216METRIC) R1206               R10                      Standard Resistor -- Various Sizes and Wattages 
+1   74ABT125-D       74ABT125-D        SO16LNB-14PIN       U4                                                                       
+1   ESP8266_MODULE   ESP8266_MODULE    ESP8266_MODULE      M1                                                                       
+4   LED1206          LED1206           LED_1206            LED2, LED3, LED4, LED5   Standard LED                                    
+1   LM2902           LM2902            SO16LNB-14PIN       U1                       Texas Instruments, LM2902KD                     
+3   PINHDR_1X3XH-JST PINHDR_1X3XH-JST  JST-XH_098_VERT_1X3 J3, J4, J5                                                               
+1   PINHDR_1X4-JST   PINHDR_1X4-JST    JST-XH_098_VERT_1X4 J6                                                                       
+3   PINHDR_1X6-JST   PINHDR_1X6-JST    JST-XH_098_VERT_1X6 J1, J2, J7                                                               
+2   VREG-3L7805CDT   VREG-3L7805CDT    TO252-3             U2, U3                   3 Pin Voltage Regulator                         
