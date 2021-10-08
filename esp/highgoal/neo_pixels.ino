@@ -1,12 +1,10 @@
 void display_color(int r, int g, int b) {
-  sprintf(lineout, "Displaying = %d, %d, %d", r, g, b);
-  Serial.println(lineout);
+  //sprintf(lineout, "Displaying = %d, %d, %d", r, g, b);
+  //Serial.println(lineout);
   for (int i = 0; i < NPIXELS; i++) {
-    pixels1.setPixelColor(i, pixels1.Color(r, g, b));
-    //pixels2.setPixelColor(i, pixels2.Color(r, g, b));
+    pixels.setPixelColor(i, pixels.Color(r, g, b));
   }
-  pixels1.show();
-  //pixels2.show();
+  pixels.show();
 }
 
 void change_color() {
@@ -26,10 +24,10 @@ void change_color() {
 void set_blue_count(int n) {
   if (n > NPIXELS) n = NPIXELS;
   for(int i = 0; i < n; i++) {
-    pixels1.setPixelColor(i, pixels1.Color(0, 0, 255));
+    pixels.setPixelColor(i, pixels.Color(0, 0, 255));
   }
   for(int i = n; i < NPIXELS; i++) {
-    pixels1.setPixelColor(i, pixels1.Color(0, 0, 0));
+    pixels.setPixelColor(i, pixels.Color(0, 0, 0));
   }
-  pixels1.show();
+  pixels.show();
 }
