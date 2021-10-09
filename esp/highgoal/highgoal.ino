@@ -27,6 +27,7 @@
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
 #include <Adafruit_NeoPixel.h>
+#include <EpicFmsLib.h>
 
 #define BASKET_TARGET
 

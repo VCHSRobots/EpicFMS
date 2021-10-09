@@ -807,6 +807,43 @@ Mounting can be vertial or horzantial.  If Horz version is used then must leave 
 <text x="-4.445" y="-6.223" size="1.4224" layer="25" font="vector" ratio="12" rot="R90">&gt;NAME</text>
 <text x="5.842" y="-7.112" size="1.4224" layer="27" font="vector" ratio="12" rot="R90">&gt;VALUE</text>
 </package>
+<package name="TO252-3-HS">
+<description>&lt;b&gt;SMALL OUTLINE TRANSISTOR&lt;/b&gt;&lt;p&gt;
+TS-003 T0252, TO252-3 
+DPAK Recommended footport from ST
+With Solder On Heat Sink from AAVID PN: 573100D00010G</description>
+<wire x1="3.2766" y1="3.8354" x2="3.277" y2="-2.159" width="0.2032" layer="51"/>
+<wire x1="3.277" y1="-2.159" x2="-3.277" y2="-2.159" width="0.2032" layer="51"/>
+<wire x1="-3.277" y1="-2.159" x2="-3.2766" y2="3.8354" width="0.2032" layer="51"/>
+<wire x1="-3.277" y1="3.835" x2="3.2774" y2="3.8346" width="0.2032" layer="51"/>
+<wire x1="-2.5654" y1="3.937" x2="-2.5654" y2="4.6482" width="0.2032" layer="51"/>
+<wire x1="-2.5654" y1="4.6482" x2="-2.1082" y2="5.1054" width="0.2032" layer="51"/>
+<wire x1="-2.1082" y1="5.1054" x2="2.1082" y2="5.1054" width="0.2032" layer="51"/>
+<wire x1="2.1082" y1="5.1054" x2="2.5654" y2="4.6482" width="0.2032" layer="51"/>
+<wire x1="2.5654" y1="4.6482" x2="2.5654" y2="3.937" width="0.2032" layer="51"/>
+<wire x1="2.5654" y1="3.937" x2="-2.5654" y2="3.937" width="0.2032" layer="51"/>
+<smd name="FIN" x="0" y="2.5" dx="6.3" dy="6.1" layer="1"/>
+<smd name="1" x="-2.28" y="-3.8" dx="1.5" dy="2.8" layer="1"/>
+<smd name="3" x="2.28" y="-3.8" dx="1.5" dy="2.8" layer="1"/>
+<text x="-2.54" y="6.35" size="1.27" layer="25" font="vector" ratio="12">&gt;NAME</text>
+<text x="8.89" y="-0.635" size="1.27" layer="27" font="vector" ratio="12" rot="R90">&gt;VALUE</text>
+<rectangle x1="-2.7178" y1="-5.1562" x2="-1.8542" y2="-2.2606" layer="51"/>
+<rectangle x1="1.8542" y1="-5.1562" x2="2.7178" y2="-2.2606" layer="51"/>
+<rectangle x1="-0.4318" y1="-3.0226" x2="0.4318" y2="-2.2606" layer="51"/>
+<polygon width="0.1998" layer="51">
+<vertex x="-2.5654" y="3.937"/>
+<vertex x="-2.5654" y="4.6482"/>
+<vertex x="-2.1082" y="5.1054"/>
+<vertex x="2.1082" y="5.1054"/>
+<vertex x="2.5654" y="4.6482"/>
+<vertex x="2.5654" y="3.937"/>
+</polygon>
+<rectangle x1="-6.985" y1="-1.27" x2="6.985" y2="8.382" layer="1"/>
+<rectangle x1="-6.731" y1="-0.889" x2="-5.207" y2="8.128" layer="29"/>
+<rectangle x1="5.207" y1="-0.889" x2="6.731" y2="8.128" layer="29"/>
+<rectangle x1="-6.604" y1="-0.762" x2="-5.334" y2="8.001" layer="31"/>
+<rectangle x1="5.334" y1="-0.762" x2="6.604" y2="8.001" layer="31"/>
+</package>
 </packages>
 <symbols>
 <symbol name="+05V">
@@ -941,43 +978,53 @@ Mounting can be vertial or horzantial.  If Horz version is used then must leave 
 <pin name="P$28" x="27.94" y="-5.08" visible="off" length="middle" direction="pas" rot="R180"/>
 <pin name="P$29" x="27.94" y="-2.54" visible="off" length="middle" direction="pas" rot="R180"/>
 <pin name="P$30" x="27.94" y="0" visible="off" length="middle" direction="pas" rot="R180"/>
-<text x="2.54" y="0" size="1.27" layer="94">3v3</text>
-<text x="2.54" y="-2.54" size="1.27" layer="94">GND</text>
-<text x="2.54" y="-5.08" size="1.27" layer="94">TX</text>
-<text x="2.54" y="-7.62" size="1.27" layer="94">RX</text>
-<text x="2.54" y="-10.16" size="1.27" layer="94">D8</text>
-<text x="2.54" y="-12.7" size="1.27" layer="94">D7</text>
-<text x="2.54" y="-15.24" size="1.27" layer="94">D6</text>
-<text x="2.54" y="-17.78" size="1.27" layer="94">D5</text>
-<text x="2.54" y="-20.32" size="1.27" layer="94">GND</text>
-<text x="2.54" y="-22.86" size="1.27" layer="94">3V3</text>
-<text x="2.54" y="-25.4" size="1.27" layer="94">D4</text>
-<text x="2.54" y="-27.94" size="1.27" layer="94">D3</text>
-<text x="2.54" y="-30.48" size="1.27" layer="94">D2</text>
-<text x="2.54" y="-33.02" size="1.27" layer="94">D1</text>
-<text x="2.54" y="-35.56" size="1.27" layer="94">D0</text>
-<text x="17.78" y="-35.56" size="1.27" layer="94">A0</text>
-<text x="17.78" y="-33.02" size="1.27" layer="94">RSV</text>
-<text x="17.78" y="-30.48" size="1.27" layer="94">RSV</text>
-<text x="17.78" y="-27.94" size="1.27" layer="94">SD3</text>
-<text x="17.78" y="-25.4" size="1.27" layer="94">SD2</text>
-<text x="17.78" y="-22.86" size="1.27" layer="94">SD1</text>
-<text x="17.78" y="-20.32" size="1.27" layer="94">CMD</text>
-<text x="17.78" y="-17.78" size="1.27" layer="94">SDO</text>
-<text x="17.78" y="-15.24" size="1.27" layer="94">CLK</text>
-<text x="17.78" y="-12.7" size="1.27" layer="94">GND</text>
-<text x="17.78" y="-10.16" size="1.27" layer="94">3V3</text>
-<text x="17.78" y="-7.62" size="1.27" layer="94">EN</text>
-<text x="17.78" y="-5.08" size="1.27" layer="94">RST</text>
-<text x="17.78" y="-2.54" size="1.27" layer="94">GND</text>
-<text x="17.78" y="0" size="1.27" layer="94">VIN</text>
-<text x="12.7" y="-12.7" size="1.6764" layer="94" rot="R90">ESP8266</text>
+<text x="1.27" y="-0.254" size="1.27" layer="94">3v3</text>
+<text x="1.27" y="-2.794" size="1.27" layer="94">GND</text>
+<text x="1.27" y="-5.334" size="1.27" layer="94">D10-G1/Tx</text>
+<text x="1.27" y="-7.874" size="1.27" layer="94">D9-G3/Rx</text>
+<text x="1.27" y="-10.414" size="1.27" layer="94">D8-G15</text>
+<text x="1.27" y="-12.954" size="1.27" layer="94">D7-G13</text>
+<text x="1.27" y="-15.494" size="1.27" layer="94">D6-G12</text>
+<text x="1.27" y="-18.034" size="1.27" layer="94">D5-G14</text>
+<text x="1.27" y="-20.574" size="1.27" layer="94">GND</text>
+<text x="1.27" y="-23.114" size="1.27" layer="94">3V3</text>
+<text x="1.27" y="-25.654" size="1.27" layer="94">D4-G2</text>
+<text x="1.27" y="-28.194" size="1.27" layer="94">D3-G0</text>
+<text x="1.27" y="-30.734" size="1.27" layer="94">D2-G4</text>
+<text x="1.27" y="-33.274" size="1.27" layer="94">D1-G5</text>
+<text x="1.27" y="-35.814" size="1.27" layer="94">D0-G16</text>
+<text x="21.59" y="-34.798" size="1.27" layer="94" rot="R180">A0</text>
+<text x="21.59" y="-32.258" size="1.27" layer="94" rot="R180">RSV</text>
+<text x="21.59" y="-29.718" size="1.27" layer="94" rot="R180">RSV</text>
+<text x="21.59" y="-27.432" size="1.27" layer="94" rot="R180">SD3-G10</text>
+<text x="21.59" y="-24.638" size="1.27" layer="94" rot="R180">SD2-G9</text>
+<text x="21.59" y="-22.098" size="1.27" layer="94" rot="R180">MOSI</text>
+<text x="21.59" y="-19.558" size="1.27" layer="94" rot="R180">CS</text>
+<text x="21.59" y="-17.018" size="1.27" layer="94" rot="R180">MISO</text>
+<text x="21.59" y="-14.478" size="1.27" layer="94" rot="R180">SCLK</text>
+<text x="21.59" y="-11.938" size="1.27" layer="94" rot="R180">GND</text>
+<text x="21.59" y="-9.398" size="1.27" layer="94" rot="R180">3V3</text>
+<text x="21.59" y="-6.858" size="1.27" layer="94" rot="R180">EN</text>
+<text x="21.59" y="-4.318" size="1.27" layer="94" rot="R180">RST</text>
+<text x="21.59" y="-1.524" size="1.27" layer="94" rot="R180">GND</text>
+<text x="21.59" y="0.762" size="1.27" layer="94" rot="R180">VIN</text>
+<text x="13.716" y="-14.732" size="1.6764" layer="94" rot="R90">ESP8266</text>
 <wire x1="0" y1="2.54" x2="22.86" y2="2.54" width="0.254" layer="94"/>
 <wire x1="22.86" y1="2.54" x2="22.86" y2="-38.1" width="0.254" layer="94"/>
 <wire x1="22.86" y1="-38.1" x2="0" y2="-38.1" width="0.254" layer="94"/>
 <wire x1="0" y1="-38.1" x2="0" y2="2.54" width="0.254" layer="94"/>
 <text x="7.62" y="3.556" size="1.6764" layer="95">&gt;NAME</text>
 <text x="6.858" y="-40.894" size="1.6764" layer="96">&gt;VALUE</text>
+<wire x1="7.62" y1="-28.448" x2="7.62" y2="-26.67" width="0.254" layer="94"/>
+<wire x1="7.112" y1="-27.686" x2="7.62" y2="-26.67" width="0.254" layer="94"/>
+<wire x1="8.128" y1="-27.686" x2="7.62" y2="-26.67" width="0.254" layer="94"/>
+<wire x1="7.62" y1="-24.13" x2="7.62" y2="-25.908" width="0.254" layer="94"/>
+<wire x1="7.62" y1="-24.13" x2="8.128" y2="-25.146" width="0.254" layer="94"/>
+<wire x1="8.636" y1="-9.398" x2="8.636" y2="-10.922" width="0.254" layer="94"/>
+<wire x1="8.636" y1="-10.922" x2="9.144" y2="-10.16" width="0.254" layer="94"/>
+<wire x1="8.636" y1="-10.922" x2="8.128" y2="-10.16" width="0.254" layer="94"/>
+<wire x1="7.62" y1="-24.13" x2="7.112" y2="-25.146" width="0.254" layer="94"/>
+<text x="8.128" y="-35.814" size="1.27" layer="94">(Wake)</text>
 </symbol>
 <symbol name="+3.3V">
 <wire x1="-0.635" y1="1.27" x2="0.635" y2="1.27" width="0.1524" layer="94"/>
@@ -1408,6 +1455,26 @@ Mounting can be vertial or horzantial.  If Horz version is used then must leave 
 <technology name=""/>
 </technologies>
 </device>
+<device name="-DIP" package="PINHDR_TH_100_1X3">
+<connects>
+<connect gate="G$1" pin="GND" pad="2"/>
+<connect gate="G$1" pin="IN" pad="1"/>
+<connect gate="G$1" pin="OUT" pad="3"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+<device name="-HS" package="TO252-3-HS">
+<connects>
+<connect gate="G$1" pin="GND" pad="FIN"/>
+<connect gate="G$1" pin="IN" pad="1"/>
+<connect gate="G$1" pin="OUT" pad="3"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
 </devices>
 </deviceset>
 <deviceset name="CAP" prefix="C" uservalue="yes">
@@ -1803,7 +1870,7 @@ Mounting can be vertial or horzantial.  If Horz version is used then must leave 
 <sheet>
 <plain>
 <text x="111.252" y="103.124" size="1.4224" layer="97">TO NEO 1</text>
-<text x="48.26" y="116.84" size="5.08" layer="97">MOVING TARGET UNIT</text>
+<text x="48.26" y="116.84" size="5.08" layer="97">MOVING TARGET UNIT, V4</text>
 <text x="111.506" y="86.106" size="1.4224" layer="97">TO NEO 2</text>
 <text x="60.96" y="5.08" size="1.6764" layer="97">2S Lipo Bat
 6.0-7.8 Volts</text>
