@@ -3,11 +3,11 @@
 
 class NeoConductor {
  public:
-  NeoConductor(int16_t neopin1=-1, int16_t neopin2=-1);
+  NeoConductor(int neopin1, int neopin2);
   void begin(void);
  private:
-    int16_t _neopin1;
-    int16_t _neopin2;
+    int _neopin1;
+    int _neopin2;
 };
 
 #endif

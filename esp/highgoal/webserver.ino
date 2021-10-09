@@ -108,7 +108,7 @@ void handleFMS() {
   //digitalWrite(led, 1);
   char json[100];
   String a1 = server.arg("gamestatus");
-  sprintf(json,"{\"hit_count\" = %d }", hit_count);
+  sprintf(json,"{\"hit_count\" = %ld }", hit_count);
   //sprintf(json, "Hello from epic FMS counter. Game Status=%s, Count=%ld\r\n", a1.c_str(), hit_count);
   server.send(200, "text/json", json);
   //digitalWrite(led, 0);

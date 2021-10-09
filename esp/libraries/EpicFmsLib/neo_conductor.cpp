@@ -5,7 +5,7 @@
 
 #include "EpicFmsLib.h"
 
-NeoConductor::NeoConductor(int16_t neopin1=-1, int16_t neopin2=-1) {
+NeoConductor::NeoConductor(int neopin1, int neopin2) {
     _neopin1 = neopin1;
     _neopin2 = neopin2;
 }
