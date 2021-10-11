@@ -11,7 +11,7 @@ void web_setup() {
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     ibluecnt++;
-    set_blue_count(ibluecnt);
+    //set_blue_count(ibluecnt);
     Serial.print("x");
   }
   Serial.println("");

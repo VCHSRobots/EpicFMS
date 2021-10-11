@@ -90,7 +90,6 @@ char recbuf[30];
 char lineout[100];
 long lastcmdtime = 0;
 long cmdcount = 0;
-int cnt = 0;
 volatile long hit_count = 0;
 volatile long last_hit_count = 0;
 volatile long hit_count_time_m1 = millis();
