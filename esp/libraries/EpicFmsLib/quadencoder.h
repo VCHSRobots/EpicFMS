@@ -13,6 +13,7 @@ class QuadEncoder {
     void begin(void);   // Attaches the pins and starts sensing position.
     long value(void);   // Returns the encoder position in tick counts.
     void setpins(int pina, int pinb);
+    void debug_report(void);
   private:
     bool _started = false; 
 };

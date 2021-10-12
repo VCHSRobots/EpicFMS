@@ -18,7 +18,7 @@
 #define PW_ZERO_RPM 1500  // Pulsewidth, in us, for zero RPM
 #define PW_MAX      1900  // Max pulsewidth allowed.
 #define PW_MIN      1200  // Min pulsewidth allowed.
-#define PW_RUN0     1400  // Initial pulsewidth when starting the motor  
+#define PW_RUN0     1300  // Initial pulsewidth when starting the motor  
 #define PW_US_RPM      2  // Used in equation for accelaration in PID loop 
 
 class BasketMotor {
@@ -46,11 +46,16 @@ class BasketMotor {
     float _rpm;            // Currently measured rpm of the motor
     long _lastencoderpos;  // Encoder postion at last update.
     unsigned long _lastupdate_us;   // Time of the last update
+    unsigned long _pid_holdoff_us;  // Time to hold off on PID cals.
+    bool _doing_pid_holdoff; 
+    unsigned long _last_pwm_update_us;
     bool _isstuck;
     bool _isenabled;
     bool _isjammed;
     long _jamcount;        // Number of jams that have been cleared.
     int _lastpw;           // Last commanded pulsewidth for pwm.
+    bool _pending_enable;  // What the caller desires.
+    float _rpm_error;      // calculated error.
 
     int _ntrys = 4;        // Number of sets of jerks before giving up.
     int _njerks = 4;       // Number of jerks per jam clear attempt.

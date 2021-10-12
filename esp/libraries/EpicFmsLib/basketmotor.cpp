@@ -4,8 +4,10 @@
 
 #include "basketmotor.h"
 
-#define TICKS_PER_REV 2048  // Number of encoder ticks per reveloution.
-
+#define TICKS_PER_REV 1024  // Number of encoder ticks per reveloution.
+#define MAX_PW_DELTA_PER_UPDATE 1 // Max change to Pwm allowed per update ().
+#define PW_UPDATE_MS  40 // Update Period for pwm
+#define RPM_DEADZONE 2.0 // Allowable RPM error before changing pwm.
 
 BasketMotor::BasketMotor(int pinpwm, int pina, int pinb) {
     _pinpwm = pinpwm;
@@ -17,6 +19,7 @@ BasketMotor::BasketMotor(int pinpwm, int pina, int pinb) {
     _isenabled = false;
     _jamcount = 0;
     _lastupdate_us = micros();
+    _doing_pid_holdoff = false;
 }
 
 void BasketMotor::begin(void) {
@@ -38,10 +41,41 @@ void BasketMotor::update(void) {
     float revs = float(enc_now - _lastencoderpos) / float(TICKS_PER_REV);
     _lastencoderpos = enc_now;
     float newrpm = 60.0 * revs / time_elp;
-    _rpm = (0.1 * newrpm) + (.9 * _rpm);   // Filter the RPM, about 20ms to clear
-    int newpw = PW_ZERO_RPM;
-    if (_isenabled) newpw = PW_RUN0;
-    else newpw = PW_ZERO_RPM;
+    _rpm = (0.05 * newrpm) + (.95 * _rpm);   // Filter the RPM, about 20ms to clear
+    float newpw = PW_ZERO_RPM;
+    if (_pending_enable != _isenabled) {
+        // We need to make a change to the enable status, and probably the pwm.
+        _isenabled = _pending_enable;
+        _pid_holdoff_us = time_now + 200000ul;  // Hold off on PID for 200ms.
+        _doing_pid_holdoff = true;
+        newpw = PW_RUN0; 
+    }
+    if (!_isenabled) newpw = PW_ZERO_RPM;
+    else {
+        newpw = PW_RUN0;
+        // if (_doing_pid_holdoff) {
+        //     if( time_now - _pid_holdoff_us > 0)  _doing_pid_holdoff = false;
+        //     _last_pwm_update_us = time_now;
+        // }
+        // if(!_doing_pid_holdoff) {
+        //     if (time_now - _last_pwm_update_us > PW_UPDATE_MS) {
+        //         _last_pwm_update_us = time_now;
+        //         newpw = _lastpw;
+        //         _rpm_error = _desiredrpm - _rpm;
+        //         float abs_rpm_error = _rpm_error;
+        //         if (abs_rpm_error < 0.0) abs_rpm_error = 0.0 - abs_rpm_error;
+        //         if (abs_rpm_error > RPM_DEADZONE) {  
+        //             if (_rpm_error > 0.0) {
+        //                 newpw -= MAX_PW_DELTA_PER_UPDATE;
+        //             } else {
+        //                 newpw += MAX_PW_DELTA_PER_UPDATE;
+        //             }
+        //         }
+        //     }
+        // }
+    }
+    if(newpw > PW_MAX) newpw = PW_MAX;
+    if(newpw < PW_MIN) newpw = PW_MIN;
     if(newpw != _lastpw) {
         _servo.writeMicroseconds(newpw);
         _lastpw = newpw;
@@ -49,25 +83,30 @@ void BasketMotor::update(void) {
 }
 
 void BasketMotor::debug_report(void) {
-    char lineout[100];
-    sprintf(lineout, "Motor rpm=%f, encpos=%ld, jamcount=%ld", 
-        _rpm, encoderpos(), _jamcount);
+    char lineout[150];
+    sprintf(lineout, "Motor Enable: %d, Motor rpm=%8.2f, jamcount=%ld",
+        _isenabled, _rpm, _jamcount);
     Serial.println(lineout);
+    sprintf(lineout, "desired_rpm = %8.2f, pw=%d us, holdoff=%d, rpm_err=%8.2f",
+        _desiredrpm, _lastpw, _doing_pid_holdoff, _rpm_error);
+    Serial.println(lineout);
+    
+    _enc.debug_report();
 }
 
 // Sets the desired rpm.  Takes effect on next update.
 void BasketMotor::setrpm(float rpm) {
-    _rpm = rpm;
+    _desiredrpm = rpm;
 }
 
 // Enables or disables the motor. Taks effect on next update.
-void BasketMotor::enable(bool run) {
-    if (!run) {
-        _isenabled = false;
+void BasketMotor::enable(bool enable) {
+    if (!enable) {
+        _pending_enable = false;
         return;
     }
     if (_isstuck) return;
-    _isenabled = true;
+    _pending_enable = true;
 }
 
 // Resets to initial state -- not enabled, no jam, not stuck, and zeros the counts.

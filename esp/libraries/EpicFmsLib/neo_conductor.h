@@ -24,7 +24,9 @@ class NeoConductor {
   void show_solidcolor(int r, int g, int b);
   void show_count(int n, int r, int g, int b);
   void show_one(int n, int r, int g, int b);
-
+  void show_basketstatus(bool hiterror, bool stuck, bool jerking, long hitcount, long jamcount, float angle);
+  void stage_groups(int nsize, int r1, int g1, int b1, int r2, int b2, int g2);
+  void debug_report(void);
 
  private:
     Adafruit_NeoPixel _pixels1; // Strip 1, NULL if not used.
@@ -39,6 +41,7 @@ class NeoConductor {
     unsigned long _lastupdatetime; // Last time update was called
     int _mode; // current mode
     
+    void show(void);
     void stage_solidcolor(int r, int g, int b);    
 
 

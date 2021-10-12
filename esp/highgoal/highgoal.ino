@@ -100,7 +100,7 @@ void setup(void) {
 
   Serial.println("Setting up motor.");
   bmotor.begin();
-  bmotor.setrpm(60);
+  bmotor.setrpm(32);
   bmotor.enable(false);
 
   Serial.println("Setup Done -- Starting Main Loop.");
@@ -112,6 +112,24 @@ void battery_update(void) {
   last_battery_udpate_time = millis();
   int ir = analogRead(A0);
   vbattery = ir * VOLTSPERLSB;
+}
+
+// Here, we take over neo updated for debugging purposes
+void update_neo(bool p) {
+  bool hiterror = (hitdetector.get_status() == HDSTATUS_ERROR);
+  bool stuck = bmotor.isstuck();
+  bool jerking = bmotor.injam();
+  long hitcount = hitdetector.value();
+  long jamcount = bmotor.jamcount();
+  long encoder_ticks = bmotor.encoderpos();
+  long nrevs_ticks = (encoder_ticks >> 10) * 1024; 
+  float revs = float(encoder_ticks - nrevs_ticks) / 1024.0;
+  neopixels.show_basketstatus(hiterror, stuck, jerking, hitcount, jamcount, revs);
+  if (p) {
+    char lineout[100];
+    sprintf(lineout, "enc_ticks = %ld, nrevs_ticks = %ld, revs = %f", encoder_ticks, nrevs_ticks, revs);
+    Serial.println(lineout);
+  }
 }
 
 // Reports status to terminal
@@ -136,12 +154,13 @@ void loop() {
   battery_update();
   bmotor.update();
   hitdetector.update();
-  //if (mode == SW_RUN && vbattery > 8.0) bmotor.enable(true);
-  //else bmotor.enable(false); 
-  if (mode != lastmode) {
-    if (mode == SW_RUN) hitdetector.start_selftest();
-    lastmode = mode;
-  }
+  update_neo(false);
   send_report();
+  if (mode == SW_RUN && vbattery > 8.0) bmotor.enable(true);
+  else bmotor.enable(false); 
+  if (mode != lastmode) {
+     if (mode == SW_RUN) hitdetector.start_selftest();
+     lastmode = mode;
+  }
 }  
 
