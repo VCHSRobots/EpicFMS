@@ -53,6 +53,7 @@
 
 #define SW_RUN LOW      // Defines how the switch is used, High=Run 
 #define SW_OFFLINE HIGH // Defines how the switch is used, Low=offline  
+#define SW_UNDEFINED -1 // Use when the condition of the switch is not known
 
 const char* ssid = STASSID;
 const char* password = STAPSK;
@@ -62,19 +63,13 @@ NeoConductor neopixels = NeoConductor(PIN_NEO, PIN_NONE, NPIXELS, NPIXELS);
 BasketMotor bmotor = BasketMotor(PIN_PWM, PIN_A, PIN_B);
 HitDetector hitdetector = HitDetector(PIN_IRE, PIN_IRD);
 
-char cmdbuf[30] = "EpicFMS Cmd\r";
-char recbuf[30];
 char lineout[100];
-long last_cmd_time = 0;
-unsigned long last_loop_time = millis();
 unsigned long last_report_time = millis();
-unsigned long cmdcount = 0;
 int mode = SW_OFFLINE; // Set by switch, updated on main loop.
-float vbattery = 0.0;  // Voltage reading on battery -- updated once per 0.5 sec
+int lastmode = SW_UNDEFINED;
+float vbattery = 0.0;  // Voltage reading on battery -- updated once per 0.5 sec//
 unsigned long last_battery_udpate_time = millis();
-volatile long hit_count = 0;
-volatile long last_hit_count = 0;
-volatile long hit_count_time = millis();
+long report_count = 0;
 
 void setup(void) {
   Serial.begin(115200);
@@ -88,8 +83,8 @@ void setup(void) {
   neopixels.begin();
   neopixels.show_solidcolor(0, 128, 0);
  
-  //server.begin();
   //Serial.println("HTTP server started");
+  //server.begin();
 
   delay(100);
   Serial.println("Setting up the hit detector.");
@@ -100,8 +95,8 @@ void setup(void) {
 
   Serial.println("Setting up motor.");
   bmotor.begin();
-  bmotor.setrpm(32);
-  bmotor.enable(false);
+  bmotor.setrpm(25);
+  bmotor.disable();
 
   Serial.println("Setup Done -- Starting Main Loop.");
 }
@@ -115,32 +110,33 @@ void battery_update(void) {
 }
 
 // Here, we take over neo updated for debugging purposes
-void update_neo(bool p) {
+void update_neo() {
   bool hiterror = (hitdetector.get_status() == HDSTATUS_ERROR);
   bool stuck = bmotor.isstuck();
   bool jerking = bmotor.injam();
-  long hitcount = hitdetector.value();
-  long jamcount = bmotor.jamcount();
+  long jamcount = bmotor.jamcount(); 
   long encoder_ticks = bmotor.encoderpos();
   long nrevs_ticks = (encoder_ticks >> 10) * 1024; 
   float revs = float(encoder_ticks - nrevs_ticks) / 1024.0;
+  long hitcount = hitdetector.value();
   neopixels.show_basketstatus(hiterror, stuck, jerking, hitcount, jamcount, revs);
-  if (p) {
-    char lineout[100];
-    sprintf(lineout, "enc_ticks = %ld, nrevs_ticks = %ld, revs = %f", encoder_ticks, nrevs_ticks, revs);
-    Serial.println(lineout);
-  }
+  // if (p) {
+  //   char lineout[100];
+  //   sprintf(lineout, "enc_ticks = %ld, nrevs_ticks = %ld, revs = %f", encoder_ticks, nrevs_ticks, revs);
+  //   Serial.println(lineout);
+  // }
 }
 
 // Reports status to terminal
 void send_report(void) {
   if(millis() - last_report_time < 1000) return;
   last_report_time = millis();
+  report_count++;
   Serial.println("");
   const char *swout;
   if (mode == SW_RUN) swout = "Run";
   else swout = "Offline";
-  sprintf(lineout, "Battery Voltage=%6.1f, Mode=%s", vbattery, swout);
+  sprintf(lineout, "%ld ***** Battery Voltage=%6.1f, Mode=%s", report_count, vbattery, swout);
   Serial.println(lineout);
   bmotor.debug_report();
   hitdetector.debug_report();
@@ -149,18 +145,21 @@ void send_report(void) {
 void loop() {
   // //server.handleClient();
   // //MDNS.update();
-  static int lastmode = SW_OFFLINE;
+  static int lastmode = SW_UNDEFINED;
   mode = digitalRead(PIN_GMODE);
   battery_update();
   bmotor.update();
   hitdetector.update();
-  update_neo(false);
+  update_neo();
   send_report();
-  if (mode == SW_RUN && vbattery > 8.0) bmotor.enable(true);
-  else bmotor.enable(false); 
   if (mode != lastmode) {
-     if (mode == SW_RUN) hitdetector.start_selftest();
-     lastmode = mode;
+    lastmode = mode;
+    if (mode == SW_OFFLINE) {
+        hitdetector.start_selftest(); // Start with clearing errors.
+        if (vbattery > 8.0) bmotor.enable();  // Run the motor in offline.
+    } else {
+      bmotor.disable(); // For now.  Later, the server will take care of this.
+    }
   }
 }  
 

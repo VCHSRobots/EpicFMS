@@ -18,7 +18,7 @@
 #define PW_ZERO_RPM 1500  // Pulsewidth, in us, for zero RPM
 #define PW_MAX      1900  // Max pulsewidth allowed.
 #define PW_MIN      1200  // Min pulsewidth allowed.
-#define PW_RUN0     1300  // Initial pulsewidth when starting the motor  
+#define PW_RUN0     1375  // Initial pulsewidth when starting the motor  
 #define PW_US_RPM      2  // Used in equation for accelaration in PID loop 
 
 class BasketMotor {
@@ -27,7 +27,8 @@ class BasketMotor {
     void begin(void);         // Begins the operation.
     void update(void);        // Updates the PID loop.  Call at least every 100ms.
     void setrpm(float rpm);   // Sets the desired rpm.
-    void enable(bool run);    // Enables/Disabled the motor.
+    void enable(void);        // Enables the motor.
+    void disable(void);       // Disabled the motor.
     void reset(void);         // Resets a stuck condition, presumely after a human clears the jam.
     float currentrpm(void);   // Returns the measured rpm at the last update.
     long encoderpos(void);    // Encoder Position
@@ -45,25 +46,37 @@ class BasketMotor {
     float _desiredrpm;     // Desired rpm of the motor
     float _rpm;            // Currently measured rpm of the motor
     long _lastencoderpos;  // Encoder postion at last update.
-    unsigned long _lastupdate_us;   // Time of the last update
-    unsigned long _pid_holdoff_us;  // Time to hold off on PID cals.
-    bool _doing_pid_holdoff; 
+    unsigned long _lastupdate_us;  // Time of the last update
+    unsigned long _motorstart_us;  // Time the motor was turned on
+    bool _doing_holdoff;   // True if waiting for motor to spin up 
     unsigned long _last_pwm_update_us;
     bool _isstuck;
     bool _isenabled;
     bool _isjammed;
-    long _jamcount;        // Number of jams that have been cleared.
+    long _jamcount;        // Number of jams that have been detected.
     int _lastpw;           // Last commanded pulsewidth for pwm.
-    bool _pending_enable;  // What the caller desires.
+    bool _pending_enable;  // To start the work.
     float _rpm_error;      // calculated error.
+    int _slowcount = 0;    // Number of slow rpm counts in jam detection.
 
     int _ntrys = 4;        // Number of sets of jerks before giving up.
     int _njerks = 4;       // Number of jerks per jam clear attempt.
     int _neg_pwm_us = 1300;  // Microseconds of PWM pulse on neg side of clear attempt.
-    int _pos_pwm_us = 1800;  // Microseconds of PWM pulse on pos side of clear attempt.
-    int _spike_ms;           // Milliseconds to spike PWM.
-    int _usperrpm = 1;       // Used to calculate initial pulsewidth for rpm setting.
-    int _cur_us;             // Current pulsewidth setting. Relative to center of 1500.
+    int _pos_pwm_us = 1700;  // Microseconds of PWM pulse on pos side of clear attempt.
+    int _spike_ms = 250;     // Milliseconds to spike PWM.
+
+    unsigned long _jam_delay_t0;
+    unsigned long _jam_delay;
+    int _jamstate = 0;       // The state of the jam clear controller
+    int _ijamtry = 0; 
+    int _ijamjerk = 0;
+
+    unsigned long _time_now; // Current time during update.
+
+    void write_pwm(int pwm);
+    void do_enabling(void);
+    void do_jamclear(void);
+    void do_jamdetection(void);
 
 };
 

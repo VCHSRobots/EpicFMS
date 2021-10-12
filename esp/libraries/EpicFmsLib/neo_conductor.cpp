@@ -3,6 +3,9 @@
 // dlb, Oct 2021
 //
 
+// Note: for the white Neo Pixel strips the red/green/blue order is mixed up.
+// IT is actually green/red/blue.  This cold rearranges the inputs to make things right.
+
 #include "neo_conductor.h"
 #include "EpicFmsLib.h"
 
@@ -67,8 +70,8 @@ void NeoConductor::show(void) {
 
 void NeoConductor::stage_solidcolor(int r, int g, int b) {
     for(int i = 0; i < _np; i++) {
-        if(_use1) _pixels1.setPixelColor(i, _pixels1.Color(r, g, b));
-        if(_use2) _pixels2.setPixelColor(i, _pixels2.Color(r, g, b));
+        if(_use1) _pixels1.setPixelColor(i, _pixels1.Color(g, r, b));
+        if(_use2) _pixels2.setPixelColor(i, _pixels2.Color(g, r, b));
     }
 }
 
@@ -78,14 +81,14 @@ void NeoConductor::stage_groups(int nsize, int r1, int g1, int b1, int r2, int b
     while(true) {
         for(int j = 0; j < nsize; j++) {
             if (i >= _np) break;
-            if(_use1) _pixels1.setPixelColor(i, _pixels1.Color(r1, g1, b1));
-            if(_use2) _pixels2.setPixelColor(i, _pixels2.Color(r1, g1, b1));
+            if(_use1) _pixels1.setPixelColor(i, _pixels1.Color(g1, r1, b1));
+            if(_use2) _pixels2.setPixelColor(i, _pixels2.Color(g1, r1, b1));
             i++;
         }
         for(int j = 0; j < nsize; j++) {
             if (i >= _np) break;
-            if(_use1) _pixels1.setPixelColor(i, _pixels1.Color(r2, g2, b2));
-            if(_use2) _pixels2.setPixelColor(i, _pixels2.Color(r2, g2, b2));
+            if(_use1) _pixels1.setPixelColor(i, _pixels1.Color(g2, r2, b2));
+            if(_use2) _pixels2.setPixelColor(i, _pixels2.Color(g2, r2, b2));
             i++;
         }
         if (i >= _np) break;
@@ -101,8 +104,8 @@ void NeoConductor::show_count(int n, int r, int g, int b) {
     if (n > _np) n = _np;
     stage_solidcolor(0, 0, 0);
     for(int i = 0; i < _np; i++) {
-        if(_use1) _pixels1.setPixelColor(i, _pixels1.Color(r, g, b));
-        if(_use2) _pixels2.setPixelColor(i, _pixels2.Color(r, g, b)); 
+        if(_use1) _pixels1.setPixelColor(i, _pixels1.Color(g, r, b));
+        if(_use2) _pixels2.setPixelColor(i, _pixels2.Color(g, r, b)); 
     }
     show();
 }
@@ -110,8 +113,8 @@ void NeoConductor::show_count(int n, int r, int g, int b) {
 void NeoConductor::show_one(int n, int r, int g, int b) {
     stage_solidcolor(0, 0, 0);
     if (n < _np) {
-        if(_use1) _pixels1.setPixelColor(n, _pixels1.Color(r, g, b));
-        if(_use2) _pixels2.setPixelColor(n, _pixels2.Color(r, g, b)); 
+        if(_use1) _pixels1.setPixelColor(n, _pixels1.Color(g, r, b));
+        if(_use2) _pixels2.setPixelColor(n, _pixels2.Color(g, r, b)); 
     }
     show();
 }
@@ -144,7 +147,7 @@ void NeoConductor::show_basketstatus(bool hiterror, bool stuck, bool jerking, lo
     unsigned long tnow = millis();
     unsigned long elp = tnow - last_time;
     if(jerking) {
-        if (elp < 100) return;
+        if (elp < 150) return;
         last_time = tnow;
         if (last_side == 1) {
             stage_groups(4, 255, 0, 0, 128, 128, 128);
@@ -158,7 +161,7 @@ void NeoConductor::show_basketstatus(bool hiterror, bool stuck, bool jerking, lo
         return;
     }
     if(hiterror) {
-        if (elp < 100) return;
+        if (elp < 150) return;
         last_time = tnow;
         if (last_side == 1) {
             show_solidcolor(129, 0, 0);
@@ -183,12 +186,12 @@ void NeoConductor::show_basketstatus(bool hiterror, bool stuck, bool jerking, lo
 
     stage_solidcolor(0, 0, 0);
     for(int i = 0; i < nhitshow; i++) {
-        if(_use1) _pixels1.setPixelColor(i, _pixels1.Color(0, 255, 0));
-        if(_use2) _pixels2.setPixelColor(i, _pixels2.Color(0, 255, 0)); 
+        if(_use1) _pixels1.setPixelColor(i, _pixels1.Color(255, 0, 0));   // g, r, b
+        if(_use2) _pixels2.setPixelColor(i, _pixels2.Color(255, 0, 0)); 
     }
     for(int i = 0; i < njamshow; i++) {
-        if(_use1) _pixels1.setPixelColor(_np - 1 - i, _pixels1.Color(128, 0, 65));
-        if(_use2) _pixels2.setPixelColor(_np - 1 - i, _pixels2.Color(128, 0, 65));    
+        if(_use1) _pixels1.setPixelColor(_np - 1 - i, _pixels1.Color(65, 128, 0));
+        if(_use2) _pixels2.setPixelColor(_np - 1 - i, _pixels2.Color(65, 128, 0));    
     }
 
     int irevs = int(revs);

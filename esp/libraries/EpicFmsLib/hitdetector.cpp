@@ -168,7 +168,8 @@ void HitDetector::start_selftest(void) {
     }    
     if (_selftest_state != 0) return;
     _selftest_state = 1;
-    _selftest_continue_time = millis();
+    _selftest_delay_t0 = millis();
+    _selftest_delay = 0;
 }
 
 // Send a status report for debugging to the terminal.
@@ -195,29 +196,32 @@ void HitDetector::debug_report(void) {
 void HitDetector::conduct_selftest(void) {
     // Here we implment a delay
     unsigned long tnow = millis();
-    if(millis() < _selftest_continue_time) return;
+    if(tnow - _selftest_delay_t0 < _selftest_delay) return;
 
+    _selftest_delay_t0 = tnow;
+    _selftest_delay = 0;  // Assume zero, can be overwriten
     switch(_selftest_state) {
         case 1: // Start up here.
             Serial.println("case 1.");
             g_ignore_hits = true;  // Ignore counts in the isr, as to not count fake hits.
-            _selftest_continue_time = tnow + 10;
+            _selftest_delay = 10;
             _selftest_state = 2;
             return;
         case 2:
             Serial.println("case 2.");
             digitalWrite(_emitter_pin, LOW);
-            _selftest_continue_time = tnow + 2;
+            _selftest_delay = 2;
             _selftest_state = 3;
             return;
         case 3: 
             Serial.println("case 3.");
             if (digitalRead(g_detector_pin) != BEAM_BROKEN) {
+                _selftest_delay = 0;
                 _selftest_state = 199;
                 return;
             }
             digitalWrite(_emitter_pin, HIGH);
-            _selftest_continue_time = tnow + 2;
+            _selftest_delay = 2;
             _selftest_state = 4;
             return;
         case 4: 
@@ -226,7 +230,7 @@ void HitDetector::conduct_selftest(void) {
                 _selftest_state = 199;
                 return;
             }
-            _selftest_continue_time = tnow +  25;
+            _selftest_delay = 25;
             _selftest_state = 5;
             return;
         case 5: 
@@ -238,16 +242,14 @@ void HitDetector::conduct_selftest(void) {
             // All is okay
             g_inerror = false;
             digitalWrite(_emitter_pin, HIGH);
-            //g_last_pin_change_time = millis();
-            _selftest_continue_time = tnow + 50;
+            _selftest_delay = 50;
             _selftest_state = 200;
             return;
         case 199: // Come here to declare error
             Serial.println("case 199.");
             g_inerror = true;
             digitalWrite(_emitter_pin, HIGH);
-            //g_last_pin_change_time = millis();
-            _selftest_continue_time = tnow + 50;
+            _selftest_delay = 50;
             _selftest_state = 200;
             return;
         case 200:
