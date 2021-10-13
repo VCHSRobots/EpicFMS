@@ -11,7 +11,7 @@ void web_setup() {
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     ibluecnt++;
-    set_blue_count(ibluecnt);
+    //set_blue_count(ibluecnt);
     Serial.print("x");
   }
   Serial.println("");
@@ -108,7 +108,7 @@ void handleFMS() {
   //digitalWrite(led, 1);
   char json[100];
   String a1 = server.arg("gamestatus");
-  sprintf(json,"{\"hit_count\" = %ld }", hit_count);
+  sprintf(json,"{\"hit_count\" = %ld }", hitdetector.value());
   //sprintf(json, "Hello from epic FMS counter. Game Status=%s, Count=%ld\r\n", a1.c_str(), hit_count);
   server.send(200, "text/json", json);
   //digitalWrite(led, 0);
