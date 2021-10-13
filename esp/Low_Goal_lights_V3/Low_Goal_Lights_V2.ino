@@ -1,19 +1,10 @@
-// neo_conductor.cpp -- A class to manage two strips of Neo Pixels
-// for the EpicFMS devices
-// dlb, Oct 2021
-//
-
-#include "EpicFmsLib.h"
-
-NeoConductor::NeoConductor(int neopin1, int neopin2, int npixels1, int npixels2) {
-    _neopin1 = neopin1;
-    _neopin2 = neopin2;
-    _npixels1 = npixles1;
-    _npixels2 = npixles2;
-}
 
 #include <Adafruit_NeoPixel.h>
-
+#define LED_PIN1    5
+#define LED_PIN2    4
+#define LED_COUNT1 12
+#define LED_COUNT2 12
+#define INPUT_BUTTON 10
 
 //define all constants for events
 #define MODE_ERROR 1
@@ -259,10 +250,10 @@ void led_manager(int mode){
 
 //The following is test code
 
-void NeoConductor::begin(void) {
+void loop(){
    if(digitalRead(INPUT_BUTTON) == HIGH){
-    led_manager(MODE_COUNTDOWN);
+    led_manager(MODE_ERROR);
    }else{
-    led_manager(MODE_AUTO_MODE);
+    led_manager(MODE_GAMEOVER);
    }
 }

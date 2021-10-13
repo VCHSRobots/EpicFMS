@@ -1,19 +1,10 @@
-// neo_conductor.cpp -- A class to manage two strips of Neo Pixels
-// for the EpicFMS devices
-// dlb, Oct 2021
-//
-
-#include "EpicFmsLib.h"
-
-NeoConductor::NeoConductor(int neopin1, int neopin2, int npixels1, int npixels2) {
-    _neopin1 = neopin1;
-    _neopin2 = neopin2;
-    _npixels1 = npixles1;
-    _npixels2 = npixles2;
-}
 
 #include <Adafruit_NeoPixel.h>
-
+#define LED_PIN1    5
+#define LED_PIN2    4
+#define LED_COUNT1 12
+#define LED_COUNT2 12
+#define INPUT_BUTTON 10
 
 //define all constants for events
 #define MODE_ERROR 1
@@ -68,8 +59,6 @@ void set_all_pixels2(int r, int g, int b){
 //all events
 
 void led_error(){
-strip1.setBrightness(150);
- strip2.setBrightness(150);
     if (millis() - timer <= 500) return; 
    timer = millis();
    if (errorCondition == 0){
@@ -85,8 +74,6 @@ strip1.setBrightness(150);
 }
 
 void led_not_ready(){
- strip1.setBrightness(150);
- strip2.setBrightness(150);
    if (millis() - timer >= 50){
     timer = millis();
     set_all_pixels1(0, 0, 0);
@@ -108,8 +95,6 @@ void led_not_ready(){
 }
 
 void led_standby(){
-strip1.setBrightness(150);
- strip2.setBrightness(150);
    if (millis() - timer >= 50){
     timer = millis();
     set_all_pixels1(0, 0, 0);
@@ -131,8 +116,6 @@ strip1.setBrightness(150);
 }
 
 void led_countdown(){
- strip1.setBrightness(150);
- strip2.setBrightness(150);
    if (millis() - timer <=1000){
      set_all_pixels1(255, 0, 0);
      set_all_pixels2(255, 0, 0);
@@ -166,9 +149,7 @@ void led_countdown(){
 }
 
 void led_auto_mode(){
- strip1.setBrightness(150);
- strip2.setBrightness(150);
-if (millis() - timer <= 500) return; 
+      if (millis() - timer <= 500) return; 
    timer = millis();
    if (dance == 0){
     dance = 1;
@@ -183,8 +164,6 @@ if (millis() - timer <= 500) return;
 }
 
 void led_score(){
-  strip1.setBrightness(150);
- strip2.setBrightness(150);
  set_all_pixels1(255, 255, 255);
  set_all_pixels2(155, 255, 255);
  strip1.show();
@@ -192,8 +171,6 @@ void led_score(){
 }
 
 void led_teleop(){
-strip1.setBrightness(150);
- strip2.setBrightness(150);
      if (millis() - timer >= 50){
     timer = millis();
     set_all_pixels1(0, 0, 0);
@@ -215,8 +192,6 @@ strip1.setBrightness(150);
 }
 
 void led_end_game(){
- strip1.setBrightness(150);
- strip2.setBrightness(150);
        if (millis() - timer <= 100) return; 
    timer = millis();
    if (dance == 0){
@@ -259,10 +234,10 @@ void led_manager(int mode){
 
 //The following is test code
 
-void NeoConductor::begin(void) {
+void loop(){
    if(digitalRead(INPUT_BUTTON) == HIGH){
-    led_manager(MODE_COUNTDOWN);
+    led_manager(MODE_TELEOP);
    }else{
-    led_manager(MODE_AUTO_MODE);
+    led_manager(MODE_STANDBY);
    }
 }
