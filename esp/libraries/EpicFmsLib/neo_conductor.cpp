@@ -1,7 +1,7 @@
 // neo_conductor.cpp -- A class to manage two strips of Neo Pixels
 // for the EpicFMS devices
 // dlb, Oct 2021
-//
+//Johnathan, Oct/12/2021-- Merged Code
 
 // Note: for the white Neo Pixel strips the red/green/blue order is mixed up.
 // IT is actually green/red/blue.  This cold rearranges the inputs to make things right.

@@ -12,23 +12,29 @@
 NeoConductor::NeoConductor(int neopin1, int neopin2, int npixels1, int npixels2) {
     _neopin1 = neopin1;
     _neopin2 = neopin2;
-    _npixels1 = npixles1;
-    _npixels2 = npixles2;
+    _npixels1 = npixels1;
+    _npixels2 = npixels2;
 }
 
 #include <Adafruit_NeoPixel.h>
 
 
 //define all constants for events
-#define MODE_ERROR 1
-#define MODE_NOT_READY 2
-#define MODE_STANDBY 3
-#define MODE_COUNTDOWN 4
-#define MODE_AUTO_MODE 5
-#define MODE_SCORE 6
-#define MODE_TELEOP 7
-#define MODE_END_GAME 8
-#define MODE_GAMEOVER 9
+#define GMODE_NONE 0
+#define GMODE_PWRUP 1
+#define GMODE_UNITERR 2
+#define GMODE_WAITFORWIFI 3 
+#define GMODE_PRACTICE 4
+#define GMODE_STANDBY 5
+#define GMODE_MATCHCOUNTDOWN 6
+#define GMODE_AUTO 7
+#define GMODE_TELEOP 8
+#define GMODE_MATCHFINAL 9
+#define GMODE_POSTWAIT 10
+#define GMODE_POSTRESULT 11
+#define GMODE_FMSERROR 12
+#define GMODE_FMSLOST 13
+
 
 char lineout[100];
 long timer = millis();
@@ -54,20 +60,20 @@ void setup() {
 
 void set_all_pixels1(int r, int g, int b){
   for(int i=0; i<12; i++){
-  strip1.setPixelColor(i,strip1.Color(r, g, b));
-  strip1.show();
+  if(_use1) strip1.setPixelColor(i,strip1.Color(g, r, b));
+  if(_use1) strip1.show();
   }
- strip1.show();
- strip1.setBrightness(brightness);
+ if(_use1) strip1.show();
+ if(_use1) strip1.setBrightness(brightness);
 }
 
 void set_all_pixels2(int r, int g, int b){
   for(int i=0; i<12; i++){
-  strip2.setPixelColor(i,strip1.Color(r, g, b));
-  strip2.show();
+  if(_use2) strip2.setPixelColor(i,strip1.Color(g, r, b));
+  if(_use2) strip2.show();
   }
- strip2.show();
- strip2.setBrightness(brightness);
+ if(_use2) strip2.show();
+ if(_use2) strip2.setBrightness(brightness);
 }
 //all events
 
@@ -246,18 +252,68 @@ void led_gameover(){
   }
 }
 
+void led_WFW(){
+  set_all_pixels1( 150, 255, 0);
+  set_all_pixels2( 150, 255, 0);
+  if (millis()-timer >=300){
+   if (reverse_lights  == 0) brightness -=33;
+   if (reverse_lights == 1) brightness +=33;
+ brightness + ;
+   if (brightness >=100) reverse_lights = 0;
+   if (brightness <= 0) reverse_lights = 1;
+  }
+}
+void led_prac(){
+strip1.setBrightness(150);
+ strip2.setBrightness(150);
+    if (millis() - timer <= 500) return; 
+   timer = millis();
+   if (errorCondition == 0){
+    errorCondition = 1;
+    set_all_pixels1(150, 255, 0);
+    set_all_pixels2(0, 255, 0);
+   }
+   else{
+    set_all_pixels1(0, 255, 0);
+    set_all_pixels2(150, 255, 0);
+    errorCondition = 0;
+   }
+}
+
+void led_end_game(){
+ strip1.setBrightness(150);
+ strip2.setBrightness(150);
+       if (millis() - timer <= 100) return; 
+   timer = millis();
+   if (dance == 0){
+    dance = 1;
+    set_all_pixels1(255, 0, 200);
+    set_all_pixels2(255, 200, 0;
+   }
+   else{
+    set_all_pixels1(255, 200, 0;
+    set_all_pixels2(255, 0, 200);
+    dance = 0;
+   } 
+}
+
 //The calling of events to lights
 void led_manager(int mode){
  switch(mode){
-    case MODE_ERROR: led_error(); break;
-    case MODE_NOT_READY: led_not_ready(); break;
-    case MODE_STANDBY: led_standby(); break;
-    case MODE_COUNTDOWN: led_countdown(); break;
-    case MODE_AUTO_MODE: led_auto_mode(); break;
-    case MODE_SCORE: led_score(); break;
-    case MODE_TELEOP: led_teleop(); break;
-    case MODE_END_GAME: led_end_game(); break;
-    case MODE_GAMEOVER: led_gameover(); break;
+    case GMODE_NONE:  led_score(); break;
+    case GMODE_PWRUP: led_not_ready(); break;
+    case GMODE_UNITERR: led_standby(); break;
+    case GMODE_WAITFORWIFI: led_WFW(); break;
+    case GMODE_PRACTICE: led_prac(); break;
+    case GMODE_MATCHCOUNTDOWN: led_countdown(); break;
+    case GMODE_STANDBY:
+    case GMODE_AUTO: led_auto_mode(); break;
+    case GMODE_TELEOP: led_teleop(); break;
+    case GMODE_MATCHFINAL: led_end_game(); break;
+    case GMODE_POSTWAIT: led_gameover(); break;
+0   case GMODE_POSTRESULT:
+    case GMODE_FMSERROR: led_error(); break;
+    case GMODE_FMSLOST:
  }
 }
 
