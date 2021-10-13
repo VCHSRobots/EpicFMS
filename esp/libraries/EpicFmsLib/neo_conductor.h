@@ -18,17 +18,8 @@ class NeoConductor {
  // disable a strip.
   NeoConductor(int neopin1, int neopin2, int npixels1, int npixels2);
   void begin(void);
-<<<<<<< HEAD
   void update(void);
   void setmode(int mode);
- private:
-    int _neopin1;
-    int _neopin2;
-    int _npixels1;
-    int _npixels2;
-=======
-  void setmode(int mode);
-  void update();
   void hitflash();
   void show_solidcolor(int r, int g, int b);
   void show_count(int n, int r, int g, int b);
@@ -52,9 +43,6 @@ class NeoConductor {
     
     void show(void);
     void stage_solidcolor(int r, int g, int b);    
-
-
->>>>>>> 2181cdb513d3d1af3bbe21f06d7bf092f8efeea0
 };
 
 #endif

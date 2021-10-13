@@ -8,11 +8,11 @@
 
 class QuadEncoder {
   public:
-    QuadEncoder(int pina, int pinb);
+    QuadEncoder(uint8_t pina, uint8_t pinb);
     QuadEncoder();
     void begin(void);   // Attaches the pins and starts sensing position.
     long value(void);   // Returns the encoder position in tick counts.
-    void setpins(int pina, int pinb);
+    void setpins(uint8_t pina, uint8_t pinb);
     void debug_report(void);
   private:
     bool _started = false; 

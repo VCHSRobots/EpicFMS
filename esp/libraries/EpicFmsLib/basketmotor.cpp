@@ -73,18 +73,18 @@ void BasketMotor::do_jamclear(void) {
             if (_ijamjerk >= _njerks) {
                 // We are done with this jerk attempt
                 write_pwm(PW_ZERO_RPM);
-                _jam_delay = 1500;
+                _jam_delay = 100;
                 _jamstate = 10;
                 return;
             }
             write_pwm(_pos_pwm_us);
-            _jam_delay = 300;
+            _jam_delay = 650;
             _jamstate = 2;
             return;
         case 2:
             Serial.println("Case 2.");
             write_pwm(_neg_pwm_us);
-            _jam_delay = 300;
+            _jam_delay = 200;
             _jamstate = 1;
             return;
         case 10: // Turn on the motor, monitor for success
@@ -106,7 +106,7 @@ void BasketMotor::do_jamclear(void) {
                     _isjammed = false;
                     return;
                 }
-                _jam_delay = 2000; 
+                _jam_delay = 500; 
                 _jamstate = 0;
                 return;
             }

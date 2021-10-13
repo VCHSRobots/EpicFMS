@@ -3,7 +3,7 @@
 
 
 void web_setup() {
-    Serial.print("Starting WiFi.");
+  Serial.print("Starting WiFi.");
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   // Wait for connection

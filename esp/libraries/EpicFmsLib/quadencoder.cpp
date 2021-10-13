@@ -23,9 +23,9 @@
 #include "quadencoder.h"
 
 volatile long g_encoderpos = 0;
-int g_pina;
-int g_pinb;
-int g_declared = 0; 
+uint8_t g_pina;
+uint8_t g_pinb;
+bool g_declared = false; 
 long g1=0; long g2=0; long g3=0; long g4=0; 
 
 ICACHE_RAM_ATTR void isr_encoderA() {
@@ -91,7 +91,7 @@ void QuadEncoder::begin(void) {
   _started = true;
 }
 
-void QuadEncoder::setpins(int pina, int pinb) {
+void QuadEncoder::setpins(uint8_t pina, uint8_t pinb) {
     if (_started) {
         Serial.println("Unable to set pins on QuadEnccoder after begin!!!");
         return;

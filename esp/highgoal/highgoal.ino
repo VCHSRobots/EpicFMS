@@ -37,6 +37,8 @@
 #define STAPSK  "epic4fms"
 #endif
 
+ESP8266WebServer server(80);
+
 // Special Setup for the Modified Basket Target running
 // on a V1 of the PCB
 #define PIN_NONE    -1  // Means no pin assigned.
@@ -58,7 +60,7 @@
 const char* ssid = STASSID;
 const char* password = STAPSK;
 
-ESP8266WebServer server(80);
+//ESP8266WebServer server(80);
 NeoConductor neopixels = NeoConductor(PIN_NEO, PIN_NONE, NPIXELS, NPIXELS);
 BasketMotor bmotor = BasketMotor(PIN_PWM, PIN_A, PIN_B);
 HitDetector hitdetector = HitDetector(PIN_IRE, PIN_IRD);

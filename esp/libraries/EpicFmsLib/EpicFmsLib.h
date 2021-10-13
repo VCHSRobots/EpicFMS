@@ -13,5 +13,6 @@
 #include "hitdetector.h"
 #include "quadencoder.h"
 #include "gamemodes.h"
+#include "epicfmswifi.h"
 
 #endif

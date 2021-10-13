@@ -18,7 +18,7 @@
 #define PW_ZERO_RPM 1500  // Pulsewidth, in us, for zero RPM
 #define PW_MAX      1900  // Max pulsewidth allowed.
 #define PW_MIN      1200  // Min pulsewidth allowed.
-#define PW_RUN0     1375  // Initial pulsewidth when starting the motor  
+#define PW_RUN0     1350  // Initial pulsewidth when starting the motor  
 #define PW_US_RPM      2  // Used in equation for accelaration in PID loop 
 
 class BasketMotor {
@@ -59,11 +59,11 @@ class BasketMotor {
     float _rpm_error;      // calculated error.
     int _slowcount = 0;    // Number of slow rpm counts in jam detection.
 
-    int _ntrys = 4;        // Number of sets of jerks before giving up.
-    int _njerks = 4;       // Number of jerks per jam clear attempt.
+    int _ntrys = 2;        // Number of sets of jerks before giving up.
+    int _njerks = 2;       // Number of jerks per jam clear attempt.
     int _neg_pwm_us = 1300;  // Microseconds of PWM pulse on neg side of clear attempt.
     int _pos_pwm_us = 1700;  // Microseconds of PWM pulse on pos side of clear attempt.
-    int _spike_ms = 250;     // Milliseconds to spike PWM.
+    int _spike_ms = 650;     // Milliseconds to spike PWM.
 
     unsigned long _jam_delay_t0;
     unsigned long _jam_delay;
