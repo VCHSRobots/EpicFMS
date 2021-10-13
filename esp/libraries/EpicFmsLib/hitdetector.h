@@ -22,8 +22,8 @@ class HitDetector {
     void debug_report(void);   // Prints a debug report to the terminal.
   private:
     int _selftest_state;
-    unsigned long _selftest_delay;
-    unsigned long _selftest_delay_t0;
+    uint32_t _selftest_delay;
+    uint32_t _selftest_delay_t0;
     int _emitter_pin;
     int _detector_pin;
     bool _started = false;  

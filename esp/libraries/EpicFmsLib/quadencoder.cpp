@@ -28,7 +28,7 @@ uint8_t g_pinb;
 bool g_declared = false; 
 long g1=0; long g2=0; long g3=0; long g4=0; 
 
-ICACHE_RAM_ATTR void isr_encoderA() {
+IRAM_ATTR void isr_encoderA() {
   noInterrupts();
   //delayMicroseconds(10);  <- this didn't seem to make a difference.
   //int a = digitalRead(g_pina); <- assume this is high, below.
@@ -46,7 +46,7 @@ ICACHE_RAM_ATTR void isr_encoderA() {
 
 // This is kept in the code so that someday we can figure out
 // why it doesn't work.  But it is NOT called.
-ICACHE_RAM_ATTR void isr_encoderB() {
+IRAM_ATTR void isr_encoderB() {
   int a = digitalRead(g_pina);
   int b = digitalRead(g_pinb);
   if (b == HIGH) {
@@ -62,7 +62,7 @@ QuadEncoder::QuadEncoder(void) {
     QuadEncoder(-1, -1); 
 }
 
-QuadEncoder::QuadEncoder(int pina, int pinb) {
+QuadEncoder::QuadEncoder(uint8_t pina, uint8_t pinb) {
     if (g_declared) {
         Serial.println("Unable to create two instances of QuadEncoder!!!");
         return;
@@ -78,10 +78,6 @@ long QuadEncoder::value(void) {
 }
 
 void QuadEncoder::begin(void) {
-  if (g_pina < 0 || g_pinb < 0) {
-      Serial.println("QuadEncoder not initailized before begin!!!");
-      return;
-  }
   if(_started) return;
   //Serial.println("Setting up Interrupts for encoder.");
   pinMode(g_pina, INPUT);

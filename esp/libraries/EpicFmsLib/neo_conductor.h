@@ -38,7 +38,7 @@ class NeoConductor {
     bool _use1;
     bool _use2;
     int _np; // Number of actual pixels to use for animated sequences
-    unsigned long _lastupdatetime; // Last time update was called
+    u_int32_t _lastupdatetime; // Last time update was called
     int _mode; // current mode
     
     void show(void);

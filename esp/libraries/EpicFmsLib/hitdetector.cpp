@@ -35,10 +35,10 @@
 int g_detector_pin;
 bool g_hit_declared = false;
 volatile bool g_inerror = false;
-volatile unsigned long g_last_hit_time = millis();
+volatile uint32_t g_last_hit_time = millis();
 volatile bool g_ignore_hits = false;
 volatile long g_hitcount = 0;
-volatile unsigned long g_last_pin_change_time = millis();
+volatile uint32_t g_last_pin_change_time = millis();
 volatile int g_pinlevel = BEAM_UNBROKEN;
 volatile long g_isrcnt = 0;
 
@@ -50,10 +50,10 @@ volatile long dc = 0;
 // Process Change on IR Beam Pin
 ICACHE_RAM_ATTR void isr_irbeam() {
   g_isrcnt++;
-  unsigned long tnow = millis();
-  unsigned long elp = g_last_pin_change_time - tnow;
+  uint32_t tnow = millis();
+  uint32_t elp = g_last_pin_change_time - tnow;
   g_last_pin_change_time = tnow;
-  g_pinlevel = digitalRead(g_detector_pin);
+  g_pinlevel = digitalRead(uint8_t(g_detector_pin));
   if (g_ignore_hits || g_inerror) {dc++; return;}
   if (g_pinlevel == BEAM_BROKEN) {
       // This is a possible hit.
@@ -99,13 +99,13 @@ void HitDetector::begin(void) {
     if(_started) return;
     //Serial.println("Setting up IR Hit Detector.");
     delay(10);
-    pinMode(_detector_pin, INPUT);
-    pinMode(_emitter_pin, OUTPUT);
-    digitalWrite(_emitter_pin, HIGH);  // Turn on IR Beam.
+    pinMode(uint8_t(_detector_pin), INPUT);
+    pinMode(uint8_t(_emitter_pin), OUTPUT);
+    digitalWrite(uint8_t(_emitter_pin), HIGH);  // Turn on IR Beam.
     g_last_pin_change_time = millis() - 20; // 20ms in the past
     g_last_hit_time = millis() - 100; // 100ms in the past
     g_ignore_hits = true;
-    attachInterrupt(_detector_pin, isr_irbeam, CHANGE);
+    attachInterrupt(uint8_t(_detector_pin), isr_irbeam, CHANGE);
     delay(2);
     g_ignore_hits = false;
     _started = true;
@@ -116,7 +116,7 @@ void HitDetector::begin(void) {
 // Update the status of this object. Should be called once every 100ms or faster.
 void HitDetector::update(void) {
     int pinlevel;
-    unsigned long pinchangetime;
+    uint32_t pinchangetime;
 
     // if begin has not been called, don't do anything.
     if(!_started) return;
@@ -195,7 +195,7 @@ void HitDetector::debug_report(void) {
 // A successfull test takes about 90ms, but no blocking is done.
 void HitDetector::conduct_selftest(void) {
     // Here we implment a delay
-    unsigned long tnow = millis();
+    uint32_t tnow = millis();
     if(tnow - _selftest_delay_t0 < _selftest_delay) return;
 
     _selftest_delay_t0 = tnow;
@@ -209,24 +209,24 @@ void HitDetector::conduct_selftest(void) {
             return;
         case 2:
             Serial.println("case 2.");
-            digitalWrite(_emitter_pin, LOW);
+            digitalWrite(uint8_t(_emitter_pin), LOW);
             _selftest_delay = 2;
             _selftest_state = 3;
             return;
         case 3: 
             Serial.println("case 3.");
-            if (digitalRead(g_detector_pin) != BEAM_BROKEN) {
+            if (digitalRead(uint8_t(g_detector_pin)) != BEAM_BROKEN) {
                 _selftest_delay = 0;
                 _selftest_state = 199;
                 return;
             }
-            digitalWrite(_emitter_pin, HIGH);
+            digitalWrite(uint8_t(_emitter_pin), HIGH);
             _selftest_delay = 2;
             _selftest_state = 4;
             return;
         case 4: 
             Serial.println("case 4.");
-            if (digitalRead(g_detector_pin) != BEAM_UNBROKEN) {
+            if (digitalRead(uint8_t(g_detector_pin)) != BEAM_UNBROKEN) {
                 _selftest_state = 199;
                 return;
             }
@@ -235,20 +235,20 @@ void HitDetector::conduct_selftest(void) {
             return;
         case 5: 
             Serial.println("case 5.");
-            if (digitalRead(g_detector_pin) != BEAM_UNBROKEN) {
+            if (digitalRead(uint8_t(g_detector_pin)) != BEAM_UNBROKEN) {
                 _selftest_state = 199;
                 return;
             }
             // All is okay
             g_inerror = false;
-            digitalWrite(_emitter_pin, HIGH);
+            digitalWrite(uint8_t(_emitter_pin), HIGH);
             _selftest_delay = 50;
             _selftest_state = 200;
             return;
         case 199: // Come here to declare error
             Serial.println("case 199.");
             g_inerror = true;
-            digitalWrite(_emitter_pin, HIGH);
+            digitalWrite(uint8_t(_emitter_pin), HIGH);
             _selftest_delay = 50;
             _selftest_state = 200;
             return;

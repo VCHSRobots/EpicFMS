@@ -9,7 +9,7 @@
 #define PW_UPDATE_MS  40 // Update Period for pwm
 #define RPM_DEADZONE 2.0 // Allowable RPM error before changing pwm.
 
-BasketMotor::BasketMotor(int pinpwm, int pina, int pinb) {
+BasketMotor::BasketMotor(uint8_t pinpwm, uint8_t pina, uint8_t pinb) {
     _pinpwm = pinpwm;
     _enc.setpins(pina, pinb);
     _desiredrpm = 0.0;
@@ -55,7 +55,7 @@ void BasketMotor::do_enabling(void) {
 }
 
 void BasketMotor::do_jamclear(void) {
-    unsigned long tnow = millis();
+    uint32_t tnow = millis();
     if(tnow - _jam_delay_t0 < _jam_delay) return;
     _jam_delay_t0 = tnow;
     _jam_delay = 0;
@@ -134,7 +134,7 @@ void BasketMotor::do_jamdetection(void) {
 
 void BasketMotor::update(void) {
      _time_now = micros();
-    unsigned long time_elp_us = _time_now - _lastupdate_us;
+    uint32_t time_elp_us = _time_now - _lastupdate_us;
     if (time_elp_us < 2000) return;        // Allow at least 2ms between updates.
     _lastupdate_us = _time_now;
     float time_elp = time_elp_us * 1.e-6;  // Convert to seconds
@@ -250,8 +250,6 @@ void BasketMotor::set_params(int ntrys, int njerks, int pos_pwm_us, int neg_pwm_
     _neg_pwm_us = neg_pwm_us;
     _spike_ms = spike_ms;
 }
-
-
 
 // This is PID code that sorta worked.  Save to use
 // of we ever get the quadrature encoder working for high speeds.   
