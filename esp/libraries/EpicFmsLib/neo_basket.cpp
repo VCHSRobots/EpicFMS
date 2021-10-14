@@ -4,88 +4,180 @@
 #include "neo_conductor.h"
 // This code is part of the NeoConductor class...
 
+bool NeoConductor::neo_basket_params_equal(Neo_Basket_Params *p1, Neo_Basket_Params *p2) {
+    if (p1->game_mode != p2->game_mode) return false;
+    if (p1->online != p2->online) return false;
+    if (p1->hiterror != p2->hiterror) return false;
+    if (p1->stuck != p2->stuck) return false;
+    if (p1->jerking != p2->jerking) return false;
+    if (p1->hitcount != p2->hitcount) return false;
+    if (p1->jamcount != p2->jamcount) return false;
+    if (p1->revs != p2->revs) return false;
+    return true;
+}
+
+
+void NeoConductor::stage_basket_online(Neo_Basket_Params *p, bool same, uint32_t telp) {
+    static int last_side = 0;
+    static int update_count = 0;
+    switch(p->game_mode) {
+        case GMODE_NONE:     // Horriable Programming Error:  red/yellow @ fast
+            if (last_side == 1) {
+                stage_groups(2, ENEO_RED_DIM, ENEO_YELLOW);
+                show();
+                last_side = 0;
+            } else {
+                stage_groups(2, ENEO_YELLOW, ENEO_RED_DIM);
+                last_side = 1;  
+            }
+            show();
+            _delay_time = 50;
+            return;
+        case GMODE_WAITFORWIFI: // Slow blue Creep...
+            update_count++;
+            if (update_count < 10) { _delay_time = 50; return;}
+            update_count = 0;
+            last_side++;
+            if (last_side > 20) last_side = 0;
+            if(last_side <= 10) {
+                stage_groups_asymmetric(last_side, 10-last_side, ENEO_BLUE, ENEO_BLACK);
+            } else {
+                int i = 20-last_side;
+                stage_groups_asymmetric(10-i, i, ENEO_BLACK, ENEO_BLUE);
+            }
+            show();
+            _delay_time = 50;
+            return;
+        case GMODE_FMSLOST:  // Blue creep with RED background
+            update_count++;
+            if (update_count < 10) { _delay_time = 50; return;}
+            update_count = 0;
+            last_side++;
+            if (last_side > 20) last_side = 0;
+            if(last_side <= 10) {
+                stage_groups_asymmetric(last_side, 10-last_side, ENEO_BLUE, ENEO_RED_DIM);
+            } else {
+                int i = 20-last_side;
+                stage_groups_asymmetric(10-i, i, ENEO_RED_DIM, ENEO_BLUE);
+            }
+            show();
+            _delay_time = 50;
+            return;
+        case GMODE_STANDBY:  // Green Creep -- slightly faster than blue
+            update_count++;
+            if (update_count < 6) { _delay_time = 50; return;}
+            update_count = 0;
+            last_side++;
+            if (last_side > 20) last_side = 0;
+            if(last_side <= 10) {
+                stage_groups_asymmetric(last_side, 10-last_side, ENEO_GREEN, ENEO_BLACK);
+            } else {
+                int i = 20-last_side;
+                stage_groups_asymmetric(10-i, i, ENEO_BLACK, ENEO_GREEN);
+            }
+            show();
+            _delay_time = 50;
+            return;
+            // { // Bue/Green Breathing
+            //     last_side++;
+            //     if (last_side > 500) last_side = 0;
+            //     float f;
+            //     if (last_side < 250) f = last_side / 250.0;
+            //     else                 f = (500-last_side) / 250.0;
+            //     int g = int(255*f); 
+            //     int b = int(150*(1.0-f));  // Blue not as intense 
+            //     show_solidcolor(0, g, b); 
+            //     _delay_time = 10;
+            //     return;
+            // }
+        default: // All other modes for now... pink blink
+            last_side++;
+            if (last_side == 1) {
+                show_solidcolor(ENEO_PINK);
+                last_side = 0;
+            } else {
+                show_solidcolor(ENEO_BLACK);
+                last_side = 1;
+            }
+            _delay_time = 350;
+            return;
+    }
+}
+
 // Shows the basket status for practice and debug mode on the basket.
 // Design: Hits are Green, Jams are Orange, Angle is White.  Jerking is Red/white back and forth.
 // Stuck is red. Count Error is alternating Red/Green.
-void NeoConductor::show_basketstatus(bool hiterror, bool stuck, bool jerking, long hitcount, long jamcount, float revs) {
-    // if inputs the same, don't do anything
-    static bool last_hiterror = true;
-    static bool last_stuck = true;
-    static bool last_jerking = true;
-    static long last_hitcount = -10;
-    static long last_jamcount = -10;
-    static float last_revs = -10.0;
-    static uint32_t last_time = -1;
-    static int last_side = 0;
-
-    bool param_changed = false;
-    if (last_hiterror != hiterror || last_stuck != stuck || last_jerking != jerking || last_hitcount != hitcount
-        || last_jamcount != jamcount || revs != last_revs) {
-        param_changed = true;
-        last_hiterror = hiterror;
-        last_stuck = stuck;
-        last_jerking = jerking;
-        last_hitcount = hitcount;
-        last_jamcount = jamcount;
-        last_revs = revs;
-    }
-    uint32_t tnow = millis();
-    uint32_t elp = tnow - last_time;
-    if(jerking) {
-        if (elp < 150) return;
-        last_time = tnow;
-        if (last_side == 1) {
-            stage_groups(4, 255, 0, 0, 128, 128, 128);
-            show();
-            last_side = 0;
-        } else {
-            stage_groups(4, 128, 128, 128, 255, 0, 0);
-            last_side = 1;  
-        }
-        show();
-        return;
-    }
-
-    if(hiterror) {
-        if (elp < 150) return;
-        last_time = tnow;
-        if (last_side == 1) {
-            show_solidcolor(129, 0, 0);
-            last_side = 0;
-        } else {
-            show_solidcolor(0, 129, 0);
-            last_side = 1;  
-        }
-        show();
-        return;
-    }
-    if(!param_changed) return;
-    if (stuck) {
-        show_solidcolor(192, 0, 0);
-        return;
-    }
-
+void NeoConductor::stage_basket_offline(Neo_Basket_Params *p, bool same, uint32_t telp) {
     int nhitsmax = int(2 * _np / 3);
     int njamsmax = _np - nhitsmax;
-    int nhitshow = hitcount % nhitsmax;
-    int njamshow = jamcount % njamsmax;
+    int nhitshow = p->hitcount % nhitsmax;
+    int njamshow = p->jamcount % njamsmax;
 
-    stage_solidcolor(0, 0, 0);
+    stage_solidcolor(ENEO_BLACK);
     for(int i = 0; i < nhitshow; i++) {
-        if(_use1) _pixels1.setPixelColor(i, _pixels1.Color(255, 0, 0));   // g, r, b
-        if(_use2) _pixels2.setPixelColor(i, _pixels2.Color(255, 0, 0)); 
+        if(_use1) _pixels1.setPixelColor(i, ENEO_GREEN);   // g, r, b
+        if(_use2) _pixels2.setPixelColor(i, ENEO_GREEN); 
     }
     for(int i = 0; i < njamshow; i++) {
         if(_use1) _pixels1.setPixelColor(_np - 1 - i, _pixels1.Color(65, 128, 0));
         if(_use2) _pixels2.setPixelColor(_np - 1 - i, _pixels2.Color(65, 128, 0));    
     }
+    _delay_time = 150;
+}
 
-    int irevs = int(revs);
-    float frac = revs - irevs;
+// Shows the basket status for practice and debug mode on the basket.
+// Design: Hits are Green, Jams are Orange, Angle is White.  Jerking is Red/white back and forth.
+// Stuck is red. Count Error is alternating Red/Green.
+void NeoConductor::show_basketstatus(Neo_Basket_Params *p) {
+    static int last_side = 0;
+    bool params_changed = neo_basket_params_equal(&_last_basket_params, p);
+    memcpy(&_last_basket_params, p, sizeof(Neo_Basket_Params));
+    uint32_t tnow = millis();
+    uint32_t telp = tnow - _lastupdatetime;
+    //if (!params_changed && telp < _delay_time) return;
+    if(telp < _delay_time) return;
+    _lastupdatetime = tnow;
+
+    if(p->jerking) {
+        if (last_side == 1) {
+            stage_groups(4, ENEO_RED, ENEO_WHITE_DIM);
+            show();
+            last_side = 0;
+        } else {
+            stage_groups(4, ENEO_WHITE_DIM, ENEO_RED);
+            last_side = 1;  
+        }
+        show();
+        _delay_time = 150;
+        return;
+    }
+    if(p->hiterror) {
+        if (last_side == 1) {
+            show_solidcolor(ENEO_RED_DIM);
+            last_side = 0;
+        } else {
+            show_solidcolor(ENEO_GREEN_DIM);
+            last_side = 1;  
+        }
+        show();
+        _delay_time = 150;
+        return;
+    }
+     if (p->stuck) {
+        show_solidcolor(ENEO_RED_DIM);
+        _delay_time = 150;
+        return;
+    }
+
+    if (p->online) stage_basket_online(p, params_changed, telp);
+    else           stage_basket_offline(p, params_changed, telp);
+        
+    int irevs = int(p->revs);
+    float frac = p->revs - irevs;
     int indx = int(_np * frac);
     if (indx < 0) indx = 0; 
     if (indx >= _np) indx = _np - 1;
-    if(_use1) _pixels1.setPixelColor(indx, _pixels1.Color(255, 255, 255));
-    if(_use2) _pixels2.setPixelColor(indx, _pixels2.Color(255, 255, 255));
+    if(_use1) _pixels1.setPixelColor(indx, ENEO_WHITE);
+    if(_use2) _pixels2.setPixelColor(indx, ENEO_WHITE);
     show();
 }

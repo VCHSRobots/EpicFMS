@@ -20,6 +20,7 @@ class HitDetector {
     int get_status(void);      // Returns the status of the detector.
     void start_selftest(void); // Starts a self test.  Do this to attempt to clear error.
     void debug_report(void);   // Prints a debug report to the terminal.
+    const char *get_status_str(void); // Gets a short string to indicate status.
   private:
     int _selftest_state;
     uint32_t _selftest_delay;

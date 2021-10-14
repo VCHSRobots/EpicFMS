@@ -26,11 +26,14 @@ class BasketMotor {
    BasketMotor(uint8_t pinpwm, uint8_t pina, uint8_t pinb);
    void begin(void);         // Begins the operation.
    void update(void);        // Updates the PID loop.  Call at least every 100ms.
-   void setrpm(float rpm);   // Sets the desired rpm.
+   void setrpm(float rpm);   // Sets the desired rpm. (Doesn't work cause no PID for now)
+   void setpwm(int pwm);     // Sets the pulsewidth for PWM to use for enabled mode.
    void enable(void);        // Enables the motor.
    void disable(void);       // Disabled the motor.
    void reset(void);         // Resets a stuck condition, presumely after a human clears the jam.
    float currentrpm(void);   // Returns the measured rpm at the last update.
+   int  currentpwm(void);    // Returns the currently used pwm.
+   int  runpwm(void);        // Returns the pwm to use when running normally.
    long encoderpos(void);    // Encoder Position
    bool isenabled(void);     // Returns true if the motor is enabled       
    bool injam(void);         // Returns true if in a jam condition.
@@ -61,6 +64,7 @@ class BasketMotor {
 
    int _ntrys = 2;        // Number of sets of jerks before giving up.
    int _njerks = 2;       // Number of jerks per jam clear attempt.
+   int _pwm_run = PW_RUN0;  // The PWM to use during run mode (takes the place of desired rpm)
    int _neg_pwm_us = 1300;  // Microseconds of PWM pulse on neg side of clear attempt.
    int _pos_pwm_us = 1700;  // Microseconds of PWM pulse on pos side of clear attempt.
    int _spike_ms = 650;     // Milliseconds to spike PWM.

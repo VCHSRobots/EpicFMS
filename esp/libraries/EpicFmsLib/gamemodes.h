@@ -18,4 +18,8 @@
 #define GMODE_FMSERROR      12  // FMS Connected: There is an FMS error preventing match start
 #define GMODE_FMSLOST       13  // FMS Disconnected: Error -- Lost connection during match
 
+const char *gmode_to_str(int i);
+int str_to_gmode(const char* str);
+
 #endif
+

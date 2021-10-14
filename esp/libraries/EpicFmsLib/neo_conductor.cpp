@@ -45,6 +45,12 @@ void NeoConductor::begin(void) {
     delay(50);
 }
 
+void NeoConductor::update(void) {
+    if (millis() - _lastupdatetime < 50) return;
+    _lastupdatetime = millis();
+    // TODO: do something on a strip according to current mode.
+}
+
 void NeoConductor::setmode(int mode) {
     if (mode == _mode) return; // Not a new mode
     _mode = mode;
@@ -52,15 +58,21 @@ void NeoConductor::setmode(int mode) {
     update();
 }
 
-void NeoConductor::update(void) {
-    if (millis() - _lastupdatetime < 50) return;
-    _lastupdatetime = millis();
-    // TODO: do something on a strip according to current mode.
-
+// Call this when a hit is detected for a quick flash.
+void NeoConductor::hitflash(void) {
+    // TODO.
 }
 
-void NeoConductor::hitflash(void) {
+// Call for debug report to the terminal. 
+void NeoConductor::debug_report(void) {
+    // Nothing to report.
+}
 
+// Sets the color of a single pixel -- staged.
+void NeoConductor::set_pixel_color(int i, uint32_t c) {
+    if (i < 0 || i >= _np) return;
+    if(_use1) _pixels1.setPixelColor(i, c);
+    if(_use2) _pixels2.setPixelColor(i, c);
 }
 
 void NeoConductor::show(void) {
@@ -68,6 +80,7 @@ void NeoConductor::show(void) {
     if (_use2) _pixels2.show();
 }
 
+// Stage a solid color over the entire strip
 void NeoConductor::stage_solidcolor(int r, int g, int b) {
     for(int i = 0; i < _np; i++) {
         if(_use1) _pixels1.setPixelColor(i, _pixels1.Color(g, r, b));
@@ -75,27 +88,20 @@ void NeoConductor::stage_solidcolor(int r, int g, int b) {
     }
 }
 
-void NeoConductor::stage_groups(int nsize, int r1, int g1, int b1, int r2, int b2, int g2) {
-    int i = 0; 
-    while(true) {
-        for(int j = 0; j < nsize; j++) {
-            if (i >= _np) break;
-            if(_use1) _pixels1.setPixelColor(i, _pixels1.Color(g1, r1, b1));
-            if(_use2) _pixels2.setPixelColor(i, _pixels2.Color(g1, r1, b1));
-            i++;
-        }
-        for(int j = 0; j < nsize; j++) {
-            if (i >= _np) break;
-            if(_use1) _pixels1.setPixelColor(i, _pixels1.Color(g2, r2, b2));
-            if(_use2) _pixels2.setPixelColor(i, _pixels2.Color(g2, r2, b2));
-            i++;
-        }
-        if (i >= _np) break;
+void NeoConductor::stage_solidcolor(uint32_t c) {
+    for(int i = 0; i < _np; i++) {
+        if(_use1) _pixels1.setPixelColor(i, c);
+        if(_use2) _pixels2.setPixelColor(i, c);
     }
 }
 
 void NeoConductor::show_solidcolor(int r, int g, int b) {
     stage_solidcolor(r, g, b);
+    show();
+}
+
+void NeoConductor::show_solidcolor(uint32_t c) {
+    stage_solidcolor(c);
     show();
 }
 
@@ -109,11 +115,58 @@ void NeoConductor::show_count(int n, int r, int g, int b) {
     show();
 }
 
+void NeoConductor::show_count(int n, uint32_t c) {
+    if (n > _np) n = _np;
+    stage_solidcolor(ENEO_BLACK);
+    for(int i = 0; i < _np; i++) {
+        if(_use1) _pixels1.setPixelColor(i, c);
+        if(_use2) _pixels2.setPixelColor(i, c); 
+    }
+    show();
+}
+
 void NeoConductor::show_one(int n, int r, int g, int b) {
-    stage_solidcolor(0, 0, 0);
+    stage_solidcolor(ENEO_BLACK);
     if (n < _np) {
         if(_use1) _pixels1.setPixelColor(n, _pixels1.Color(g, r, b));
         if(_use2) _pixels2.setPixelColor(n, _pixels2.Color(g, r, b)); 
     }
     show();
 }
+
+void NeoConductor::show_one(int n, uint32_t c) {
+    stage_solidcolor(ENEO_BLACK);
+    if (n < _np) {
+        if(_use1) _pixels1.setPixelColor(n, c);
+        if(_use2) _pixels2.setPixelColor(n, c); 
+    }
+    show();
+}
+
+void NeoConductor::stage_groups(int nsize, uint32_t c1, uint32_t c2) {
+    stage_groups_asymmetric(nsize, nsize, c1, c2);
+}
+
+void NeoConductor::stage_groups_asymmetric(int nsize1, int nsize2, uint32_t c1, uint32_t c2) {
+    int i = 0; 
+    while(true) {
+        for(int j = 0; j < nsize1; j++) {
+            if (i >= _np) break;
+            if(_use1) _pixels1.setPixelColor(i, c1);
+            if(_use2) _pixels2.setPixelColor(i, c2);
+            i++;
+        }
+        for(int j = 0; j < nsize2; j++) {
+            if (i >= _np) break;
+            if(_use1) _pixels1.setPixelColor(i, c2);
+            if(_use2) _pixels2.setPixelColor(i, c1);
+            i++;
+        }
+        if (i >= _np) break;
+    }
+}
+
+
+
+
+

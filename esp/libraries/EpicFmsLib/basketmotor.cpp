@@ -48,7 +48,7 @@ void BasketMotor::do_enabling(void) {
         _isjammed = false; 
         _motorstart_us = _time_now;
         _doing_holdoff = true;
-        write_pwm(PW_RUN0);
+        write_pwm(_pwm_run);
         return;
     }
     write_pwm(PW_ZERO_RPM);
@@ -89,7 +89,7 @@ void BasketMotor::do_jamclear(void) {
             return;
         case 10: // Turn on the motor, monitor for success
             Serial.println("Case 10.");
-            write_pwm(PW_RUN0);
+            write_pwm(_pwm_run);
             _jam_delay = 2000;
             _jamstate = 11;
             return;
@@ -159,6 +159,7 @@ void BasketMotor::update(void) {
         if( _time_now - _motorstart_us < 250000) return;
          _doing_holdoff = false;
     }
+    write_pwm(_pwm_run);  // Rewrite it, just incase it changed.
     do_jamdetection();
 }
 
@@ -176,6 +177,11 @@ void BasketMotor::debug_report(void) {
 // Sets the desired rpm.  Takes effect on next update.
 void BasketMotor::setrpm(float rpm) {
     _desiredrpm = rpm;
+}
+
+// Sets the desired pulsewidth in us for pwm.  Takes effect on next update.
+void BasketMotor::setpwm(int pwm) {
+    _pwm_run = pwm;
 }
 
 // Enables the motor. Takes effect on next update.  Note:
@@ -215,6 +221,16 @@ void BasketMotor::reset(void) {
 // Returns the currently measured rpm.
 float BasketMotor::currentrpm(void) {
     return _rpm;
+}
+
+// Returns the last commanded pulsewidth, in us.
+int BasketMotor::currentpwm(void) {
+    return _lastpw;
+}
+
+// Returns the pulsewidth, in us, to use when running normally.
+int BasketMotor::runpwm(void) {
+    return _pwm_run;
 }
 
 // Returns the currently measured encoder position, in ticks.

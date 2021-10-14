@@ -158,6 +158,17 @@ int HitDetector::get_status(void) {
     return HDSTATUS_OKAY;    
 }
 
+const char *HitDetector::get_status_str(void) {
+    int x = get_status();
+    switch(x) {
+        case HDSTATUS_OFF: return "off";
+        case HDSTATUS_OKAY: return "okay";
+        case HDSTATUS_INSELFTEST: return "testing";
+        case HDSTATUS_ERROR: return "error";
+        default: return "??";
+    }
+}
+
 // Starts a self test.  The self test will be conducted via update().
 // Results of the test can be obtained from get_status() in about 100ms.
 // Use this to attempt to clear an error.
