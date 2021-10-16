@@ -96,10 +96,10 @@ void NeoConductor::stage_basket_online(Neo_Basket_Params *p, bool same, uint32_t
                 show_solidcolor(ENEO_PINK);
                 last_side = 0;
             } else {
-                show_solidcolor(ENEO_BLACK);
+                show_solidcolor(ENEO_YELLOW);
                 last_side = 1;
             }
-            _delay_time = 350;
+            _delay_time = 50;
             return;
     }
 }
