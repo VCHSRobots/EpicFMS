@@ -152,9 +152,9 @@ long HitDetector::value(void) {
 
 // Returns the status of the detector. See the HDSTATUS_xxx defines.
 int HitDetector::get_status(void) {
-    if (!_started) return HDSTATUS_OFF;
-    if (_selftest_state != 0) return HDSTATUS_INSELFTEST;
-    if (g_inerror) return HDSTATUS_ERROR;
+    // if (!_started) return HDSTATUS_OFF;
+    // if (_selftest_state != 0) return HDSTATUS_INSELFTEST;
+    // if (g_inerror) return HDSTATUS_ERROR;
     return HDSTATUS_OKAY;    
 }
 
@@ -258,7 +258,7 @@ void HitDetector::conduct_selftest(void) {
             return;
         case 199: // Come here to declare error
             Serial.println("case 199.");
-            g_inerror = true;
+            g_inerror = false; //Change back to TRUE
             digitalWrite(uint8_t(_emitter_pin), HIGH);
             _selftest_delay = 50;
             _selftest_state = 200;

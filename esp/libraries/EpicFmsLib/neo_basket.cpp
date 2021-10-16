@@ -78,18 +78,15 @@ void NeoConductor::stage_basket_online(Neo_Basket_Params *p, bool same, uint32_t
             show();
             _delay_time = 50;
             return;
-            // { // Bue/Green Breathing
-            //     last_side++;
-            //     if (last_side > 500) last_side = 0;
-            //     float f;
-            //     if (last_side < 250) f = last_side / 250.0;
-            //     else                 f = (500-last_side) / 250.0;
-            //     int g = int(255*f); 
-            //     int b = int(150*(1.0-f));  // Blue not as intense 
-            //     show_solidcolor(0, g, b); 
-            //     _delay_time = 10;
-            //     return;
-            // }
+        case GMODE_PWRUP:
+             if (last_side>_np) { last_side=0; return;}
+             show_one(last_side, 200, 0, 0);
+             _delay_time = 100;
+             last_side++;
+             char lineout[50];
+             sprintf(lineout,"i=%d",last_side);
+             Serial.println(lineout);
+            return;
         default: // All other modes for now... pink blink
             last_side++;
             if (last_side == 1) {
@@ -103,7 +100,6 @@ void NeoConductor::stage_basket_online(Neo_Basket_Params *p, bool same, uint32_t
             return;
     }
 }
-
 // Shows the basket status for practice and debug mode on the basket.
 // Design: Hits are Green, Jams are Orange, Angle is White.  Jerking is Red/white back and forth.
 // Stuck is red. Count Error is alternating Red/Green.
