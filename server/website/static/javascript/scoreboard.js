@@ -50,78 +50,91 @@ function fill_score_board(data) {
     // Put up the timmer stuff
     document.getElementById("timerlabel").innerHTML = data["TimerLabel"];
     document.getElementById("timervalue").innerHTML = data["Timer"];
+    
     // Put up the Team Names...
-    document.getElementById("blueteamname").innerHTML = data["BlueTeamName"];
-    document.getElementById("redteamname").innerHTML = data["RedTeamName"];
+    document.getElementById("blueteamname").innerHTML = data["Blue"]["TeamName"];
+    document.getElementById("redteamname").innerHTML = data["Red"]["TeamName"];
     // Put up the score
-    document.getElementById("blueteamscore").innerHTML = data["BlueScore"];
-    document.getElementById("redteamscore").innerHTML = data["RedScore"];
+    document.getElementById("blueteamscore").innerHTML = data["Blue"]["Score"];
+    document.getElementById("redteamscore").innerHTML = data["Red"]["Score"];
     
       // Indicate the error status of the six game elements
     var ediv = document.getElementById("bluebasketerr");
-    if (data["GameElement"]["Blue"]["Basket"]) vis_off(ediv); 
+    if (data["Blue"]["GameElement"]["Basket"]) vis_off(ediv); 
     else                                       vis_on(ediv);
     ediv = document.getElementById("bluemovingerr");
-    if (data["GameElement"]["Blue"]["Moving"]) vis_off(ediv); 
+    if (data["Blue"]["GameElement"]["Moving"]) vis_off(ediv); 
     else                                       vis_on(ediv);
     ediv = document.getElementById("blueslidingerr");
-    if (data["GameElement"]["Blue"]["Sliders"]) vis_off(ediv); 
+    if (data["Blue"]["GameElement"]["Sliders"]) vis_off(ediv); 
     else                                        vis_on(ediv); 
     ediv = document.getElementById("redbasketerr");
-    if (data["GameElement"]["Red"]["Basket"])   vis_off(ediv); 
+    if (data["Red"]["GameElement"]["Basket"])   vis_off(ediv); 
     else                                        vis_on(ediv); 
     ediv = document.getElementById("redmovingerr");
-    if (data["GameElement"]["Red"]["Moving"])   vis_off(ediv); 
+    if (data["Red"]["GameElement"]["Moving"])   vis_off(ediv); 
     else                                        vis_on(ediv); 
     ediv = document.getElementById("redslidingerr");
-    if (data["GameElement"]["Red"]["Sliders"])  vis_off(ediv); 
+    if (data["Red"]["GameElement"]["Sliders"])  vis_off(ediv); 
     else                                        vis_on(ediv); 
 
-    // Check Mark and Failure Marks
+    // Set up Score for Auto Path Finding
     var ecm = document.getElementById("blueautocm");
     var exx = document.getElementById("blueautofail");
-    if (data["CheckMarks"]["Blue"]["Auto"] == "Blank") {vis_off(ecm); vis_off(exx); }
-    if (data["CheckMarks"]["Blue"]["Auto"] == "Checked") {vis_on(ecm); vis_off(exx); }
-    if (data["CheckMarks"]["Blue"]["Auto"] == "Failed") {vis_on(exx); vis_off(ecm); }
-    ecm = document.getElementById("bluebasketcm");
-    if (data["CheckMarks"]["Blue"]["Basket"])   vis_on(ecm);
+    var sc  = document.getElementById("blueautorunscore")
+    if (data["Blue"]["AutoScore"]["Checkmark"]) vis_on(ecm);
     else                                        vis_off(ecm);
-    ecm = document.getElementById("bluemovingcm");
-    if (data["CheckMarks"]["Blue"]["Moving"])   vis_on(ecm);
-    else                                        vis_off(ecm);
-    ecm = document.getElementById("bluesliding1cm");
-    if (data["CheckMarks"]["Blue"]["Slider1"])  vis_on(ecm);
-    else                                        vis_off(ecm);
-    ecm = document.getElementById("bluesliding2cm");
-    if (data["CheckMarks"]["Blue"]["Slider2"])  vis_on(ecm);
-    else                                        vis_off(ecm);
-    ecm = document.getElementById("bluesliding3cm");
-    if (data["CheckMarks"]["Blue"]["Slider3"])  vis_on(ecm);
-    else                                        vis_off(ecm);
+    if (data["Blue"]["AutoScore"]["XMark"])     vis_on(exx);
+    else                                        vis_off(exx);
+    if (data["Blue"]["AutoScore"]["ShowScore"]) vis_on(sc);
+    else                                        vis_off(sc);
+    sc.innerHTML = data["Blue"]["AutoScore"]["Score"] 
     ecm = document.getElementById("redautocm");
     exx = document.getElementById("redautofail");
-    if (data["CheckMarks"]["Red"]["Auto"] == "Blank") {vis_off(ecm); vis_off(exx); }
-    if (data["CheckMarks"]["Red"]["Auto"] == "Checked") {vis_on(ecm); vis_off(exx); }
-    if (data["CheckMarks"]["Red"]["Auto"] == "Failed") {vis_on(exx); vis_off(ecm); }
+    sc  = document.getElementById("redautorunscore")
+    if (data["Red"]["AutoScore"]["Checkmark"]) vis_on(ecm);
+    else                                        vis_off(ecm);
+    if (data["Red"]["AutoScore"]["XMark"])     vis_on(exx);
+    else                                        vis_off(exx);
+    if (data["Red"]["AutoScore"]["ShowScore"]) vis_on(sc);
+    else                                        vis_off(sc);
+    sc.innerHTML = data["Red"]["AutoScore"]["Score"] 
+
+    // Indicate Field Elements that have errors
+    ecm = document.getElementById("bluebasketcm");
+    if (data["Blue"]["CheckMarks"]["Basket"])   vis_on(ecm);
+    else                                        vis_off(ecm);
+    ecm = document.getElementById("bluemovingcm");
+    if (data["Blue"]["CheckMarks"]["Moving"])   vis_on(ecm);
+    else                                        vis_off(ecm);
+    ecm = document.getElementById("bluesliding1cm");
+    if (data["Blue"]["CheckMarks"]["Slider1"])  vis_on(ecm);
+    else                                        vis_off(ecm);
+    ecm = document.getElementById("bluesliding2cm");
+    if (data["Blue"]["CheckMarks"]["Slider2"])  vis_on(ecm);
+    else                                        vis_off(ecm);
+    ecm = document.getElementById("bluesliding3cm");
+    if (data["Blue"]["CheckMarks"]["Slider3"])  vis_on(ecm);
+    else                                        vis_off(ecm);
     ecm = document.getElementById("redbasketcm");
-    if (data["CheckMarks"]["Red"]["Basket"])  vis_on(ecm);
+    if (data["Red"]["CheckMarks"]["Basket"])  vis_on(ecm);
     else                                       vis_off(ecm);
     ecm = document.getElementById("redmovingcm");
-    if (data["CheckMarks"]["Red"]["Moving"])  vis_on(ecm);
+    if (data["Red"]["CheckMarks"]["Moving"])  vis_on(ecm);
     else                                       vis_off(ecm);
     ecm = document.getElementById("redsliding1cm");
-    if (data["CheckMarks"]["Red"]["Slider1"]) vis_on(ecm);
+    if (data["Red"]["CheckMarks"]["Slider1"]) vis_on(ecm);
     else                                       vis_off(ecm);
     ecm = document.getElementById("redsliding2cm");
-    if (data["CheckMarks"]["Red"]["Slider2"]) vis_on(ecm);
+    if (data["Red"]["CheckMarks"]["Slider2"]) vis_on(ecm);
     else                                       vis_off(ecm);
     ecm = document.getElementById("redsliding3cm");
-    if (data["CheckMarks"]["Red"]["Slider3"]) vis_on(ecm);
+    if (data["Red"]["CheckMarks"]["Slider3"]) vis_on(ecm);
     else                                       vis_off(ecm);
 
     // Put up the win-tie-lose banners
     blue_banner = document.getElementById("bluewinframe");
-    if (data["BlueWinBanner"] == false) {
+    if (data["Blue"]["ShowWinBanner"] == false) {
         blue_banner.style.borderColor = "#491818";
         blue_banner.style.borderStyle = "solid";
     } else {
@@ -129,7 +142,7 @@ function fill_score_board(data) {
         blue_banner.style.borderStyle = "dotted";
     }
     red_banner = document.getElementById("redwinframe");
-    if (data["RedWinBanner"] == false) {
+    if (data["Red"]["ShowWinBanner"] == false) {
         red_banner.style.borderStyle = "solid";
         red_banner.style.borderColor = "#491818";
     } else {
