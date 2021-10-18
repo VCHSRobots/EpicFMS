@@ -12,6 +12,8 @@ import time
 loopcount = 0
 score_man  = sm.ScoreManager() 
 score_man.update()
+score_man.testing(True)  # Remove this for production 
+
 dummy_params = { "dummy" : 0}
 
 # Main loop here.  Does work that is not the web server.
@@ -41,6 +43,10 @@ def score():
 @webapp.route("/admin")
 def admin():
   return render_template('admin.html', **dummy_params)
+
+@webapp.route("/basket")
+def basket():
+  return render_template('basket.html', **dummy_params)
 
 # Rawscore returns JSON text that describes the complete state of the game
 @webapp.route("/rawscore")

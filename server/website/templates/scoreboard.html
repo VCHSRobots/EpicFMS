@@ -1,36 +1,14 @@
 {#  scoreboard.html -- Renders Scoreboard page for EPIC Fms
     dlb, Sept 2021
 #}
+
 <!DOCTYPE html>
-    <script>
-        function loadScore() {
-            fetch("rawscore")
-                .then(function(response) {
-                    return response.json();
-                })
-                .then(function (data) {
-                    fill_score_board(data);
-                })
-                .catch(function (err) {
-                    console.log('error: ' + err);
-                });
-        }
-        function init_loading() {
-            setInterval(loadScore, 1000)
-        }
-        function fill_score_board(data) {
-            var i = data["GameTimeToGo"];
-            document.getElementsByName("blueteamname").innerHTML = 'Blue Team = ' + data["BlueTeamName"];
-            document.getElementsByName("redteamname").innerHTML = 'Red Team = ' + data["RedTeamName"];
-            document.getElementById("timetogo").innerHTML = i;
-        } 
-    </script>
-     
     <html lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <title>EPIC BASEBALL GAME</title>
         <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+        <script src="../static/javascript/scoreboard.js"></script>
         <style>
             #screen_area {width: 1024 px;}
             .content_area {width: 900 px;} 
@@ -41,18 +19,18 @@
             <div id="bannersplit">
                 <div id="epiclogo"><img src="../static/img/epiclogo.png" width="200" height="200"></div>
                 <div id="titlesplit">
-                    <div id="maintitle">BASEBALL GAME</div>
+                    <div id="maintitle">FOAM BALL BASH</div>
                     <div id="gamemode">dummy</div>
                 </div>
                 <div id="clockframe">
-                    <div id="timetogo">Time XX</div>
+                    <div id="timerlabel">dummy</div>
+                    <div id="timervalue">Time XX</div>
                 </div>  
             </div>
             <div style="clear: both;"></div>
             <div id="teamsframe">
                 <div id="bluewinframe">
                     <div id="blueframe">
-                        <div id="bluetitle" class="teamtitle">Blue Team</div>
                         <div id="blueteamname" class="teamname">dummy</div>
                         <div id="bluescorearea">
                             <div id="blueteamscore" class="totalscore">1289</div>
@@ -60,6 +38,7 @@
                                 <div id="bluearrowpathdiv" class="autopath"><img src="../static/img/autopath_brown.png" class="arrowpath"></div>
                                 <div id="blueautofail" class="autofail"><img src="../static/img/redx.png" class="redx"></div>
                                 <div id="blueautocm" class="checkmarkdiv"><img src="../static/img/checkmark.png" class="checkmarkimg"></div>
+                                <div id="redautorunscore" class="autorunscore">0</div>
                             </div>
                         </div>  
                         <div id="bluebasket" class="basketdiv"><img src="../static/img/baskettarget.png" class="basketimg"></div>
@@ -74,12 +53,47 @@
                         <div id="bluebasketerr" class="errframediv"><img src="../static/img/errorframe.png" class="errframe1"></div>
                         <div id="bluemovingerr" class="errframediv"><img src="../static/img/errorframe.png" class="errframe2"></div>
                         <div id="blueslidingerr" class="errframediv"><img src="../static/img/errorframe.png" class="errframe3"></div>
+                        <div style="clear: both;"></div>
+                        <div id="bluescorebreakdown" class="breakdownarea">
+                            <div id="blueautoscoreline" class="scoreline">
+                                <div id="blueautoscorelabel" class="scorelinelabel">Auto</div>
+                                <div id="blueautobasket" class="scorelinenumber">0x0</div>
+                                <div id="blueautomoving" class="scorelinenumber">0x0</div>
+                                <div id="blueautosliders" class="scorelinenumber scorelineslider">0x0</div>
+                            </div>
+                            <div style="clear: both;"></div>
+                            <div id="blueteleopscoreline" class="scoreline">
+                                <div id="blueteleopscorelabel" class="scorelinelabel">Teleop</div>
+                                <div id="blueteleopbasket" class="scorelinenumber">0x0</div>
+                                <div id="blueteleopmoving" class="scorelinenumber">0x0</div>
+                                <div id="blueteleopsliders" class="scorelinenumber scorelineslider">0x0</div>
+                            </div>
+                            <div style="clear: both;"></div>
+                            <div id="blueendgamescoreline" class="scoreline">
+                                <div id="blueendgamescorelabel" class="scorelinelabel">Endgame</div>
+                                <div id="blueendgamebasket" class="scorelinenumber">0x0</div>
+                                <div id="blueendgamemoving" class="scorelinenumber">0x0</div>
+                                <div id="blueendgamesliders" class="scorelinenumber scorelineslider">0x0</div>
+                            </div>
+                            <div style="clear: both;"></div>
+                            <div id="bluetotalscoreline" class="scoreline">
+                                <div id="bluetotalscorelabel" class="scorelinelabel">Totals</div>
+                                <div id="bluetotalbasket" class="scorelinenumber scoretotal">0</div>
+                                <div id="bluetotalmoving" class="scorelinenumber scoretotal">0</div>
+                                <div id="bluetotalsliders" class="scorelinenumber scorelineslider scoretotal">0</div>
+                            </div>
+                            <div style="clear: both;"></div>
+                            <div id="bluelastscoreline" class="scoreline lastscoreline">
+                                <div id="bluerakelabel" class="rakelabel">Raking:</div>        <div id="bluerakevalue" class="rakevalue">0</div>
+                                <div id="blueadjlabel" class="adjlabel">Adjustment:</div>      <div id="blueadjvalue" class="adjvalue">0</div>
+                            </div>
+                            <div style="clear: both;"></div>
+                        </div>
                     </div>
                 </div>
                 <div id="teamspacer"></div>
                 <div id="redwinframe">
                     <div id="redframe">
-                        <div id="redtitle" class="teamtitle">Red Team</div>
                         <div id="redteamname" class="teamname">dummy</div>
                         <div id="redscorearea">
                             <div id="redteamscore" class="totalscore">0</div>
@@ -87,6 +101,7 @@
                                 <div id="redarrowpathdiv" class="autopath"><img src="../static/img/autopath_brown.png" class="arrowpath"></div>
                                 <div id="redautofail" class="autofail"><img src="../static/img/redx.png" class="redx"></div>
                                 <div id="redautocm" class="checkmarkdiv"><img src="../static/img/checkmark.png" class="checkmarkimg"></div>
+                                <div id="redautorunscore" class="autorunscore">0</div>
                             </div>
                         </div>  
                         <div id="redbasket" class="basketdiv"><img src="../static/img/baskettarget.png" class="basketimg"></div>
@@ -101,6 +116,42 @@
                         <div id="redbasketerr" class="errframediv"><img src="../static/img/errorframe.png" class="errframe1"></div>
                         <div id="redmovingerr" class="errframediv"><img src="../static/img/errorframe.png" class="errframe2"></div>
                         <div id="redslidingerr" class="errframediv"><img src="../static/img/errorframe.png" class="errframe3"></div>
+                        <div style="clear: both;"></div>
+                        <div id="redscorebreakdown" class="breakdownarea">
+                            <div id="redautoscoreline" class="scoreline">
+                                <div id="redautoscorelabel" class="scorelinelabel">Auto</div>
+                                <div id="redautobasket" class="scorelinenumber">0x0</div>
+                                <div id="redautomoving" class="scorelinenumber">0x0</div>
+                                <div id="redautosliders" class="scorelinenumber scorelineslider">0x0</div>
+                            </div>
+                            <div style="clear: both;"></div>
+                            <div id="redteleopscoreline" class="scoreline">
+                                <div id="redteleopscorelabel" class="scorelinelabel">Teleop</div>
+                                <div id="redteleopbasket" class="scorelinenumber">0x0</div>
+                                <div id="redteleopmoving" class="scorelinenumber">0x0</div>
+                                <div id="redteleopsliders" class="scorelinenumber scorelineslider">0x0</div>
+                            </div>
+                            <div style="clear: both;"></div>
+                            <div id="redendgamescoreline" class="scoreline">
+                                <div id="redendgamescorelabel" class="scorelinelabel">Endgame</div>
+                                <div id="redendgamebasket" class="scorelinenumber">0x0</div>
+                                <div id="redendgamemoving" class="scorelinenumber">0x0</div>
+                                <div id="redendgamesliders" class="scorelinenumber scorelineslider">0x0</div>
+                            </div>
+                            <div style="clear: both;"></div>
+                            <div id="redtotalscoreline" class="scoreline">
+                                <div id="redtotalscorelabel" class="scorelinelabel">Totals</div>
+                                <div id="redtotalbasket" class="scorelinenumber scoretotal">0</div>
+                                <div id="redtotalmoving" class="scorelinenumber scoretotal">0</div>
+                                <div id="redtotalsliders" class="scorelinenumber scorelineslider scoretotal">0</div>
+                            </div>
+                            <div style="clear: both;"></div>
+                            <div id="redlastscoreline" class="scoreline lastscoreline">
+                                <div id="redrakelabel" class="rakelabel">Raking:</div>        <div id="redrakevalue" class=rakevalue>0</div>
+                                <div id="redadjlabel" class="adjlabel">Adjustment:</div>      <div id="redadjvalue" class="adjvalue">0</div>
+                            </div>
+                            <div style="clear: both;"></div>
+                        </div>
                     </div>
                 </div>  
             </div>

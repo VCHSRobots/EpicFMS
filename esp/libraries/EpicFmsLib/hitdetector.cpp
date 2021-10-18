@@ -48,7 +48,7 @@ volatile long cc = 0;
 volatile long dc = 0;
 
 // Process Change on IR Beam Pin
-ICACHE_RAM_ATTR void isr_irbeam() {
+IRAM_ATTR void isr_irbeam() {
   g_isrcnt++;
   uint32_t tnow = millis();
   uint32_t elp = g_last_pin_change_time - tnow;
@@ -186,7 +186,7 @@ void HitDetector::start_selftest(void) {
 // Send a status report for debugging to the terminal.
 void HitDetector::debug_report(void) {
     char lineout[100];
-    char *state;
+    const char *state;
     switch(get_status()) {
         case HDSTATUS_OFF: state = "Off"; break;
         case HDSTATUS_OKAY: state = "Okay"; break;
@@ -258,7 +258,7 @@ void HitDetector::conduct_selftest(void) {
             return;
         case 199: // Come here to declare error
             Serial.println("case 199.");
-            g_inerror = false; //Change back to TRUE
+            g_inerror = true; 
             digitalWrite(uint8_t(_emitter_pin), HIGH);
             _selftest_delay = 50;
             _selftest_state = 200;

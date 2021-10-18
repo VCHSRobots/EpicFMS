@@ -1,17 +1,20 @@
 # timercb.py -- Used to schedule regular spaced callbacks
-# 
-#
+# dlb, Oct 2021  (taken from the web)
+
 from threading import Thread, Event
 import time
 
 class TimerCB(Thread):
-    def __init__(self, cb, period, stopevent):
+    _timer_instance_counter = 0
+    def __init__(self, cb, period, stopevent, name="unknown"):
         '''Init -- Pass in the callback, period and an Event.
         Set the event to stop the callback timer.'''
         self.cb = cb
         self.period = period
         self.stopevent = stopevent
-        Thread.__init__(self)
+        TimerCB._timer_instance_counter += 1
+        real_name = "TimerCB-%d-%s" % (TimerCB._timer_instance_counter, name)
+        Thread.__init__(self, name=real_name)
     def run(self):
         while not self.stopevent.wait(self.period):
             self.cb()

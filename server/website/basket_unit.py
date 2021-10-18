@@ -3,6 +3,7 @@
 
 import json
 from json.decoder import JSONDecodeError
+import timercb
 import threading
 import requests
 import time
@@ -31,17 +32,20 @@ class BasketUnit():
         self.cmdlock = threading.Lock()  
         BasketUnit._basket_count += 1
         self.basketid = BasketUnit._basket_count
+        self.done_event = threading.Event()
+        self.background_thread = timercb.TimerCB(self.run_status_thread, 0.200, self.done_event, "basket_unit")
 
     def begin(self):
         # Starts the activity in this object. Runs a thread in the 
         # background to continuely gather info from the basket target.
-        self.worker = threading.Thread(target=self.run_status_thread, name="basket-%d" % self.basketid)
-        self.worker.start()
+        # self.worker = threading.Thread(target=self.run_status_thread, name="basket-%d" % self.basketid)
+        # self.worker.start()
+        self.background_thread.start()
 
     def run_status_thread(self):
         # Ping-pongs between sending commands to the unit and receiving status.  Status is 
         # requested about once a sec, whereas commands are sent within 0.2 seconds if a 
-        # new command is pending
+        # new command is pending.  
         nloop = 0
         while(True):
             # Do a fast loop here, polling for commands to send and for times to update
