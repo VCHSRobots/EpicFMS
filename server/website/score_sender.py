@@ -1,5 +1,9 @@
-# score_manager.py -- Keeps the acutal Score
+# score_sender.py -- Prepares the score for communicating with javascript
 # dlb, Sept 2021
+
+# The main purpose of these classes is to control the scoreboard display by
+# preparing JSON that is sent to the scoreboard page.  The scoreboard page's 
+# javascript interperts the JSON to display the score and status of the game.
 
 import json
 import time
@@ -28,7 +32,7 @@ class TeamScore():
     def get_score(self):
         return self.score
 
-class ScoreManager():
+class ScoreSender():
     def __init__(self):
         self.text = ''
         blue_score = TeamScore().get_score()
@@ -170,7 +174,7 @@ class ScoreManager():
 
 
 if __name__ == "__main__":
-   sm = ScoreManager()
+   sm = ScoreSender()
    sm.update()
    t = sm.get_state()
    print("Json: ", t)  

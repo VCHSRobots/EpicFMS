@@ -142,6 +142,7 @@ class BasketUnit():
         # Attemps to turn the motor on.  Returns True if command is
         # successfully put in the command queue.  Use status to 
         # see that it acutally occured sometime later.
+        print("In turn_motor_on. pending=", self.command_pending)
         self.cmdlock.acquire() 
         if self.command_pending:
             self.cmdlock.release()
@@ -155,6 +156,7 @@ class BasketUnit():
         # Attemps to turn the motor off.  Returns True if command is
         # successfully put in the command queue.  Use status to 
         # see that it acutally occured sometime later.
+        print("In turn_motor_off. pending=", self.command_pending)
         self.cmdlock.acquire() 
         if self.command_pending:
             self.cmdlock.release()

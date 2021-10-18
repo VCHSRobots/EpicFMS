@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-      <title>EPIC BASEBALL GAME</title>
+      <title>EpicFms</title>
       <link rel="stylesheet" type="text/css" href="../static/css/style.css">
   </head>
   <body>
@@ -10,12 +10,17 @@
       <div id="bannersplit">
         <div id="epiclogo"><img src="../static/img/epiclogo.png" width="200" height="200"></div>
         <div id="titlesplit">
-            <div id="maintitle">BASEBALL GAME</div>
+            <div id="maintitle">EPIC FMS</div>
         </div>
       </div>
-      <div id="scroeboardlink"><a href="score">GO TO SCOREBOARD</a></div>
-      <div id="adminlink"><a href="admin">GO TO ADMIN</a></div>
-      <div id="basketlink"><a href="basket">GO TO BASKET</a></div>
+      <div id="buttonnavarea">
+        <div class="navbuttondiv">
+            <button id="scoreboardbutton" class="navbutton" onclick="window.location.href='score';">Scoreboard</button>
+        </div>
+        <div class="navbuttondiv">
+            <button id="adminbutton" class="navbutton" onclick="window.location.href='admin';">Admin</button>
+        </div>
+       </div>  
     </div>
   </body>
 </html>

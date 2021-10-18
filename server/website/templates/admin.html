@@ -2,17 +2,38 @@
 <html lang="en">
   <head>
       <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-      <title>EPIC BASEBALL GAME</title>
+      <title>EpicFms Admin</title>
       <link rel="stylesheet" type="text/css" href="../static/css/style.css">
-  </head>
-  <body>
+      <link rel="stylesheet" type="text/css" href="../static/css/admin.css">
+      <script src="../static/javascript/admin.js"></script>
+  <style>
+        #screen_area {width: 1024 px;}
+        .content_area {width: 900 px;} 
+  </style>
+</head>
+
+<body onload="init_loading()">
     <div id="mainframe">
       <div id="bannersplit">
         <div id="epiclogo"><img src="../static/img/epiclogo.png" width="200" height="200"></div>
         <div id="titlesplit">
-            <div id="maintitle">BASEBALL GAME</div>
+            <div id="maintitle">EPIC FMS</div>
         </div>
-        </div id="admintitle">GAME ADMINISTRATION</div>
+        <div id="admintitle">GAME ADMINISTRATION</div>
+      </div>
+      <div id="loginarea">
+        <div id="passwordlabel">Password:</div>
+        <div id="passwordinputdiv"><input id="passwordbox" type="password"></div>
+        <div id="passwordbuttondiv"><button id="passwordbutton" onclick="sendpassword()">Submit</button></div>
+      </div>
+      <div id="mainarea" style="visibility: hidden;">
+        <div id="hits" class="param">
+          <div id="hitslabel" class="param_label">Hits: </div>
+          <div id="hitsvalue" class="param_value">0</div>
+        </div>
+        <div style="clear: both;"></div>
+        <button id="motoron" class="controlbutton" onclick="setmotor(1)">Motor On</button>
+        <button id="motoroff" class="controlbutton" onclick="setmotor(0)">Motor Off</button>
       </div>
     </div>
   </body>
