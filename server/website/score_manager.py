@@ -74,6 +74,18 @@ class ScoreManager():
         x = { "Checkmark" : check, "XMark" : xmark, "ShowScore": showscore, "Score": score }
         return x
 
+    def load_test_data(self, i):
+        data = [{"Auto"  : { "Basket" : "4x6", "Moving" : "1x40", "Sliders" : "22x4" },
+                "TeleOp" : { "Basket" : "8x4", "Moving" : "2x20", "Sliders" : "20x2" },
+                "EGame"  : { "Basket" : "1x4", "Moving" : "0x20", "Sliders" :  "4x2" },
+                "Totals" : { "Basket" :  "60", "Moving" :   "80", "Sliders" :  "136" }},
+                {"Auto"  : { "Basket" : "2x6", "Moving" : "0x40", "Sliders" : "10x6" },
+                "TeleOp" : { "Basket" : "0x4", "Moving" : "1x20", "Sliders" : "50x3" },
+                "EGame"  : { "Basket" : "0x4", "Moving" : "0x20", "Sliders" : "10x3" },
+                "Totals" : { "Basket" :  "12", "Moving" :   "20", "Sliders" :  "240" }}]       
+        if i == 0: return data[0]
+        else:      return data[1]
+
     def send_test_board(self):
         # Generates a test pattern for the score board to
         # make sure no features are broken when changing css/js/html.
@@ -92,10 +104,16 @@ class ScoreManager():
             self.score["Red"]["CheckMarks"] = self.set_checks(False, False, False, False, False)
             self.score["Blue"]["AutoScore"] = self.set_autoscore(False, False, False, 0)
             self.score["Red"]["AutoScore"] = self.set_autoscore(False, False, False, 0)
+            self.score["Blue"]["Grid"] = self.load_test_data(0)
+            self.score["Red"]["Grid"] = self.load_test_data(1)
         if bigcycle == 1:
             self.score["GameMode"] ="Count Down!!"
             self.score["TimerLabel"] = "Count Down"
             self.score["Timer"] = "9"
+            self.score["Blue"]["ShowLastLine"] = True
+            self.score["Red"]["ShowLastLine"] = True
+            self.score["Blue"]["Raking"] = "23"
+            self.score["Blue"]["Adjustment"] = "10"
         if bigcycle > 1:
             self.score["Timer"] = str(int(self.score["Timer"]) - 1)
         if bigcycle == 2:
@@ -109,6 +127,8 @@ class ScoreManager():
             self.score["Red"]["CheckMarks"] = self.set_checks(False, False, True, True, False)
             self.score["Blue"]["AutoScore"] = self.set_autoscore(True, False, True, 25)
             self.score["Red"]["AutoScore"] = self.set_autoscore(False, True, True, 0)
+            self.score["Red"]["Raking"] = "10"
+            self.score["Red"]["Adjustment"] = "23"
         if bigcycle == 5:
             self.score["Blue"]["TeamName"] = "Cowboys"
             self.score["Red"]["TeamName"] = "Lawyers"
@@ -116,10 +136,14 @@ class ScoreManager():
             self.score["TimerLabel"] = "TeleOp"
             self.score["Red"]["GameElement"]["Moving"] = False
             self.score["Blue"]["GameElement"]["Moving"] = False
+            self.score["Blue"]["Grid"] = self.load_test_data(1)
+            self.score["Red"]["Grid"] = self.load_test_data(0)
         if bigcycle == 7:
             self.score["GameMode"] = "Error"
             self.score["Blue"]["CheckMarks"] = self.set_checks(True, True, True, True, False)
             self.score["Red"]["CheckMarks"] = self.set_checks(True, True, True, True, True)
+            self.score["Blue"]["ShowLastLine"] = False
+            self.score["Red"]["ShowLastLine"] = False
         if bigcycle == 8:
             self.score["GameMode"] = "PostGame"
             self.score["TimerLabel"] = "Finished"

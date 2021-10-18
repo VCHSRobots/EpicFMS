@@ -33,6 +33,10 @@ function vis_on(element) {
     element.style.visibility = "visible";
 }
 
+function load_grid_data_element(id, value) {
+    document.getElementById(id).innerHTML = value;
+}
+
 // Fills the entire scoreboard, including turning on and off features.  All
 // this is based on the json data prepared by score_manager.py in the server.
 function fill_score_board(data) {
@@ -50,7 +54,7 @@ function fill_score_board(data) {
     // Put up the timmer stuff
     document.getElementById("timerlabel").innerHTML = data["TimerLabel"];
     document.getElementById("timervalue").innerHTML = data["Timer"];
-    
+
     // Put up the Team Names...
     document.getElementById("blueteamname").innerHTML = data["Blue"]["TeamName"];
     document.getElementById("redteamname").innerHTML = data["Red"]["TeamName"];
@@ -131,6 +135,44 @@ function fill_score_board(data) {
     ecm = document.getElementById("redsliding3cm");
     if (data["Red"]["CheckMarks"]["Slider3"]) vis_on(ecm);
     else                                       vis_off(ecm);
+
+    // Fill the Grid
+    load_grid_data_element("blueautobasket",     data["Blue"]["Grid"]["Auto"]["Basket"]);
+    load_grid_data_element("blueautomoving",     data["Blue"]["Grid"]["Auto"]["Moving"]);
+    load_grid_data_element("blueautosliders",    data["Blue"]["Grid"]["Auto"]["Sliders"]);
+    load_grid_data_element("blueteleopbasket",   data["Blue"]["Grid"]["TeleOp"]["Basket"]);
+    load_grid_data_element("blueteleopmoving",   data["Blue"]["Grid"]["TeleOp"]["Moving"]);
+    load_grid_data_element("blueteleopsliders",  data["Blue"]["Grid"]["TeleOp"]["Sliders"]);
+    load_grid_data_element("blueendgamebasket",  data["Blue"]["Grid"]["EGame"]["Basket"]);
+    load_grid_data_element("blueendgamemoving",  data["Blue"]["Grid"]["EGame"]["Moving"]);
+    load_grid_data_element("blueendgamesliders", data["Blue"]["Grid"]["EGame"]["Sliders"]);
+    load_grid_data_element("bluetotalbasket",    data["Blue"]["Grid"]["Totals"]["Basket"]);
+    load_grid_data_element("bluetotalmoving",    data["Blue"]["Grid"]["Totals"]["Moving"]);
+    load_grid_data_element("bluetotalsliders",   data["Blue"]["Grid"]["Totals"]["Sliders"]);
+    load_grid_data_element("redautobasket",      data["Red"]["Grid"]["Auto"]["Basket"]);
+    load_grid_data_element("redautomoving",      data["Red"]["Grid"]["Auto"]["Moving"]);
+    load_grid_data_element("redautosliders",     data["Red"]["Grid"]["Auto"]["Sliders"]);
+    load_grid_data_element("redteleopbasket",    data["Red"]["Grid"]["TeleOp"]["Basket"]);
+    load_grid_data_element("redteleopmoving",    data["Red"]["Grid"]["TeleOp"]["Moving"]);
+    load_grid_data_element("redteleopsliders",   data["Red"]["Grid"]["TeleOp"]["Sliders"]);
+    load_grid_data_element("redendgamebasket",   data["Red"]["Grid"]["EGame"]["Basket"]);
+    load_grid_data_element("redendgamemoving",   data["Red"]["Grid"]["EGame"]["Moving"]);
+    load_grid_data_element("redendgamesliders",  data["Red"]["Grid"]["EGame"]["Sliders"]);
+    load_grid_data_element("redtotalbasket",     data["Red"]["Grid"]["Totals"]["Basket"]);
+    load_grid_data_element("redtotalmoving",     data["Red"]["Grid"]["Totals"]["Moving"]);
+    load_grid_data_element("redtotalsliders",    data["Red"]["Grid"]["Totals"]["Sliders"]);
+
+    // Last Line
+    var eline = document.getElementById("bluelastscoreline");
+    if (data["Blue"]["ShowLastLine"]) vis_on(eline);
+    else                              vis_off(eline);
+    document.getElementById("bluerakevalue").innerHTML = data["Blue"]["Raking"]
+    document.getElementById("blueadjvalue").innerHTML = data["Blue"]["Adjustment"]
+    eline = document.getElementById("redlastscoreline");
+    if (data["Red"]["ShowLastLine"]) vis_on(eline);
+    else                             vis_off(eline);
+    document.getElementById("redrakevalue").innerHTML = data["Red"]["Raking"]
+    document.getElementById("redadjvalue").innerHTML =  data["Red"]["Adjustment"]
 
     // Put up the win-tie-lose banners
     blue_banner = document.getElementById("bluewinframe");
