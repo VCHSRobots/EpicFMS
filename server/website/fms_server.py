@@ -49,6 +49,9 @@ def setup():
       print("Enable = ", enable)
       if enable == 1: basket_unit.turn_motor_on()
       else:           basket_unit.turn_motor_off()
+    basketmode = request.args.get("basketmode", "dummy")
+    if basketmode != "dummy":
+      basket_unit.set_game_mode(basketmode)
     return render_template('admin.html', **dummy_params)
 
   @webapp.route("/basket")

@@ -26,14 +26,63 @@
         <div id="passwordinputdiv"><input id="passwordbox" type="password"></div>
         <div id="passwordbuttondiv"><button id="passwordbutton" onclick="sendpassword()">Submit</button></div>
       </div>
+      
       <div id="mainarea" style="visibility: hidden;">
-        <div id="hits" class="param">
-          <div id="hitslabel" class="param_label">Hits: </div>
-          <div id="hitsvalue" class="param_value">0</div>
+        <div id="scorearea">
+          <div id="gamemodediv">Dummy</div>
+          <div id="clockdiv">00</div> 
+          <div class="scorediv">
+            <div id="bluescore" class="scoreside"><div class="scorelabel">Blue</div><div id="bluescore" class="scorevalue">0</div></div>
+            <div id="redscore" class="scoreside"><div class="scorelabel">Red</div><div id="redscore" class="scorevalue">0</div></div>
+          </div>
         </div>
-        <div style="clear: both;"></div>
-        <button id="motoron" class="controlbutton" onclick="setmotor(1)">Motor On</button>
-        <button id="motoroff" class="controlbutton" onclick="setmotor(0)">Motor Off</button>
+        <div id="tabarea">
+          <div id="tabbar" class="tab">
+            <button class="tabbutton active" onclick="changetab(event, 'gametab')">Game</button>
+            <button class="tabbutton" onclick="changetab(event, 'setuptab')">Setup</button>
+            <button class="tabbutton" onclick="changetab(event, 'baskettab')">Baskets</button>
+            <button class="tabbutton" onclick="changetab(event, 'slidertab')">Sliders</button>
+            <button class="tabbutton" onclick="changetab(event, 'movingtab')">Movers</button>
+          </div>
+          
+          <div id="gametab" class="tabcontent">Game Tab</div>
+          
+          <div id="setuptab" class="tabcontent">Setup Tab</div>
+
+          <div id="baskettab" class="tabcontent">
+              BasketTab
+              <div id="hits" class="param">
+                <div id="hitslabel" class="param_label">Hits: </div>
+                <div id="hitsvalue" class="param_value">0</div>
+              </div>
+            <div style="clear: both;"></div>
+            <button id="motoron" class="controlbutton" onclick="setmotor(1)">Motor On</button>
+            <button id="motoroff" class="controlbutton" onclick="setmotor(0)">Motor Off</button> 
+            <div style="clear: both;"></div>
+            <select id="basketgamemode" name="gamemode">
+                <option vaoue="none">none</option>
+                <option vaoue="powerup">powerup</option>
+                <option vaoue="uniterror">uniterror</option>
+                <option vaoue="wifiwait">wifiwait</option>   
+                <option vaoue="practice">practice</option>
+                <option vaoue="standby">standby</option>
+                <option vaoue="countdown">countdown</option>
+                <option vaoue="auto">auto</option>
+                <option vaoue="teleop">teleop</option>
+                <option vaoue="matchfinal">matchfinal</option>
+                <option vaoue="postwait">postwait</option>
+                <option vaoue="postresult">postresult</option>
+                <option vaoue="fmserror">fmserror</option>
+                <option vaoue="fmslost">fmslost</option>
+            </select> 
+            <button id="setmode" class="controlbutton" onclick="setbasketmode()">Set Mode</button>
+            <div style="clear: both;"></div>
+          </div>
+          
+          <div id="slidertab" class="tabcontent">Slider Tab</div>
+          
+          <div id="movingtab" class="tabcontent">Mover Tab</div>
+       </div>
       </div>
     </div>
   </body>

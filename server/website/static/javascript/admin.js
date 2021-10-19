@@ -22,6 +22,7 @@ function loadStatusData() {
 // repeating timer that calls load score once per second.
 function init_loading() {
     setInterval(loadStatusData, 1000)
+    document.getElementById("gametab").style.display = "block"
 }
 
 function vis_off(id) {
@@ -51,6 +52,23 @@ function fill_admin_status(data) {
     set_value("hitsvalue", nhits)
 }
 
+function changetab(evt, tabname) {
+    var i, tabcontentdivs, tabbuttons;
+    // Turn off all divs under the tab bar
+    tabcontentdivs = document.getElementsByClassName("tabcontent");
+    for (i = 0; i < tabcontentdivs.length; i++) {
+        tabcontentdivs[i].style.display = "none";
+    }
+    // Set all tab buttons to inactive by manipulating the classes they belong to
+    tabbuttons = document.getElementsByClassName("tabbutton");
+    for (i = 0; i < tabbuttons.length; i++) {
+        tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
+    }
+    // Turn on the tab button and content div for that button
+    document.getElementById(tabname).style.display = "block";
+    evt.currentTarget.className += " active";
+}
+
 function sendpassword() {
     var text = document.getElementById("passwordbox").value
     var url = "admin?pw=" + text
@@ -59,9 +77,18 @@ function sendpassword() {
         .catch(function (err) { console.log("Unable to send password. Error: " + err)});
 }
 
+// Functions for the basket tab
 function setmotor(enable) {
     var url = "admin?motor=" + enable
     fetch(url)
         .then(function (data) { console.log("Motor request sent to server.")})
         .catch(function (err) { console.log("Unable to send motor request. Error: " + err)});
+}
+
+function setbasketmode() {
+    var sel = document.getElementById("basketgamemode");
+    var url = "admin?basketmode=" + sel.value 
+    fetch(url)
+        .then(function (data) { console.log("Basket mode request sent to server.")})
+        .catch(function (err) { console.log("Unable to send basket mode request. Error: " + err)});
 }

@@ -9,10 +9,33 @@
 #passwordbutton {height: 34px; font-size: 20pt;}
 
 #mainarea {font-size: 20pt; border: 4px; border-style: solid; border-color: yellow; width: 1000px; height: 500px;
-margin-left: 100px; position: relative; top: -100px;}
+    margin-left: 100px; position: relative; top: -100px;}
+
+#tabarea {width: 1000px; height: 500px; position: relative; top: -152px;}
+#tabbar {overflow: hidden; border: 1px solid #ccc; background-color: #f1f1f1;}
+.tabbutton {float: left; background-color: inherit; border: none; outline: none; cursor: pointer;
+  padding: 14px 16px; transition: 0.3s; font-size: 17px; }
+.tabbutton button:hover {background-color: #ddd; }  /* causes a hover effect over tab buttons */
+.tabbutton.active {background-color: #ccc;}  /* causes active tab button to be darker */
 
 .param {margin-top: 5px; margin-left: 10px;}
 .param_label {float: left; margin-left: 10px; color: yellow; font-size: 16pt; position: relative; top: 4px;}
 .param_value {float: left; margin-left: 10px; width: 100px; height: 20px; font-size: 18pt; color: white; }
 .controlbutton {width: 140px; height: 30px; font-size: 16pt; color: black; font-weight: bold; 
     margin-left: 30px; margin-top: 20px;}
+
+#scorearea {position: relative; top: -180px; left: 300px; width: 400px; height: 150px;
+border: none; }
+#gamemodediv {text-align: left; width: 200px; position: relative; top: 10px; left: 20px;}
+#clockdiv {color: white; font-size: 30pt; width: 150px; height: 30px; 
+    position: relative; top: -25px; left: 300px; }
+.scoreside {float: left; margin-left: 20px; border: 2px solid; width: 150px; height: 70px;}
+#bluescore {background-color: #9191ca;}
+#redscore {background-color: #e48181;}
+.scorelabel {font-size: 16pt; text-align: center; color: white}
+.scorevalue {font-size: 30pt; text-align: center; color: black;}
+
+.tabcontent {display: none;}
+
+#basketgamemode {font-size: 16pt; margin-left: 30px;}
+#setmode {margin-left: 40px;}
