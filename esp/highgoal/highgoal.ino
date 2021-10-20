@@ -69,6 +69,7 @@ Cmdargs cmd_args;
 
 void setup(void) {
   Serial.begin(115200);
+  for(int i = 0; i < 10; i++) { Serial.println("."); delay(200);}
   delay(500);
   Serial.println(" ");  
   Serial.println("Epic Game Slave Device For Basket Target.");
@@ -176,7 +177,8 @@ void loop() {
   mainloop_count++;
   static int lastmode = SW_UNDEFINED;
   mode = digitalRead(PIN_GMODE);
-  if (mode != lastmode) {
+  mode = SW_RUN; //Undo please
+  if (mode != lastmode) { 
     lastmode = mode;
     if (mode == SW_OFFLINE) {
         hitdetector.start_selftest(); // Start with clearing errors.
