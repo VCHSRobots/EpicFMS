@@ -83,10 +83,24 @@ void NeoConductor::stage_basket_online(Neo_Basket_Params *p, bool same, uint32_t
              show_one(last_side, 200, 0, 0);
              _delay_time = 100;
              last_side++;
-             char lineout[50];
-             sprintf(lineout,"i=%d",last_side);
-             Serial.println(lineout);
             return;
+        case GMODE_UNITERR:
+            update_count++;
+            if (update_count < 1) { _delay_time = 10; return;
+            show_solidcolor(0, 0, 0);
+            }
+            update_count = 0;
+             if (last_side>_np) { last_side=0; return;}
+             show_one(last_side, 150, 255, 0);
+             _delay_time = 10;
+             last_side++;
+             return;
+        case GMODE_PRACTICE:
+            if (last_side> 254) { last_side=0; return;}
+             show_solidcolor(0, 0, last_side);
+             _delay_time = 10;
+             last_side++;
+             return;
         default: // All other modes for now... pink blink
             last_side++;
             if (last_side == 1) {

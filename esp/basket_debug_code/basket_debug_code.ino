@@ -6,7 +6,7 @@
 
 #include <Adafruit_NeoPixel.h>
 #include <Servo.h>
-#define PIN_NEO     4  // D2/G4 -- On NEO2 Header -- 
+#define PIN_NEO     5  // D2/G4 -- On NEO2 Header -- 
 #define PIN_IRE     1  // D10/TX/G1 -- IR Emitter
 #define PIN_MODE    5  // D1/G5 -- On NEO1 Header --
 #define PIN_PWM    13  // D7/G13 -- PWM via 74125 buffer
@@ -51,47 +51,47 @@ void setup() {
   pixels1.begin();
   show_color(0, 0, 128);
   delay(100);
-
-  //pinMode(PIN_IRE, OUTPUT);
-  //digitalWrite(PIN_IRE, HIGH);
-
-  pinMode(PIN_IRD, INPUT);
-  pinMode(PIN_MODE, INPUT);
-
-  pinMode(PIN_A, INPUT);
-  pinMode(PIN_B, INPUT);
-  attachInterrupt(PIN_A, isr_encoderA, CHANGE);
-  attachInterrupt(PIN_B, isr_encoderB, CHANGE);
-
-  servo.attach(PIN_PWM);
-  servo.writeMicroseconds(1500);  // This should be zero rotation.
 }
+//   //pinMode(PIN_IRE, OUTPUT);
+//   //digitalWrite(PIN_IRE, HIGH);
 
-ICACHE_RAM_ATTR void isr_encoderA() {
-  isrcnt++;
-  int a = digitalRead(PIN_A);
-  int b = digitalRead(PIN_B);
-  if (a == HIGH) {
-      if (b == LOW) encoder_position++;
-      else encoder_position--;
-  } else {
-      if (b == LOW) encoder_position--;
-      else encoder_position++;
-  }
-}
+//   pinMode(PIN_IRD, INPUT);
+//   pinMode(PIN_MODE, INPUT);
 
-ICACHE_RAM_ATTR void isr_encoderB() {
-  isrcnt++;
-  int a = digitalRead(PIN_A);
-  int b = digitalRead(PIN_B);
-  if (b == HIGH) {
-      if (a == HIGH) encoder_position++;
-      else encoder_position--;
-  } else {
-      if (a == LOW) encoder_position--;
-      else encoder_position++;
-  }
-}
+//   pinMode(PIN_A, INPUT);
+//   pinMode(PIN_B, INPUT);
+//   attachInterrupt(PIN_A, isr_encoderA, CHANGE);
+//   attachInterrupt(PIN_B, isr_encoderB, CHANGE);
+
+//   servo.attach(PIN_PWM);
+//   servo.writeMicroseconds(1500);  // This should be zero rotation.
+// }
+
+// ICACHE_RAM_ATTR void isr_encoderA() {
+//   isrcnt++;
+//   int a = digitalRead(PIN_A);
+//   int b = digitalRead(PIN_B);
+//   if (a == HIGH) {
+//       if (b == LOW) encoder_position++;
+//       else encoder_position--;
+//   } else {
+//       if (b == LOW) encoder_position--;
+//       else encoder_position++;
+//   }
+// }
+
+// ICACHE_RAM_ATTR void isr_encoderB() {
+//   isrcnt++;
+//   int a = digitalRead(PIN_A);
+//   int b = digitalRead(PIN_B);
+//   if (b == HIGH) {
+//       if (a == HIGH) encoder_position++;
+//       else encoder_position--;
+//   } else {
+//       if (a == LOW) encoder_position--;
+//       else encoder_position++;
+//   }
+// }
 
 //void loop() {
 //   // put your main code here, to run repeatedly:
@@ -113,23 +113,33 @@ ICACHE_RAM_ATTR void isr_encoderB() {
 //   }
 //}
 
+// void loop() {
+//   if(millis() - lastlooptime < 50) return;
+//   lastlooptime = millis();
+//   if (lastpossition != encoder_position) {
+//     lastpossition = encoder_position;
+//     ncnt++;
+//     if (last_mode == LOW) show_one(ncnt);
+//   } 
+//   int current_mode = digitalRead(PIN_MODE);
+//   if (current_mode != last_mode) {
+//     last_mode = current_mode;
+//     if (digitalRead(PIN_MODE) == HIGH) {
+//       show_color(0, 0, 128);
+//       servo.writeMicroseconds(1500);
+//     } else {
+//       show_one(ncnt);
+//       servo.writeMicroseconds(1400);
+//     }
+//   }
+// }  
+
 void loop() {
-  if(millis() - lastlooptime < 50) return;
-  lastlooptime = millis();
-  if (lastpossition != encoder_position) {
-    lastpossition = encoder_position;
-    ncnt++;
-    if (last_mode == LOW) show_one(ncnt);
-  } 
-  int current_mode = digitalRead(PIN_MODE);
-  if (current_mode != last_mode) {
-    last_mode = current_mode;
-    if (digitalRead(PIN_MODE) == HIGH) {
-      show_color(0, 0, 128);
-      servo.writeMicroseconds(1500);
-    } else {
-      show_one(ncnt);
-      servo.writeMicroseconds(1400);
-    }
-  }
-}  
+  delay(500);
+  Serial.println("HI");
+  show_color(255, 0, 0);
+  delay(500);
+  show_color(0, 255, 0);
+  delay(500);
+  show_color(0, 0, 255);
+}
