@@ -52,6 +52,15 @@ def setup():
     basketmode = request.args.get("basketmode", "dummy")
     if basketmode != "dummy":
       basket_unit.set_game_mode(basketmode)
+    testmode = request.args.get("testscoreboard", "dummy")
+    if testmode != "dummy":
+      if testmode == 1:
+        scoreoutput.testing(True)
+        print("setting test output to true")
+      else: 
+        print("setting test output to false")
+        scoreoutput.testing(False)
+        scoreoutput.clear()
     return render_template('admin.html', **dummy_params)
 
   @webapp.route("/basket")

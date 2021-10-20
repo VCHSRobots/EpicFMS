@@ -73,7 +73,7 @@ function sendpassword() {
     var text = document.getElementById("passwordbox").value
     var url = "admin?pw=" + text
     fetch(url)
-        .then(function (data) { console.log("pw sent to server.")})
+        .then(function () { console.log("pw sent to server.")})
         .catch(function (err) { console.log("Unable to send password. Error: " + err)});
 }
 
@@ -81,7 +81,7 @@ function sendpassword() {
 function setmotor(enable) {
     var url = "admin?motor=" + enable
     fetch(url)
-        .then(function (data) { console.log("Motor request sent to server.")})
+        .then(function () { console.log("Motor request sent to server.")})
         .catch(function (err) { console.log("Unable to send motor request. Error: " + err)});
 }
 
@@ -89,6 +89,16 @@ function setbasketmode() {
     var sel = document.getElementById("basketgamemode");
     var url = "admin?basketmode=" + sel.value 
     fetch(url)
-        .then(function (data) { console.log("Basket mode request sent to server.")})
+        .then(function () { console.log("Basket mode request sent to server.")})
         .catch(function (err) { console.log("Unable to send basket mode request. Error: " + err)});
+}
+
+function sendtestcb() {
+  var cb = document.getElementById("testscoreboard");
+  var url = "admin?scoretestmode="
+  if (cb.checked) url += "1";
+  else            url += "0";
+  fetch(url)
+      .then(function () { console.log("Test mode request sent to server.")})
+      .catch(function (err) { console.log("Unable to send test mode request. Error: " + err)});
 }

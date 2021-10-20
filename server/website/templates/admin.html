@@ -45,8 +45,14 @@
             <button class="tabbutton" onclick="changetab(event, 'movingtab')">Movers</button>
           </div>
           
-          <div id="gametab" class="tabcontent">Game Tab</div>
-          
+          <div id="gametab" class="tabcontent">
+            <div class="inputwidget">
+              <div class="cblabel">Test score board</div> 
+              <input class="cbinput" id="testscoreboard" type="checkbox">
+              <button class="smallbutton" id="submittestscoreboard" onclick="sendtestcb(event)">change</button>
+            </div>
+          </div>
+       
           <div id="setuptab" class="tabcontent">Setup Tab</div>
 
           <div id="baskettab" class="tabcontent">

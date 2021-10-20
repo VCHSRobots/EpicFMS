@@ -39,3 +39,8 @@ border: none; }
 
 #basketgamemode {font-size: 16pt; margin-left: 30px;}
 #setmode {margin-left: 40px;}
+
+.inputwidget {margin-left: 10px; margin-top: 10px;font-size: 16pt; color: lightblue}
+.cblabel {float: left;}
+.cbinput {margin-left: 10px; width: 15px; height: 15px;}
+.smallbutton {margin-left: 10px; font-size: 12pt; width: 100px; height: 25px;}

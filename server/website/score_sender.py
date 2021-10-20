@@ -53,6 +53,16 @@ class ScoreSender():
     def testing(self, enable):
         self.doing_test = enable 
 
+    def clear(self):
+      self.score["Title"] = "FOAM BALL BASH"
+      self.score["GameMode"] = "Standby"
+      self.score["TimerLabel"] = "Off"
+      self.score["Timer"] = "0"
+      self.score["Blue"] = TeamScore().get_score()
+      self.score["Red"] = TeamScore().get_score()
+      self.score["Blue"]["TeamName"] = "Blue"
+      self.score["Blue"]["TeamName"] = "Red"
+
     def update(self):
         # Update will be called about 10 Hz.  
         self.update_count += 1
