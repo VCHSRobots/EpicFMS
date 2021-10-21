@@ -22,10 +22,15 @@ class BasketUnit():
         self.hits = 0            # Total number of hits recorded
         self.last_main_loop_count = 0 # main loop count at last update.
         self.last_nhits = 0      # last number of hits reported
-        self.validstatus = False
-        self.last_successful_status_update = 0.0
-        self.status_update_count = 0
+        self.validstatus = False # True if in last 10 secs we had a valid status
+        self.last_status_request = 0.0 # Time since a status was requested
+        self.last_successful_status_update = 0.0 # Time since a valid status was updated
+        self.status_update_count = 0 # Number of valid status received
         self.telp_to_update = 0
+        self.status_pending = False 
+        self.comm_channel_clear = True
+        self.time_of_channel_jam = 0
+ 
         self.command_pending = False 
         self.command = ""
         self.updatelock = threading.Lock()
@@ -49,27 +54,33 @@ class BasketUnit():
         nloop = 0
         while(True):
             # Do a fast loop here, polling for commands to send and for times to update
+            if self.validstatus:
+                if time.monotonic() - self.last_successful_status_update > 10.0: 
+                    self.validstatus = False
+            if not self.comm_channel_clear:
+                if time.monotonic() - self.time_of_channel_jam > 10.0:
+                    self.comm_channel_clear = True
             nloop += 1 
-            if nloop >= 5: 
-                nloop = 0
-                self.get_data()
-            self.cmdlock.acquire()
-            command_pending = self.command_pending 
-            cmd = self.command 
-            self.cmdlock.release()
-            if command_pending: 
-                okay = self.send_command(cmd)
-                if okay: 
-                    self.cmdlock.acquire()
-                    self.command_pending = False 
-                    self.cmdlock.release()
+            if nloop >= 5: nloop = 0
+            if self.comm_channel_clear and nloop == 0: self.get_data() 
+            if self.comm_channel_clear:
+                self.cmdlock.acquire()
+                command_pending = self.command_pending 
+                cmd = self.command 
+                self.cmdlock.release()
+                if command_pending: 
+                    okay = self.send_command(cmd)
+                    if okay: 
+                        self.cmdlock.acquire()
+                        self.command_pending = False 
+                        self.cmdlock.release()
             time.sleep(0.2)
 
     def send_command(self, cmd):
         # Attemps to send a command to the unit.
         try:
             url = "http://" + self.ip + "/command?" + cmd
-            rsp = requests.get(url, timeout=1)
+            rsp = requests.get(url, timeout=2)
             if rsp.status_code != 200:
                 self.progerror = 3
                 return False
@@ -78,6 +89,8 @@ class BasketUnit():
             rsp.close()
             print("Error: {0}".format(err))
             self.connected = False
+            self.comm_channel_clear = False 
+            self.time_of_channel_jam = time.monotonic()
             return True
         self.connected = True
         return True     
@@ -87,7 +100,7 @@ class BasketUnit():
         try:
             t0 = time.monotonic()
             url = "http://" + self.ip + "/status"
-            rsp = requests.get(url, timeout=1)
+            rsp = requests.get(url, timeout=2)
             if rsp.status_code != 200:
                 self.progerror = 3
                 return
@@ -96,6 +109,8 @@ class BasketUnit():
         except BaseException as err:  # if we knew all the ways this could fail, change this to be less overarching
             print("Error: {0}".format(err))
             self.connected = False
+            self.comm_channel_clear = False 
+            self.time_of_channel_jam = time.monotonic()
             return
         self.connected = True
         try:
@@ -107,7 +122,6 @@ class BasketUnit():
             if not k in temp_status.keys():
                 self.progerror = 1
                 return
-
         self.updatelock.acquire()
         self.status = temp_status
         self.validstatus = True

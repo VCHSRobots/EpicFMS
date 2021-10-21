@@ -177,7 +177,6 @@ void loop() {
   mainloop_count++;
   static int lastmode = SW_UNDEFINED;
   mode = digitalRead(PIN_GMODE);
-  mode = SW_RUN; //Undo please
   if (mode != lastmode) { 
     lastmode = mode;
     if (mode == SW_OFFLINE) {
