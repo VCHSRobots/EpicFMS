@@ -36,4 +36,4 @@ Finally, V1 boards are not numbered. (boo).
 | 11    | 10/21/21  | V3    |  No  | Y |    |Fails test. Gets really hot.|
 | 12    | 10/21/21  | V3    |  No  |   |    |Fails test.                 |
 | 13    | 10/21/21  | V3    |  No  |   |    |Completely Ruined.          |
-| 14    | 10/21/21  | V3    |  No  |   |    |Unfinished, needs ESP9266   |
+| 14    | 10/21/21  | V3    |  No  |   |    |Unfinished, needs ESP8266   |

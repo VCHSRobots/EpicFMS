@@ -1,43 +1,20 @@
-// pcb_tests_v5.ino -- testing v5 of pcb
+// slider_test.ino -- used to test and setup the slider targets.
 // dlb, oct 2021
 
-// This code tests version TWO of the pcb
-// that is based on schematic V5.
-//
-// WITH the following modifications:
-//  ** IRD_1 is rerouted to SD3. D10 is now unconnected.
-//  ** IRD_2 is rerouted to D2.  D9 is now unconnected.
-//  ** HITRST is rerouted to D0.  
-// 
-// This rework allows D9 and D10 to be completely 
-// dedicated to TX and RX, which makes debugging a lot
-// easier, and doesn't cause problems during flashing.
-//
-// Unfortuately, this means that the second NEO port
-// cannot be used, since, it will be driven by IRD_2.
-//
-// It also may mean that HITRST cannot be LOW on bootup.
+// This code tests version TWO/THREE of the PCB cards.
+// In this code, NEO1 is reassigned to control the SERVO.
 
-
-#include <Adafruit_NeoPixel.h>
+#include <Servo.h>
 
 #define VOLTSPERLSB 0.00753 // Volts per bit on analog sensor for V-Battery
 
-#define NEOMODE_SOLID      0
-#define NEOMODE_ALTERNATE  1
-#define NEOMODE_RUN        2
-#define NEOMODE_SHOWCOUNTS 3
-
-#define C_RED    0x00ff0000ul
-#define C_GREEN  0x0000ff00ul
-#define C_BLUE   0x000000fful
-#define C_BLACK  0x00000000ul
-#define C_YELLOW 0x00c0c000ul
-#define C_WHITE  0x00fffffful
+#define PW_CENTER 1500
+#define PW_LEFT    800
+#define PW_RIGHT  2300
 
 #define PIN_NONE    -1  // Means no pin assigned.
 #define PIN_HRST    16  // D0/G16 -- push button with pullup
-#define PIN_NEO1     5  // D1/G5 -- NEO LEDs, via buffer
+#define PIN_SERVO    5  // D1/G5 -- NEO LEDs, via buffer
 #define PIN_IRD2     4  // D2/G4 -- Takes over NEO2!
 #define PIN_IRE4     0  // D3/G0 -- IR Emitter via buffer
 #define PIN_IRE3     2  // D4/G2 -- IR Emitter via buffer
@@ -49,7 +26,7 @@
 #define PIN_GMODE    9  // SD2/G9  -- Switch with pullup
 #define NPIXELS 24
 
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NPIXELS, PIN_NEO1, NEO_GRB + NEO_KHZ800);
+Servo servo;
 uint32_t last_battery_udpate_time = millis();
 float vbattery = 0.0;  // Voltage reading on battery -- updated once per 0.5 sec
 volatile long count1 = 0;
@@ -63,6 +40,7 @@ volatile uint32_t last_dect_4_time = millis();
 long main_loop_count = 0;
 int sw1 = LOW;
 int sw2 = LOW;
+int last_pos; 
 
 void setup() {
   // put your setup code here, to run once:
@@ -70,8 +48,10 @@ void setup() {
   delay(500);
   Serial.println("Startup. Test for PCB V2, Schematic 5, with Mods.");
   delay(500);
-  pixels.begin();
-  show_color(0x00808080); // White at 1/2 brightness
+  Serial.println("Setting up servo.");
+  servo.attach(PIN_SERVO, 600, 2400);
+  servo.writeMicroseconds(PW_CENTER);
+
   pinMode(PIN_HRST, INPUT);
   pinMode(PIN_GMODE, INPUT);
 
@@ -101,21 +81,15 @@ void loop() {
   battery_update();
   sw1 = digitalRead(PIN_GMODE);
   sw2 = digitalRead(PIN_HRST);
-  if (sw1 == HIGH) {
-    if (sw2 == HIGH) neo_control(NEOMODE_SOLID, C_GREEN, C_BLACK);
-    else             neo_control(NEOMODE_RUN, C_WHITE, C_RED);
-  } else {
-    if (sw2 == HIGH) neo_control(NEOMODE_RUN, C_BLUE, C_BLACK);
-    else             neo_control(NEOMODE_SHOWCOUNTS, C_BLACK, C_BLACK);
-  }
+  control_servo(sw1);
   report();
 }
 
-void show_color(uint32_t c) {
-  for (int i = 0; i < NPIXELS; i++) {
-    pixels.setPixelColor(i, c);
-  }
-  pixels.show();
+void control_servo(int pos) {
+    if (pos == last_pos) return;
+    last_pos = pos;
+    if (pos == 0)  servo.writeMicroseconds(PW_LEFT);
+    else           servo.writeMicroseconds(PW_RIGHT);
 }
 
 // Reads the Battery Voltage
@@ -168,63 +142,3 @@ void report() {
   Serial.println(lineout);
 }
 
-
-uint32_t last_neo_time = millis();
-int neo_side_count = 0;
-uint32_t neo_delay = 0;
-int last_neo_mode = -1;
-uint32_t last_neo_c1 = -1;
-uint32_t last_neo_c2 = -1;
-void neo_control(int mode, uint32 c1, uint32 c2) {
-  uint32_t tnow = millis();
-  if(tnow - last_neo_time < neo_delay) {
-    if (last_neo_mode == mode && last_neo_c1 == c1 && last_neo_c2 == c2) return;
-    last_neo_mode = mode;
-    last_neo_c1 = c1;
-    last_neo_c2 = c2;
-  }
-  last_neo_time = tnow;
-  if (mode == NEOMODE_SOLID) {  // Solid Color
-    show_color(c1);
-    neo_delay = 200;
-  }
-  if (mode == NEOMODE_ALTERNATE) {
-    // Alternating solid colors.
-    neo_side_count++;
-    if(neo_side_count > 1) {
-      show_color(c1);
-      neo_side_count = 0; 
-    } else {
-      show_color(c2);
-    }
-    neo_delay = 100;
-    return;
-  }
-  if (mode == NEOMODE_RUN) {
-    neo_side_count++;
-    if (neo_side_count >= NPIXELS) neo_side_count = 0;
-    for(int i = 0; i < NPIXELS; i++) pixels.setPixelColor(i, c2);
-    pixels.setPixelColor(neo_side_count, c1);
-    pixels.show();
-    neo_delay = 50;
-    return;
-  }
-  if (mode == NEOMODE_SHOWCOUNTS) {
-    for(int i = 0; i < NPIXELS; i++) pixels.setPixelColor(i, C_BLACK);    
-    for (int idect = 0; idect < 4; idect++) {
-      int np = NPIXELS / 4;
-      int ip0 = idect * np;
-      int cnt = 0;
-      int c = 0;
-      switch (idect) {
-        case 0: cnt = count1; c = C_RED; break;
-        case 1: cnt = count2; c = C_GREEN; break;
-        case 2: cnt = count3; c = C_BLUE; break;
-        case 3: cnt = count4; c = C_YELLOW; break;
-      }
-      int n = cnt % np;
-      for (int i = 0; i < n; i++) pixels.setPixelColor(i + ip0, c);
-    }
-    pixels.show();
-  }
-}
