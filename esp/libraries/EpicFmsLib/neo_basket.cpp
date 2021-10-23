@@ -45,6 +45,18 @@ void NeoConductor::stage_basket_online(Neo_Basket_Params *p, bool same, uint32_t
                 int i = 20-last_side;
                 stage_groups_asymmetric(10-i, i, ENEO_BLACK, ENEO_BLUE);
             }
+        case GMODE_FMSLOST:
+            update_count++;
+            if (update_count < 10) { _delay_time = 50; return;}
+            update_count = 0;
+            last_side++;
+            if (last_side > 20) last_side = 0;
+            if(last_side <= 10) {
+                stage_groups_asymmetric(last_side, 10-last_side, ENEO_YELLOW, ENEO_BLACK);
+            } else {
+                int i = 20-last_side;
+                stage_groups_asymmetric(10-i, i, ENEO_BLACK, ENEO_YELLOW);
+            }
             show();
             _delay_time = 50;
             return;
