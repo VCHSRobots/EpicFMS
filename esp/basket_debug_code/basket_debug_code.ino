@@ -52,8 +52,8 @@ void setup() {
   show_color(0, 0, 128);
   delay(100);
 }
-//   //pinMode(PIN_IRE, OUTPUT);
-//   //digitalWrite(PIN_IRE, HIGH);
+  // pinMode(PIN_IRE, OUTPUT);
+  // digitalWrite(PIN_IRE, HIGH);
 
 //   pinMode(PIN_IRD, INPUT);
 //   pinMode(PIN_MODE, INPUT);

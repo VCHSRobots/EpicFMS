@@ -78,13 +78,13 @@ void NeoConductor::stage_basket_online(Neo_Basket_Params *p, bool same, uint32_t
             show();
             _delay_time = 50;
             return;
-        case GMODE_PWRUP:
+        case GMODE_PWRUP: // Fast Running red
              if (last_side>_np) { last_side=0; return;}
              show_one(last_side, 200, 0, 0);
-             _delay_time = 100;
+             _delay_time = 30;
              last_side++;
             return;
-        case GMODE_UNITERR:
+        case GMODE_UNITERR: // Super Fast running yellow
             update_count++;
             if (update_count < 1) { _delay_time = 10; return;
             show_solidcolor(0, 0, 0);
@@ -95,9 +95,66 @@ void NeoConductor::stage_basket_online(Neo_Basket_Params *p, bool same, uint32_t
              _delay_time = 10;
              last_side++;
              return;
-        case GMODE_PRACTICE:
-            if (last_side> 254) { last_side=0; return;}
+        case GMODE_PRACTICE: // Breathing blue
+            if (last_side> 200) { last_side=0; return;}
              show_solidcolor(0, 0, last_side);
+             _delay_time = 10;
+             last_side++;
+             return;
+        case GMODE_TELEOP: //Breathing Purple
+            if (last_side> 250) { last_side= 50; return;}
+             show_solidcolor(last_side - 50, 0, last_side);
+             _delay_time = 10;
+             last_side++;
+             return;
+        case GMODE_MATCHCOUNTDOWN: //red, yellow, blue, green
+        _delay_time = 1000;
+            if (update_count != 377) { last_side = 1; update_count = 377;}
+                if (last_side == 1){
+                    show_solidcolor(ENEO_RED);
+                    last_side++;
+                    return;
+                }
+                if (last_side == 2){
+                    show_solidcolor(ENEO_YELLOW);
+                    last_side++;
+                    return;
+                }
+                
+                if (last_side == 3){
+                    show_solidcolor(ENEO_BLUE);
+                    last_side++;
+                    return;
+                }
+                
+                if (last_side >= 4 & last_side <=6){
+                    show_solidcolor(ENEO_GREEN);
+                    last_side++;
+                    return;
+                }
+                if (last_side == 7){ last_side = 1;} //To cycle the program
+            return;
+        case GMODE_AUTO: //Dim White Running
+             if (last_side>_np) { last_side=0; return;}
+             show_one(last_side, ENEO_WHITE_DIM);
+             _delay_time = 30;
+             last_side++;
+            return;
+        case GMODE_MATCHFINAL: //END of match (for the last 30 secs of the match)
+            if (last_side == 1) { last_side = 0; show_solidcolor(ENEO_BLACK); _delay_time= 500; return;}
+            show_solidcolor( 150, 0, 255);
+            last_side =1;
+            _delay_time = 500;
+            return;
+        case GMODE_POSTWAIT: //red slow chasing
+            if (last_side > _np) { last_side=0; return;}
+             show_one(last_side, ENEO_GREEN_DIM);
+             _delay_time = 100;
+             last_side++;
+             return;
+        case GMODE_POSTRESULT:
+            if (last_side > _np) { last_side=0; return;}
+             show_one(last_side, random(0,255),random(0,255),random(0,255));
              _delay_time = 10;
              last_side++;
              return;
