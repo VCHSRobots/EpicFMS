@@ -5,18 +5,19 @@ For Dals Desktop:
 
 "C:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\tools\\xtensa-lx106-elf-gcc\\3.0.4-gcc10.3-1757bed/bin/xtensa-lx106-elf-g++"
  
-"-IC:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2/tools/sdk/include" 
-"-IC:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2/tools/sdk/lwip2/include" 
-"-IC:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2/tools/sdk/libc/xtensa-lx106-elf/include" 
-"-IC:\\Users\\dalbr\\AppData\\Local\\Temp\\arduino-sketch-884EBE1E396AA575A40A2A2FBEA15E6B/core" 
-"-IC:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\cores\\esp8266" 
-"-IC:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\variants\\nodemcu" 
-"-IC:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\libraries\\ESP8266WiFi\\src" 
-"-IC:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\libraries\\ESP8266WebServer\\src" 
-"-IC:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\libraries\\ESP8266mDNS\\src" 
-"-Ic:\\Users\\dalbr\\Documents\\Projects\\Robots_Fall_2021\\EpicFMS\\esp\\libraries\\EpicFmsLib" 
-"-Ic:\\Users\\dalbr\\Documents\\Projects\\Robots_Fall_2021\\EpicFMS\\esp\\libraries\\Adafruit_NeoPixel" 
-"-IC:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\libraries\\Servo\\src"
+"C:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2/tools/sdk/include",
+"C:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2/tools/sdk/lwip2/include", 
+"C:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2/tools/sdk/libc/xtensa-lx106-elf/include", 
+"C:\\Users\\dalbr\\AppData\\Local\\Temp\\arduino-sketch-884EBE1E396AA575A40A2A2FBEA15E6B/core", 
+"C:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\cores\\esp8266", 
+"C:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\variants\\nodemcu", 
+"C:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\libraries\\ESP8266WiFi\\src", 
+"C:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\libraries\\ESP8266WebServer\\src", 
+"C:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\libraries\\ESP8266mDNS\\src", 
+"C:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\libraries\\EEPROM",
+"c:\\Users\\dalbr\\Documents\\Projects\\Robots_Fall_2021\\EpicFMS\\esp\\libraries\\EpicFmsLib", 
+"c:\\Users\\dalbr\\Documents\\Projects\\Robots_Fall_2021\\EpicFMS\\esp\\libraries\\Adafruit_NeoPixel", 
+"C:\\Users\\dalbr\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\libraries\\Servo\\src"
 
 -U__STRICT_ANSI__
 -w

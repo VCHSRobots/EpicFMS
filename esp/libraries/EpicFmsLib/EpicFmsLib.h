@@ -11,6 +11,7 @@
 #include "neo_conductor.h"
 #include "basketmotor.h"
 #include "hitdetector.h"
+#include "hitdetector4.h"
 #include "quadencoder.h"
 #include "gamemodes.h"
 #include "epicfmswifi.h"
