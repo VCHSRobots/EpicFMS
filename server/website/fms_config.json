@@ -1,0 +1,68 @@
+{
+  "baskets": [
+    {
+      "name": "love bill",
+      "ip": "10.0.2.41",
+      "enabled": true
+    },
+    {
+      "name": "Unit B",
+      "ip": "",
+      "enabled": false
+    },
+    {
+      "name": "Unit C",
+      "ip": "",
+      "enabled": false
+    },
+    {
+      "name": "Unit D",
+      "ip": "",
+      "enabled": false
+    }
+  ],
+  "sliders": [
+    {
+      "name": "Unit A",
+      "ip": "10.0.2.42",
+      "enabled": true
+    },
+    {
+      "name": "Unit B",
+      "ip": "",
+      "enabled": false
+    },
+    {
+      "name": "Unit C",
+      "ip": "",
+      "enabled": false
+    },
+    {
+      "name": "Unit D",
+      "ip": "",
+      "enabled": false
+    },
+    {
+      "name": "Unit E",
+      "ip": "",
+      "enabled": false
+    },
+    {
+      "name": "Unit F",
+      "ip": "",
+      "enabled": false
+    }
+  ],
+  "movers": [
+    {
+      "name": "Unit A",
+      "ip": "",
+      "enabled": false
+    },
+    {
+      "name": "Unit B",
+      "ip": "",
+      "enabled": false
+    }
+  ]
+}

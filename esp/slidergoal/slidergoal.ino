@@ -183,10 +183,10 @@ void led_update(void) {
         return;
     }
     if (!fmswifi.is_connected()) {
-        if (led_cycle < 10) digitalWrite(PIN_ONBOARDLED, LED_ON);
-        else digitalWrite(PIN_ONBOARDLED, LED_ON);
+        if (led_cycle < 20) digitalWrite(PIN_ONBOARDLED, LED_ON);
+        else digitalWrite(PIN_ONBOARDLED, LED_OFF);
         led_cycle++;
-        if(led_cycle > 20) led_cycle = 0; 
+        if(led_cycle > 40) led_cycle = 0; 
         return;
     }
     // All seems okay.

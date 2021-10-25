@@ -3,5 +3,6 @@
         "interrupt.h": "c",
         "wiring_private.h": "c",
         "cstring": "cpp"
-    }
+    },
+    "githd.blameView.enabled": false
 }

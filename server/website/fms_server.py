@@ -11,6 +11,7 @@ import timercb
 import score_sender
 import time
 import security
+import settings
 
 mode_testing = True   # Set to test all features on the scoreboard
 webapp = Flask(__name__)
@@ -52,9 +53,10 @@ def setup():
     basketmode = request.args.get("basketmode", "dummy")
     if basketmode != "dummy":
       basket_unit.set_game_mode(basketmode)
-    testmode = request.args.get("testscoreboard", "dummy")
+    testmode = request.args.get("scoretestmode", "dummy")
+    print("testmode = ", testmode)
     if testmode != "dummy":
-      if testmode == 1:
+      if testmode == "1":
         scoreoutput.testing(True)
         print("setting test output to true")
       else: 
@@ -72,6 +74,10 @@ def setup():
   def rawscore():
       global loopcount, scoreoutput
       return scoreoutput.get_state()
+    
+  @webapp.route("/unitstatus")
+  def uintstatus():
+    pass
 
   # Rawstatus returns JSON text for the administration of the game
   @webapp.route("/rawstatus")
@@ -80,6 +86,12 @@ def setup():
     nhits = basket_unit.get_hits()
     status = {"LoggedIn" : okay, "Hits" : nhits}
     tout = json.dumps(status) 
+    return tout
+
+  #Returns the configuration settings as JSON
+  @webapp.route("/getconfig")
+  def rawconfig():
+    tout = json.dumps(settings.fms_config) 
     return tout
 
 # Main loop here.  Does work that is not the web server.
