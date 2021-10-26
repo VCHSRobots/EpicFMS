@@ -38,11 +38,11 @@
         </div>
         <div id="tabarea">
           <div id="tabbar" class="tab">
-            <button class="tabbutton active" onclick="changetab(event, 'gametab')">Game</button>
-            <button class="tabbutton" onclick="changetab(event, 'setuptab')">Setup</button>
-            <button class="tabbutton" onclick="changetab(event, 'baskettab')">Baskets</button>
-            <button class="tabbutton" onclick="changetab(event, 'slidertab')">Sliders</button>
-            <button class="tabbutton" onclick="changetab(event, 'movingtab')">Movers</button>
+            <button class="tabbutton active" onclick="change_tab(event, 'gametab')">Game</button>
+            <button class="tabbutton" onclick="change_tab(event, 'setuptab')">Setup</button>
+            <button class="tabbutton" onclick="change_tab(event, 'baskettab')">Baskets</button>
+            <button class="tabbutton" onclick="change_tab(event, 'slidertab')">Sliders</button>
+            <button class="tabbutton" onclick="change_tab(event, 'movingtab')">Movers</button>
           </div>
           
           <div id="gametab" class="tabcontent">
@@ -94,30 +94,63 @@
             <div class="unitbar">
               <div class="unitselectiondiv">
                 <div class="unittitle gplabel">Unit:</div>
-                <select id="sliderunitsel" class="unitsel" onchange="sliderunitchange()">
+                <select id="sliderunitsel" class="unitsel" onchange="fill_slider_elements()">
                   <option value="1">1</option>
                   <option value="1">2</option>
-                  <option value="1">3</option>
-                  <option value="1">4</option>
-                  <option value="1">5</option>
-                  <option value="1">6</option>
                 </select>
               </div>
               <div class="unitiptextdiv">
                 <div class="iplabel gplabel">IP Addr:</div>
-                <input type="text" class="iptextbox" id="sliderip" onchange='showchange("sliderip")'>
+                <input type="text" class="iptextbox" id="sliderip" onchange='make_dirty("sliderip")'>
               </div>
               <div class="unitnamediv">
                 <div class="namelabel gplabel">Name:</div>
-                <input type="text" class="nametextbox" id="slidername" onchange='showchange("slidername")'>
+                <input type="text" class="nametextbox" id="slidername" onchange='make_dirty("slidername")'>
               </div>
               <div class="unitenablediv">
                 <div class="enablelabel gplabel">Enable:</div> 
-                <input type="checkbox" id="sliderenablecb" class="cbinput" onchange='showchange("sliderenablecb")'>
+                <input type="checkbox" id="sliderenablecb" class="cbinput" onchange='make_dirty("sliderenablecb")'>
               </div>
               <div class="uintchangerefreshdiv">
-                <button class="gpbutton" id="sliderchangebutton" onclick="sliderconfigure()">Change</button>
-                <button class="gpbutton" id="sliderrefreshbutton" onclick="sliderrefresh()">Refresh</button>
+                <button class="gpbutton" id="sliderchangebutton" onclick="slider_configure()">Change</button>
+                <button class="gpbutton" id="sliderrefreshbutton" onclick="load_config()">Refresh</button>
+              </div>
+            </div>
+            <div style="clear: both;"></div>
+            <div id="slidercontrolbuttons">
+              <button class="scbutton" id="slideropenbutton" onclick="move_slider(1)">Open</button>
+              <button class="scbutton" id="slideropenbutton" onclick="move_slider(0)">Close</button>
+              <button class="scbutton" id="slideropenbutton" onclick="move_slider(-1)">Center</button>
+              <button class="scbutton" id="sliderselftestbutton" onclick="slider_selftest()">Selftest</button>
+            </div>
+            <div style="clear: both;"></div>
+            <div id="sliderstatusdiv">
+              <div class=gplabel id="sliderstatuslabel">Slider Status</div>
+              <button class="updatebutton" id="sliderstatusupdate" onclick="update_sliderstatus()">Update</button>
+              <textarea class="gptextarea" id="sliderstatus"></textarea>
+            </div>
+            <div id="sliderhitbox">
+              <div class="gplabel" id="sliderhitboxlabel">Hits</div>
+              <div id="sliderhitboxvalue">00</div>
+            </div>
+            <div id="sliderpwmbox">
+              <div id="sliderpwmboxlabel">PWM Settings</div>
+              <div class="pwmbar">
+                <div class="pwmlabel">Open</div>
+                <div class="pwmtextboxdiv">
+                  <input type="text" class="pwmtextbox" id="slideropenpwm" onchange='make_dirty("slideropenpwm")'>
+                </div>
+              </div>
+              <div class="pwmbar">
+                <div class="pwmlabel">Close</div>
+                <div class="pwmtextboxdiv">
+                  <input type="text" class="pwmtextbox" id="sliderclosepwm" onchange='make_dirty("sliderclosepwm")'>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div id="slidersavechangebuttons">
+                <button class="gpbutton" id="sliderchangepwmbutton" onclick='slider_set_pwm()'>Change</button>
+                <button class="gpbutton" id="slidersavebutton" onclick="slider_save_pwm()">Save</button>
               </div>
             </div>
           </div>

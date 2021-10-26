@@ -61,3 +61,26 @@ border: none; }
 .enablelabel {float: left; margin-top: 8px; font-size: 14pt;}
 .cbinput {margin-left: 10px; width: 18px; height: 18px; margin-top: 10px;}
 .uintchangerefreshdiv {float: left; margin-left: 40px;}
+
+#slidercontrolbuttons {margin-left: 80px; margin-top: 20px; margin-bottom: 10px; width: 100%; height: 50px;}
+.scbutton {float: left; margin-left: 20px; width: 100px; font-size: 16pt;}
+
+#sliderstatusdiv {float: left; margin-left: 100px; border: 2px solid #886060; width: 270px; height: 300px; }
+#sliderstatuslabel {color:  #dd999e; font-size: 12pt; margin-bottom: -20px; margin-top: 5px; margin-left: 10px;}
+#sliderstatusupdate {width: 50px; height: 20px; font-size: 9pt; position: relative; top: -8px; left: 190px;}
+#sliderstatus {margin-left: 10px; width: 240px; height: 250px;}
+
+#sliderhitbox {float: left; margin-left: 50px; border: 2px solid #886060; width: 80px; height: 100px; }
+#sliderhitboxlabel {color: #dd999e; font-size: 12pt; margin-left: 10px; margin-right: 10px; margin-top: 5px; }
+#sliderhitboxvalue {background-color: blue; color: white; font-size: 18pt; width: 40px; margin-left: 10px; 
+        text-align: center; margin-top: 10px;}
+
+#sliderpwmbox {float: left; margin-left: 50px; border: 2px solid #886060; width: 150px; height: 150px; }
+#sliderpwmboxlabel {color: #dd999e; font-size: 12pt; margin-left: 10px; margin-top: 5px;}
+.pwmbar {width: 250px; height: 40px;}
+.pwmlabel {float: left; olor: #dd999e; font-size: 12pt; margin-left: 10px; margin-right: 10px; margin-top: 10px;}
+.pwmtextboxdiv {float: left;}
+.pwmtextbox {width: 50px; height: 15px; font-size: 12pt;}
+#slidersavechangebuttons {margin-left: 10px;}
+
+

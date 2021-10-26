@@ -1,6 +1,7 @@
 // scoreboard.js -- Script behind the main scoreboard page. 
 var last_update = window.performance.now();
 var blink_count = 0;
+var config_data = null;  // Configuration data
 
 
 // Load status data in the background.
@@ -11,6 +12,7 @@ function loadStatusData() {
         })
         .then(function (data) {
             fill_admin_status(data);
+            load_slider_data();
         })
         .catch(function (err) {
             console.log('error: ' + err);
@@ -26,13 +28,19 @@ function init_loading() {
 }
 
 function vis_off(id) {
-    e = document.getElementById(id)
+    var e = document.getElementById(id)
     e.style.visibility = "hidden";
 }
 
 function vis_on(id) { 
-    e = document.getElementById(id)
+    var e = document.getElementById(id)
     e.style.visibility = "visible";
+}
+
+function is_tab_vis(id) { 
+    var e = document.getElementById(id)
+    if (e.style.display=="block") return true;
+    return false;
 }
 
 function set_value(id, v) {
@@ -52,7 +60,7 @@ function fill_admin_status(data) {
     set_value("hitsvalue", nhits)
 }
 
-function changetab(evt, tabname) {
+function change_tab(evt, tabname) {
     var i, tabcontentdivs, tabbuttons;
     // Turn off all divs under the tab bar
     tabcontentdivs = document.getElementsByClassName("tabcontent");
@@ -104,11 +112,6 @@ function settestcb() {
       .catch(function (err) { console.log("Unable to send test mode request. Error: " + err)});
 }
 
-function showchange(elemid) {
-    var elem = document.getElementById(elemid);
-    elem.style.backgroundColor = '#dd999e';
-}
-
 function load_config() {
     var url = "getconfig";
     fetch(url)
@@ -116,7 +119,8 @@ function load_config() {
             return response.json();
         })
         .then(function (data) {
-            fill_config_elements(data);
+            config_data = JSON.parse(JSON.stringify(data))
+            fill_config_elements();
         })
         .catch(function (err) {
             console.log('error: ' + err);
@@ -198,11 +202,66 @@ function setSelectionBox(selid, txt) {
     return false;
 }
 
-function fill_config_elements(data) {
+function make_dirty(elemid) {
+    var elem = document.getElementById(elemid);
+    elem.style.backgroundColor = '#dd999e';
+}
+
+function make_clean(elemid) {
+    var elem = document.getElementById(elemid);
+    elem.style.backgroundColor = '#ffffff';
+}
+
+function set_textbox(id, txt, makeclean) {
+    var elem = document.getElementById(id);
+    if (elem == null) {
+        console.log("Programming error. Bad id for text box (", id, ")");
+        return;
+    }
+    elem.value = txt;
+    if(makeclean) make_clean(id);
+}
+
+function set_interhtml(id, txt) {
+    var elem = document.getElementById(id);
+    if (elem == null) {
+        console.log("Programming error. Bad id for text box (", id, ")");
+        return;
+    }
+    elem.innerHTML = txt;
+}
+
+function set_checkbox(id, val, makeclean) {
+    var elem = document.getElementById(id);
+    if (elem == null) {
+        console.log("Programming error. Bad id for check box (", id, ")");
+        return;
+    }
+    elem.checked = val   
+}
+
+function get_selectionbox_value(id) {
+    var elem = document.getElementById(id);
+    if (elem == null) {
+        console.log("Programming error. Bad id for selection box (", id, ")");
+        return 0;
+    }  
+    return parseInt(elem.value)  
+}
+
+function fill_config_elements() {
     var sel = document.getElementById("sliderunitsel");
     var curindex = sel.value;
     clearSelBox(sel);
-    var nsliders = data["sliders"].length;
+    if (config_data === null) {
+        console.log("config data is null.")
+        // Clear all the page elements
+        set_textbox("slidername", "", true);
+        set_textbox("sliderip", "", true);
+        set_checkbox("sliderenablecb", false, true);
+        return;
+    }
+    var nsliders = config_data["sliders"].length;
     var i;
     for(i = 0; i < nsliders; i++) {
         var si = (i+1).toString();
@@ -210,9 +269,151 @@ function fill_config_elements(data) {
     }
     var okay = setSelectionBox("sliderunitsel", curindex);
     if (!okay) setSelectionBox("sliderunitsel", "1");
-    // Fill rest of page here.
+    fill_slider_elements();
 }
 
-function sliderunitchange() {
-    // Fill rest of page here too.
+function get_current_slider_unit_index() {
+    var indx = get_selectionbox_value("sliderunitsel");
+    indx = indx - 1;
+    var nsliders = config_data["sliders"].length;
+    if (indx < 0 || indx >= nsliders) {
+        console.log("Slider index out of range.");
+        return -1;
+    }
+    return indx;
+}
+
+function fill_slider_elements() {
+    indx = get_current_slider_unit_index();
+    if (indx < 0) {
+        // Clear all the page elements
+        set_textbox("slidername", "", true);
+        set_textbox("sliderip", "", true);
+        set_checkbox("sliderenablecb", false, true);
+        return;
+    }
+    set_textbox("slidername", config_data["sliders"][indx]["name"], true);
+    set_textbox("sliderip", config_data["sliders"][indx]["ip"], true);
+    set_checkbox("sliderenablecb", config_data["sliders"][indx]["enabled"], true);
+}
+
+function get_textbox_value(id) {
+    elem = document.getElementById(id);
+    if (elem == null) {
+        console.log("Programming Error. Text Box not found: (", id, ")");
+        return "";
+    }
+    return elem.value;
+}
+
+function get_checkbox_value(id) {
+    elem = document.getElementById(id);
+    if (elem == null) {
+        console.log("Programming Error. Text Box not found: (", id, ")");
+        return "";
+    }
+    return elem.checked;
+}
+
+function slider_configure() {
+    var indx = get_current_slider_unit_index();
+    if (indx < 0) return;
+    var map = {};
+    map["type"] = "sliders";
+    map["unit"] = indx;
+    map["ip"] = get_textbox_value("sliderip");
+    map["name"] = get_textbox_value("slidername");
+    map["enabled"] = get_checkbox_value("sliderenablecb");
+    var ss = btoa(JSON.stringify(map));
+    var url = "admin?config="+ss
+    fetch(url)
+        .then(function () { console.log("config change sent to server.");})
+        .then(function() {load_config();})
+        .catch(function (err) { console.log("Unable to change config. Error: " + err)});
+}
+
+function update_sliderstatus() {
+    var num = get_current_slider_unit_index();
+    var url = "/unitstatus?unittype=sliders&unitnum=" + num;
+    fetch(url)
+        .then(function(response) { return response.text(); })
+        .then(function (data) { set_textbox("sliderstatus", data); })
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
+function load_slider_data() {
+    if (!is_tab_vis("slidertab")) return;
+    var num = get_current_slider_unit_index();
+    if (num < 0) return;
+    var url = "/unitstatus?unittype=sliders&unitnum=" + num;
+    fetch(url)
+        .then(function(response) { return response.text(); })
+        .then(function(textdata) { fill_slider_tab(textdata); })
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
+function fill_slider_tab(textdata) {
+    set_textbox("sliderstatus", textdata); 
+    var data = JSON.parse(textdata);
+    var n = data["hits"]
+    if (typeof n === 'undefined') set_interhtml("sliderhitboxvalue", 0);
+    else                          set_interhtml("sliderhitboxvalue", n);
+}
+
+function move_slider(place) {
+    var num = get_current_slider_unit_index();
+    if (num < 0) return;
+    var url = "/admin?unittype=sliders&unitnum=" + num
+    if (place == -1) url = url + "&center=1";
+    if (place == 0) url = url + "&close=1";
+    if (place== 1) url = url + "&open=1";
+    fetch(url)
+        .then(function(response) { return})
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
+function slider_selftest() {
+    var num = get_current_slider_unit_index();
+    if (num < 0) return;
+    var url = "/admin?unittype=sliders&unitnum=" + num
+    url += "&selftest=1"
+    fetch(url)
+        .then(function(response) { return})
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
+function slider_resethits() {
+    var num = get_current_slider_unit_index();
+    if (num < 0) return;
+    var url = "/admin?unittype=sliders&unitnum=" + num
+    url += "&resethitst=1"
+    fetch(url)
+        .then(function(response) { return})
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
+function slider_set_pwm() {
+    var num = get_current_slider_unit_index();
+    if (num < 0) return;
+    var open_pwm = get_textbox_value("slideropenpwm");
+    var close_pwm = get_textbox_value("sliderclosepwm");
+    var baseurl = "/admin?unittype=sliders&unitnum=" + num
+    var url1 = baseurl + "&openpwm=" + open_pwm
+    var url2 = baseurl + "&closepwm=" + close_pwm
+    fetch(url1)
+        .then(function(response) { return})
+        .catch(function (err) { console.log('error: ' + err); return; })
+    fetch(url2)
+        .then(function(response) { return})
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
+function slider_save_pwm() {
+    var num = get_current_slider_unit_index();
+    if (num < 0) return;
+    var url = "/admin?unittype=sliders&unitnum=" + num
+    url += "&saveconfig=1"
+    fetch(url)
+        .then(function(response) { return})
+        .catch(function (err) { console.log('error: ' + err); return; })
 }

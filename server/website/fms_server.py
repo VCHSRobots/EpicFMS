@@ -6,9 +6,9 @@ from flask import Flask, render_template, request
 from threading import Event
 import json
 import datetime
-import basket_unit
 import timercb
 import score_sender
+import target_manager
 import time
 import security
 import settings
@@ -22,7 +22,9 @@ scoreoutput.update()
 scoreoutput.testing(True)  # Remove this for production 
 dummy_params = { "dummy" : 0}
 pw_manager = security.Security()
-basket_unit = basket_unit.BasketUnit()
+settings.load_settings()
+target_manager.set_up_targets()
+target_manager.begin_all()
 
 def setup():
   @webapp.route("/")
@@ -38,23 +40,20 @@ def setup():
 
   @webapp.route("/admin")
   def admin():
-    # Handle password attemps
+    # Handle password and password attemps
     pw = request.args.get("pw", "NOT-GIVEN")
     logout = request.args.get("logout", -1)
     if pw != "NOT-GIVEN":
-        pw_manager.attempt_login(request.remote_addr, pw)
+      pw_manager.attempt_login(request.remote_addr, pw)
+      return render_template('admin.html', **dummy_params)
     if logout != -1:
-        pw_manager.log_out(request.remote_addr)
-    if request.args.get("motor", -1) != -1:
-      enable = int(request.args.get("motor", 0))
-      print("Enable = ", enable)
-      if enable == 1: basket_unit.turn_motor_on()
-      else:           basket_unit.turn_motor_off()
-    basketmode = request.args.get("basketmode", "dummy")
-    if basketmode != "dummy":
-      basket_unit.set_game_mode(basketmode)
+      pw_manager.log_out(request.remote_addr)
+      return render_template('admin.html', **dummy_params)
+    if not pw_manager.is_loggedin(request.remote_addr):
+      return render_template('admin.html', **dummy_params)
+
+    # Temperarily handle general game stuff here
     testmode = request.args.get("scoretestmode", "dummy")
-    print("testmode = ", testmode)
     if testmode != "dummy":
       if testmode == "1":
         scoreoutput.testing(True)
@@ -63,6 +62,10 @@ def setup():
         print("setting test output to false")
         scoreoutput.testing(False)
         scoreoutput.clear()
+      return render_template('admin.html', **dummy_params)
+    
+    # Handle requests for target units in manager...
+    target_manager.process_admin_request(request) 
     return render_template('admin.html', **dummy_params)
 
   @webapp.route("/basket")
@@ -77,13 +80,15 @@ def setup():
     
   @webapp.route("/unitstatus")
   def uintstatus():
-    pass
+    j = target_manager.process_unitstatus_request(request) 
+    return j
 
   # Rawstatus returns JSON text for the administration of the game
+  # Temp for NOW.  MUST REDO.
   @webapp.route("/rawstatus")
   def rawstatus():
     okay = pw_manager.is_loggedin(request.remote_addr)
-    nhits = basket_unit.get_hits()
+    nhits, _ = target_manager.get_hits()
     status = {"LoggedIn" : okay, "Hits" : nhits}
     tout = json.dumps(status) 
     return tout
@@ -105,9 +110,6 @@ def mainloop():
 setup()
 looptimer_thread = timercb.TimerCB(mainloop, 0.100, doneevent)
 looptimer_thread.start()
-
-# Start other background activities
-basket_unit.begin()
 
 # Start the Web server here.
 webapp.run(host='0.0.0.0', port=80, debug=True)

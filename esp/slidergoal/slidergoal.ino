@@ -363,7 +363,7 @@ void on_status(char *json) {
   sprintf(lineout, "\"hits\" : %ld, \n", hitdetector.value());
   strncat(json, lineout, MAX_STATUS_CHARS);
 
-  sprintf(lineout, "\"slider\" : %s, \n", slider_str());
+  sprintf(lineout, "\"slider\" : \"%s\", \n", slider_str());
   strncat(json, lineout, MAX_STATUS_CHARS);
 
   sprintf(lineout, "\"pw_last\" : %d, \n", pw_last);

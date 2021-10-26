@@ -1,4 +1,4 @@
-# basket_unit.py -- manages interactions with the basket target
+# slider_unit.py -- manages interactions with the slider targets
 # dlb, Oct 2021
 
 import json
@@ -10,15 +10,15 @@ import time
 import utils
 import gamemode
 
-requried_status_keys = ["unit", "switch", "gamemode", "mainloop_count", "hits", 
-"motor_enabled", "in_jam", "jam_count", "stuck", "rpm", "pwm", "run_pwm", "encoder", "hitdetector_status", "batvolts"]
+requried_status_keys = ["unit", "gamemode", "mainloop_count", "command_count", "hits", "slider", 
+    "pw_last", "pw_open", "pw_close", "hitdetector_status", "hitdetector_fail_code", "batvolts"] 
 
-class BasketUnit():
-    _basket_count = 0
+class SliderUnit():
+    _slider_count = 0
     def __init__(self, ip=None):
-        self.ip = ip
+        self.ip = None 
         self.set_ip(ip)
-        self.enable = True       # if set to false, doesn't do much in background
+        self.enable = True       # if set to false, doesn't do much in background.
         self.kill = False        # use to stop background loop and render object inert.
         self.status = {}         # dict containing decoded status response
         self.connected = False   # flag to indicate connection status
@@ -34,15 +34,14 @@ class BasketUnit():
         self.status_pending = False 
         self.comm_channel_clear = True
         self.time_of_channel_jam = 0
- 
         self.command_pending = False 
         self.command = ""
         self.updatelock = threading.Lock()
         self.cmdlock = threading.Lock()  
-        BasketUnit._basket_count += 1
-        self.basketid = BasketUnit._basket_count
+        SliderUnit._slider_count += 1
+        self.sliderid = SliderUnit._slider_count
         self.done_event = threading.Event()
-        self.background_thread = timercb.TimerCB(self.run_status_thread, 0.200, self.done_event, "basket_unit")
+        self.background_thread = timercb.TimerCB(self.run_status_thread, 0.200, self.done_event, "slider_unit")
 
     def set_ip(self, ip):
         # Sets IP address.  Turns out the IP can be set at any time.  If set to None, then that
@@ -65,8 +64,8 @@ class BasketUnit():
 
     def begin(self):
         # Starts the activity in this object. Runs a thread in the 
-        # background to continuely gather info from the basket target.
-        # self.worker = threading.Thread(target=self.run_status_thread, name="basket-%d" % self.basketid)
+        # background to continuely gather info from the target unit.
+        # self.worker = threading.Thread(target=self.run_status_thread, name="slider-%d" % self.sliderid)
         # self.worker.start()
         self.background_thread.start()
 
@@ -121,7 +120,7 @@ class BasketUnit():
         return True     
 
     def get_data(self):
-        # Attempts to get data from the basket unit.  Should only be called in the background.
+        # Attempts to get data from the target unit.  Should only be called in the background.
         try:
             t0 = time.monotonic()
             url = "http://" + self.ip + "/status"
@@ -141,7 +140,7 @@ class BasketUnit():
         try:
             temp_status = json.loads(rsp.text)
         except JSONDecodeError:
-            self.progerror = 1
+            self.progerror = 20
             return
         for k in requried_status_keys:
             if not k in temp_status.keys():
@@ -168,6 +167,17 @@ class BasketUnit():
         self.hits += newhits 
         self.updatelock.release()
         return 
+    
+    def get_rawstatus(self):
+        # Returns a dict of the raw status obtained from the 
+        # unit if it is current to within about 10 secs.  If not,
+        # None is returned.
+        self.updatelock.acquire()
+        valid = self.validstatus
+        tempdata = self.status.copy()
+        self.updatelock.release()
+        if not valid: return None 
+        return tempdata
 
     def clear_command_queue(self):
         # Use this to clear the command queue.  Suitable when it is
@@ -177,31 +187,45 @@ class BasketUnit():
         self.command = ""
         self.cmdlock.release()
 
-    def turn_motor_on(self):
-        # Attemps to turn the motor on.  Returns True if command is
+    def close_door(self):
+        # Attemps to close the door.  Returns True if command is
         # successfully put in the command queue.  Use status to 
         # see that it acutally occured sometime later.
-        print("In turn_motor_on. pending=", self.command_pending)
+        print("In close_door. pending=", self.command_pending)
         self.cmdlock.acquire() 
         if self.command_pending:
             self.cmdlock.release()
             return False 
         self.command_pending = True 
-        self.command = "motor=1" 
+        self.command = "close=1" 
         self.cmdlock.release()
         return True
 
-    def turn_motor_off(self):
-        # Attemps to turn the motor off.  Returns True if command is
+    def open_door(self):
+        # Attemps to open the door.  Returns True if command is
         # successfully put in the command queue.  Use status to 
         # see that it acutally occured sometime later.
-        print("In turn_motor_off. pending=", self.command_pending)
+        print("In open_door. pending=", self.command_pending)
         self.cmdlock.acquire() 
         if self.command_pending:
             self.cmdlock.release()
             return False 
         self.command_pending = True 
-        self.command = "motor=0" 
+        self.command = "open=1" 
+        self.cmdlock.release()
+        return True
+
+    def center_door(self):
+        # Attemps to center the door.  Returns True if command is
+        # successfully put in the command queue.  Use status to 
+        # see that it acutally occured sometime later.
+        print("In center_door. pending=", self.command_pending)
+        self.cmdlock.acquire() 
+        if self.command_pending:
+            self.cmdlock.release()
+            return False 
+        self.command_pending = True 
+        self.command = "center=1" 
         self.cmdlock.release()
         return True
 
@@ -234,6 +258,42 @@ class BasketUnit():
         self.cmdlock.release()
         return True     
 
+    def set_open_pwm(self, pwm):
+        # Attemps to set the open pwm on the unit.  Returns
+        # True if command is successfully put in the command queue.
+        self.cmdlock.acquire() 
+        if self.command_pending:
+            self.cmdlock.release()
+            return False 
+        self.command_pending = True 
+        self.command = "openpwm="+str(pwm)
+        self.cmdlock.release()
+        return True
+
+    def set_close_pwm(self, pwm):
+        # Attemps to set the open pwm on the unit.  Returns
+        # True if command is successfully put in the command queue.
+        self.cmdlock.acquire() 
+        if self.command_pending:
+            self.cmdlock.release()
+            return False 
+        self.command_pending = True 
+        self.command = "closepwm="+str(pwm)
+        self.cmdlock.release()
+        return True
+
+    def save_config(self):
+        # Attemps save the pwm configuration on the unit.  Returns
+        # True if command is successfully put in the command queue.
+        self.cmdlock.acquire() 
+        if self.command_pending:
+            self.cmdlock.release()
+            return False 
+        self.command_pending = True 
+        self.command = "saveconfig=1"
+        self.cmdlock.release()
+        return True  
+
     def reset_hits(self):
         # Resets the hits logic at the beginning of a game.  Should
         # be called if its known that a recent update has occured.
@@ -249,15 +309,6 @@ class BasketUnit():
         n = self.hits 
         self.updatelock.release()
         return n
-    
-    def is_motor_enabled(self):
-        # Returns True if the motor is enabled
-        if not self.validstatus: return False
-        self.updatelock.acquire()
-        i = self.status["motor_enabled"] 
-        self.updatelock.release()
-        if i != 0: return True 
-        return False
     
     def is_detector_okay(self):
         # Returns True if the detector seems okay.
@@ -280,38 +331,9 @@ class BasketUnit():
         self.updatelock.release()
         return s 
 
-    def is_stuck(self):
-        # Returns True if the motor is stuck.  If so, the motor should
-        # be disabled, then  a human should clear the jam, and then
-        # the motor should re-enabled.  This will clear the jam and
-        # stuck flags.
-        if not self.validstatus: return False
-        self.updatelock.acquire()
-        i = self.status["stuck"] 
-        self.updatelock.release()
-        if i != 0: return True
-        return False 
-
-    def in_jam(self):
-        # Returns True if a jam is being cleared
-        if not self.validstatus: return False
-        self.updatelock.acquire()
-        i = self.status["in_jam"] 
-        self.updatelock.release()
-        if i != 0: return True
-        return False 
-
-    def jam_count(self):
-        # Returns the number of jams that have been detected
-        if not self.validstatus: return 0
-        self.updatelock.acquire()
-        i = int(self.status["jam_count"])
-        self.updatelock.release()
-        return i
-
     def battery_volts(self):
-        # Returns the volts on the input.  The basket should be powered
-        # with at least 9.5 volts
+        # Returns the volts on the input.  The unit should be powered
+        # with at least 7.5 volts
         if not self.validstatus: return True
         self.updatelock.acquire()
         v = float(self.status["batvolts"])
@@ -340,7 +362,7 @@ class BasketUnit():
                 time_since_last_update = "%3.1f mins" % mins
         else:
             time_since_last_update = "Never"
-        fmt = "BasketUnit: Connected=%s, Updates=%d, IsValid=%s, elp=%.2f ms, Age=%s, prg_err=%d" 
+        fmt = "SliderUnit: Connected=%s, Updates=%d, IsValid=%s, elp=%.2f ms, Age=%s, prg_err=%d" 
         print(fmt % (self.connected, _count, _valid, _telp, time_since_last_update, self.progerror))
         if _valid:
             fmt = "%s = %s"
@@ -348,7 +370,7 @@ class BasketUnit():
                 print(fmt % (k.ljust(20), _status[k]))
 
 if __name__ == "__main__":
-    b = BasketUnit() 
+    b = SliderUnit() 
     b.begin()
     c = 0
     t0 = time.monotonic()
