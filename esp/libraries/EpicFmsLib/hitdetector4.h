@@ -21,6 +21,7 @@ class HitDetector4 {
     long value(void);          // Returns the number of hits detected.
     int get_status(void);      // Returns the status of the detector.
     void start_selftest(void); // Starts a self test.  Do this to attempt to clear error.
+    void reset_hits(void);     // Reset the hit count
     int get_fail_code(void);   // Returns a number indicating why selftest failed.
     void debug_report(void);   // Prints a debug report to the terminal.
     const char *get_status_str(void); // Gets a short string to indicate status.

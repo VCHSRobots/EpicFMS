@@ -339,6 +339,12 @@ void process_cmd(const char *name, const char *value) {
     hitdetector.start_selftest();
     return;
   }
+  if(strcmp(name, "resethits") == 0) {
+    if (iv != 1) return;
+    Serial.println("Reseting Hit Count.");
+    hitdetector.reset_hits();
+    return;
+  }
   sprintf(lineout, "Unknown command received from server: %s = %s", name, value);
   Serial.println(lineout);
 }

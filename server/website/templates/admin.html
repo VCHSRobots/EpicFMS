@@ -32,8 +32,10 @@
           <div id="gamemodediv">Dummy</div>
           <div id="clockdiv">00</div> 
           <div class="scorediv">
-            <div id="bluescore" class="scoreside"><div class="scorelabel">Blue</div><div id="bluescore" class="scorevalue">0</div></div>
-            <div id="redscore" class="scoreside"><div class="scorelabel">Red</div><div id="redscore" class="scorevalue">0</div></div>
+            <div id="bluescorediv" class="scoreside"><div class="scorelabel">Blue</div>
+              <div class="scorevalue" id="bluescore">0</div></div>
+            <div id="redscorediv" class="scoreside"><div class="scorelabel">Red</div>
+              <div class="scorevalue" id="redscore">0</div></div>
           </div>
         </div>
         <div id="tabarea">
@@ -46,7 +48,7 @@
           </div>
           
           <div id="gametab" class="tabcontent">
-            <div class="tabtitle">Game Control</div>
+            <div class="tabtitle">Game</div>
             <div class="inputwidget">
               <div class="cblabel">Test score board</div> 
               <input class="cbinput" id="testscoreboard" type="checkbox" onchange="settestcb()">
@@ -54,38 +56,71 @@
           </div>
        
           <div id="setuptab" class="tabcontent">
-            <div class="tabtitle">Setup Tab</div>
+            <div class="tabtitle">Setup</div>
           </div>
 
           <div id="baskettab" class="tabcontent">
-              <div class="tabtitle">BasketTab</div>
-              <div id="hits" class="param">
-                <div id="hitslabel" class="param_label">Hits: </div>
-                <div id="hitsvalue" class="param_value">0</div>
+            <div class="tabtitle">Baskets</div>
+            <div class="unitbar">
+              <div class="unitselectiondiv">
+                <div class="unittitle gplabel">Unit:</div>
+                <select id="basketunitsel" class="unitsel" onchange="fill_basket_elements()">
+                  <option value="1">1</option>
+                  <option value="1">2</option>
+                </select>
               </div>
-            <div style="clear: both;"></div>
-            <button id="motoron" class="controlbutton" onclick="setmotor(1)">Motor On</button>
-            <button id="motoroff" class="controlbutton" onclick="setmotor(0)">Motor Off</button> 
-            <div style="clear: both;"></div>
-            <div class="selcontrol">
-              <div class="seltitle">GameMode</div>
-              <select id="basketgamemode" name="gamemode" class="selvalue" onchange="setbasketmode()">
-                  <option value="none">none</option>
-                  <option value="powerup">powerup</option>
-                  <option value="uniterror">uniterror</option>
-                  <option value="wifiwait">wifiwait</option>   
-                  <option value="practice">practice</option>
-                  <option value="standby">standby</option>
-                  <option value="countdown">countdown</option>
-                  <option value="auto">auto</option>
-                  <option value="teleop">teleop</option>
-                  <option value="matchfinal">matchfinal</option>
-                  <option value="postwait">postwait</option>
-                  <option value="postresult">postresult</option>
-                  <option value="fmserror">fmserror</option>
-                  <option value="fmslost">fmslost</option>
-              </select> 
+              <div class="unitiptextdiv">
+                <div class="iplabel gplabel">IP Addr:</div>
+                <input type="text" class="iptextbox" id="basketip" onchange='make_dirty("basketip")'>
+              </div>
+              <div class="unitnamediv">
+                <div class="namelabel gplabel">Name:</div>
+                <input type="text" class="nametextbox" id="basketname" onchange='make_dirty("basketname")'>
+              </div>
+              <div class="unitenablediv">
+                <div class="enablelabel gplabel">Enable:</div> 
+                <input type="checkbox" id="basketenablecb" class="cbinput" onchange='make_dirty("basketenablecb")'>
+              </div>
+              <div class="uintchangerefreshdiv">
+                <button class="gpbutton" id="basketchangebutton" onclick="basket_configure()">Change</button>
+                <button class="gpbutton" id="basketrefreshbutton" onclick="load_config()">Refresh</button>
+              </div>
             </div>
+            <div style="clear: both;"></div>
+            <div id="basketstatusdiv">
+              <div class=gplabel id="basketstatuslabel">Basket Status</div>
+              <button class="updatebutton" id="basketstatusupdate" onclick="update_basketstatus()">Update</button>
+              <textarea class="gptextarea" id="basketstatus"></textarea>
+            </div>
+            <div id="basketcontrolarea">
+              <div id="basketcontrolbuttons">
+                <button id="motoron" class="scbutton" onclick="set_basket_motor(1)">Motor On</button>
+                <button id="motoroff" class="scbutton" onclick="set_basket_motor(0)">Motor Off</button> 
+              </div>
+               <div class="selcontrol">
+                <div class="seltitle">GameMode</div>
+                <select id="basketgamemode" name="gamemode" class="selvalue" onchange="set_basket_mode()">
+                    <option value="none">none</option>
+                    <option value="powerup">powerup</option>
+                    <option value="uniterror">uniterror</option>
+                    <option value="wifiwait">wifiwait</option>   
+                    <option value="practice">practice</option>
+                    <option value="standby">standby</option>
+                    <option value="countdown">countdown</option>
+                    <option value="auto">auto</option>
+                    <option value="teleop">teleop</option>
+                    <option value="matchfinal">matchfinal</option>
+                    <option value="postwait">postwait</option>
+                    <option value="postresult">postresult</option>
+                    <option value="fmserror">fmserror</option>
+                    <option value="fmslost">fmslost</option>
+                </select> 
+              </div>
+              <div id="baskethitbox">
+                <div class="gplabel" id="baskethitboxlabel">Hits</div>
+                <div id="baskethitboxvalue">00</div>
+              </div>
+            </div>  
             <div style="clear: both;"></div>
           </div>
           
@@ -122,6 +157,7 @@
               <button class="scbutton" id="slideropenbutton" onclick="move_slider(0)">Close</button>
               <button class="scbutton" id="slideropenbutton" onclick="move_slider(-1)">Center</button>
               <button class="scbutton" id="sliderselftestbutton" onclick="slider_selftest()">Selftest</button>
+              <button class="scbutton" id="sliderresetbutton" onclick="slider_resethits()">Reset</button>
             </div>
             <div style="clear: both;"></div>
             <div id="sliderstatusdiv">
@@ -156,7 +192,31 @@
           </div>
           
           <div id="movingtab" class="tabcontent">
-            <div class="tabtitle">Mover Tab</div>
+            <div class="tabtitle">Movers</div>
+            <div class="unitbar">
+              <div class="unitselectiondiv">
+                <div class="unittitle gplabel">Unit:</div>
+                <select id="moverunitsel" class="unitsel" onchange="fill_mover_elements()">
+                  <option value="1">1</option>
+                </select>
+              </div>
+              <div class="unitiptextdiv">
+                <div class="iplabel gplabel">IP Addr:</div>
+                <input type="text" class="iptextbox" id="moverip" onchange='make_dirty("moverip")'>
+              </div>
+              <div class="unitnamediv">
+                <div class="namelabel gplabel">Name:</div>
+                <input type="text" class="nametextbox" id="movername" onchange='make_dirty("movername")'>
+              </div>
+              <div class="unitenablediv">
+                <div class="enablelabel gplabel">Enable:</div> 
+                <input type="checkbox" id="moverenablecb" class="cbinput" onchange='make_dirty("moverenablecb")'>
+              </div>
+              <div class="uintchangerefreshdiv">
+                <button class="gpbutton" id="moverchangebutton" onclick="mover_configure()">Change</button>
+                <button class="gpbutton" id="moverrefreshbutton" onclick="load_config()">Refresh</button>
+              </div>
+            </div>
           </div>
        </div>
       </div>

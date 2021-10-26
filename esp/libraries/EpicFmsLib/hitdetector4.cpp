@@ -222,6 +222,11 @@ void HitDetector4::start_selftest(void) {
     _selftest_delay = 0;
 }
 
+// Resets the hit count to zero.
+void HitDetector4::reset_hits(void) {
+    s_hitcount = 0;
+}
+
 // Send a status report for debugging to the terminal.
 void HitDetector4::debug_report(void) {
     char lineout[100];

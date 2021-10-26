@@ -12,7 +12,11 @@ import target_manager
 import time
 import security
 import settings
+import fmslogger
+from fmslogger import log
 
+fmslogger.start()
+log("Starting the Epic FMS Server")
 mode_testing = True   # Set to test all features on the scoreboard
 webapp = Flask(__name__)
 doneevent = Event()
@@ -57,9 +61,9 @@ def setup():
     if testmode != "dummy":
       if testmode == "1":
         scoreoutput.testing(True)
-        print("setting test output to true")
+        log("setting test output to true")
       else: 
-        print("setting test output to false")
+        log("setting test output to false")
         scoreoutput.testing(False)
         scoreoutput.clear()
       return render_template('admin.html', **dummy_params)
@@ -88,8 +92,8 @@ def setup():
   @webapp.route("/rawstatus")
   def rawstatus():
     okay = pw_manager.is_loggedin(request.remote_addr)
-    nhits, _ = target_manager.get_hits()
-    status = {"LoggedIn" : okay, "Hits" : nhits}
+    nredhits, nbluehits = target_manager.get_hits()
+    status = {"LoggedIn" : okay, "redhits" : nredhits, "bluehits" : nbluehits}
     tout = json.dumps(status) 
     return tout
 
@@ -107,9 +111,11 @@ def mainloop():
     loopcount += 1
 
 # Start the background main loop here
+log("Starting the main loop thread.")
 setup()
 looptimer_thread = timercb.TimerCB(mainloop, 0.100, doneevent)
 looptimer_thread.start()
 
 # Start the Web server here.
+log("Starting the webserver.")
 webapp.run(host='0.0.0.0', port=80, debug=True)

@@ -9,6 +9,7 @@ import requests
 import time
 import utils
 import gamemode
+from fmslogger import log
 
 requried_status_keys = ["unit", "switch", "gamemode", "mainloop_count", "hits", 
 "motor_enabled", "in_jam", "jam_count", "stuck", "rpm", "pwm", "run_pwm", "encoder", "hitdetector_status", "batvolts"]
@@ -112,7 +113,7 @@ class BasketUnit():
             rsp.close()
         except BaseException as err:  # if we knew all the ways this could fail, change this to be less overarching
             rsp.close()
-            print("Error: {0}".format(err))
+            log("Error: {0}".format(err))
             self.connected = False
             self.comm_channel_clear = False 
             self.time_of_channel_jam = time.monotonic()
@@ -132,7 +133,7 @@ class BasketUnit():
             telp = (time.monotonic() - t0) * 1000
             rsp.close()
         except BaseException as err:  # if we knew all the ways this could fail, change this to be less overarching
-            print("Error: {0}".format(err))
+            log("Error: {0}".format(err))
             self.connected = False
             self.comm_channel_clear = False 
             self.time_of_channel_jam = time.monotonic()
@@ -169,6 +170,17 @@ class BasketUnit():
         self.updatelock.release()
         return 
 
+    def get_rawstatus(self):
+        # Returns a dict of the raw status obtained from the 
+        # unit if it is current to within about 10 secs.  If not,
+        # None is returned.
+        self.updatelock.acquire()
+        valid = self.validstatus
+        tempdata = self.status.copy()
+        self.updatelock.release()
+        if not valid: return None 
+        return tempdata
+
     def clear_command_queue(self):
         # Use this to clear the command queue.  Suitable when it is
         # suppected that the command queue is deadlocked.
@@ -181,7 +193,7 @@ class BasketUnit():
         # Attemps to turn the motor on.  Returns True if command is
         # successfully put in the command queue.  Use status to 
         # see that it acutally occured sometime later.
-        print("In turn_motor_on. pending=", self.command_pending)
+        log("In turn_motor_on. pending=%s" % self.command_pending)
         self.cmdlock.acquire() 
         if self.command_pending:
             self.cmdlock.release()
@@ -195,7 +207,7 @@ class BasketUnit():
         # Attemps to turn the motor off.  Returns True if command is
         # successfully put in the command queue.  Use status to 
         # see that it acutally occured sometime later.
-        print("In turn_motor_off. pending=", self.command_pending)
+        log("In turn_motor_off. pending=%s" % self.command_pending)
         self.cmdlock.acquire() 
         if self.command_pending:
             self.cmdlock.release()
@@ -325,6 +337,7 @@ class BasketUnit():
         return False
 
     def report(self):
+        # Sends a status report to the log
         self.updatelock.acquire()
         _status = self.status.copy() 
         _count = self.status_update_count
@@ -341,11 +354,11 @@ class BasketUnit():
         else:
             time_since_last_update = "Never"
         fmt = "BasketUnit: Connected=%s, Updates=%d, IsValid=%s, elp=%.2f ms, Age=%s, prg_err=%d" 
-        print(fmt % (self.connected, _count, _valid, _telp, time_since_last_update, self.progerror))
+        log(fmt % (self.connected, _count, _valid, _telp, time_since_last_update, self.progerror))
         if _valid:
             fmt = "%s = %s"
             for k in requried_status_keys:
-                print(fmt % (k.ljust(20), _status[k]))
+                log(fmt % (k.ljust(20), _status[k]))
 
 if __name__ == "__main__":
     b = BasketUnit() 

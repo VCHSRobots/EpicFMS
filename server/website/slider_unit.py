@@ -9,6 +9,7 @@ import requests
 import time
 import utils
 import gamemode
+from fmslogger import log
 
 requried_status_keys = ["unit", "gamemode", "mainloop_count", "command_count", "hits", "slider", 
     "pw_last", "pw_open", "pw_close", "hitdetector_status", "hitdetector_fail_code", "batvolts"] 
@@ -111,7 +112,7 @@ class SliderUnit():
             rsp.close()
         except BaseException as err:  # if we knew all the ways this could fail, change this to be less overarching
             rsp.close()
-            print("Error: {0}".format(err))
+            log("Error: {0}".format(err))
             self.connected = False
             self.comm_channel_clear = False 
             self.time_of_channel_jam = time.monotonic()
@@ -131,7 +132,7 @@ class SliderUnit():
             telp = (time.monotonic() - t0) * 1000
             rsp.close()
         except BaseException as err:  # if we knew all the ways this could fail, change this to be less overarching
-            print("Error: {0}".format(err))
+            log("Error: {0}".format(err))
             self.connected = False
             self.comm_channel_clear = False 
             self.time_of_channel_jam = time.monotonic()
@@ -195,7 +196,7 @@ class SliderUnit():
         if (n < 10): self.command_queue.append(cmd)
         self.cmdlock.release()
         if (n >= 10): 
-            print("Target Command Queue full!")
+            log("Target Command Queue full!")
             return False 
         return True
 
@@ -246,6 +247,10 @@ class SliderUnit():
         # Attemps save the pwm configuration on the unit.  Returns
         # True if command is successfully put in the command queue.
         return self.add_command_to_queue("saveconfig=1")
+
+    def reset_hits_on_unit(self):
+        # Attemps to reset the hit count on the device.
+        return self.add_command_to_queue("resethits=1")
 
     def reset_hits(self):
         # Resets the hits logic at the beginning of a game.  Should
@@ -300,6 +305,7 @@ class SliderUnit():
         return False
 
     def report(self):
+        # Sends a status report to the log
         self.updatelock.acquire()
         _status = self.status.copy() 
         _count = self.status_update_count
@@ -316,11 +322,11 @@ class SliderUnit():
         else:
             time_since_last_update = "Never"
         fmt = "SliderUnit: Connected=%s, Updates=%d, IsValid=%s, elp=%.2f ms, Age=%s, prg_err=%d" 
-        print(fmt % (self.connected, _count, _valid, _telp, time_since_last_update, self.progerror))
+        log(fmt % (self.connected, _count, _valid, _telp, time_since_last_update, self.progerror))
         if _valid:
             fmt = "%s = %s"
             for k in requried_status_keys:
-                print(fmt % (k.ljust(20), _status[k]))
+                log(fmt % (k.ljust(20), _status[k]))
 
 if __name__ == "__main__":
     b = SliderUnit() 

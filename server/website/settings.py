@@ -4,6 +4,7 @@
 import json
 import copy
 import base64
+from fmslogger import log
 
 # This is the loaded version for use while running
 fms_config = {
@@ -53,9 +54,9 @@ def save_settings():
         f.close()
     except BaseException as err:
         f.close()
-        print("Unable to save settings. Error: {0}".format(err))
+        log("Unable to save settings. Error: {0}".format(err))
         return
-    print("Configurtion Settings Saved")
+    log("Configurtion Settings Saved")
     return
   
 def load_settings():
@@ -63,19 +64,19 @@ def load_settings():
     try: 
         f = open("fms_config.json", 'r')
     except BaseException as err:
-        print("Unable to load settings. Error: {0}".format(err))
-        print("Using default configuration.")
+        log("Unable to load settings. Error: {0}".format(err))
+        log("Using default configuration.")
         fms_config = copy.deepcopy(fms_defualt_config)
         return
     try:
         fms_config = json.load(f) 
     except BaseException as err:
-        print("Unable to decode settings. Error: {0}".format(err))
-        print("Using default configuration.")
+        log("Unable to decode settings. Error: {0}".format(err))
+        log("Using default configuration.")
         fms_config = copy.deepcopy(fms_defualt_config)
         return
     f.close()
-    print("Configuration Settings Loaded")
+    log("Configuration Settings Loaded")
 
 
 def convert_to_index(x):
@@ -87,35 +88,35 @@ def convert_to_index(x):
 
 def set_config_base64json(config):
     # Expects a json map encoded in base64.
-    print("Setting Config.  Recevied Base64.")
+    log("Setting Config.  Recevied Base64.")
     bconfig = config.encode('ascii')  # Produce a byte array of the ascii input
     bbconfig = base64.b64decode(bconfig) # Get a byte sequeence if ascii chars
     sconfig = bbconfig.decode('ascii') # Convert the bytes into a string.
-    print("Recived this for config: ", sconfig)
+    log("Recived this for config: " + sconfig)
     try:
         new_config = json.loads(sconfig)
     except BaseException as err:
-        print("Unable to decode config input. Error: {0}".format(err))
+        log("Unable to decode config input. Error: {0}".format(err))
         return False
     try:
         type = new_config["type"]
         unit = new_config["unit"]
     except BaseException as err:
-        print("Required params not provided.  Unable to set config.")
+        log("Required params not provided.  Unable to set config.")
         return False
     if not type in fms_config.keys():
-        print("Unknown unit {0} in config. Unable to change config.".format(type))
+        log("Unknown unit {0} in config. Unable to change config.".format(type))
         return False
     nobjs = len(fms_config[type])
     iunit = convert_to_index(unit)
     if iunit < 0 or iunit >= nobjs:
-        print("Unit number is out of range {0}. Unable to change config.".format(unit))
+        log("Unit number is out of range {0}. Unable to change config.".format(unit))
         return False
     for k in new_config.keys():
         if k != "type" and k != "uint":
-            print("Changing %s[%d].%s to %s" % (type, iunit, k, new_config[k]))
+            log("Changing %s[%d].%s to %s" % (type, iunit, k, new_config[k]))
             fms_config[type][iunit][k] = new_config[k]
-    print("Config change successful.")
+    log("Config change successful.")
     return True
     
 

@@ -5,6 +5,7 @@ import basket_unit
 import slider_unit
 import settings
 import json
+from fmslogger import log
 
 targets = []
 nunits = {}
@@ -28,14 +29,14 @@ def set_up_targets():
 
 def begin_all():
     for t in targets:
-        print("Starting Target unit. Type=%s, num=%d" % (t["type"], t["slot"]))
+        log("Starting Target unit. Type=%s, num=%d" % (t["type"], t["slot"]))
         t["unit"].begin()
 
 def reload_all_targets():
     global targets, nunits
-    print("Reloading all targets")
+    log("Reloading all targets")
     for t in targets:
-        print("Destroying Target unit. Type=%s, num=%d" % (t["type"], t["slot"]))
+        log("Destroying Target unit. Type=%s, num=%d" % (t["type"], t["slot"]))
         t["unit"].destroy() 
     targets = [] 
     nunits = {}
@@ -57,12 +58,12 @@ def find_target(unittype, unitnum):
 def process_basket_commands(request, t):
     if request.args.get("motor", -1) != -1:
         enable = int(request.args.get("motor", 0))
-        print("Enable = ", enable)
+        log("Enable = %d" % enable)
         if enable == 1: t["unit"].turn_motor_on()
         else:           t["unit"].turn_motor_off()
     basketmode = request.args.get("basketmode", "dummy")
     if basketmode != "dummy":
-        t.set_game_mode(basketmode)
+        t["unit"].set_game_mode(basketmode)
 
 def process_slider_commands(request, t):
     if request.args.get("open", -1) != -1:
@@ -94,11 +95,12 @@ def process_slider_commands(request, t):
         return 
     if request.args.get("resethits", -1) != -1:
         t["unit"].reset_hits()
+        t["unit"].reset_hits_on_unit()
         return
     if request.args.get("saveconfig", -1) != -1:
         t["unit"].save_config()
         return
-    print("Invalid slider command.")
+    log("Invalid slider command.")
 
 def process_mover_commands(request, t):
     pass
@@ -107,24 +109,24 @@ def extract_type_unit(request):
     unittype = request.args.get("unittype", "dummy")
     unitnum = request.args.get("unitnum", -1)
     if unittype == "dummy" or unitnum == -1: 
-        print("Error. uinttype (%s) or unitnum (%d) is invalid. Command not processed." % (unittype, unitnum))
+        log("Error. uinttype (%s) or unitnum (%d) is invalid. Command not processed." % (unittype, unitnum))
         return (None, None)
     if not unittype in nunits: 
-        print("Error. Unknown unit type (%s). Command not processed." % unittype)
+        log("Error. Unknown unit type (%s). Command not processed." % unittype)
         return (None, None)
     try:
         iunitnum = int(unitnum)
     except BaseException:
-        print("Error. unitnum is not a number (%s).Command not processed." % unitnum)
+        log("Error. unitnum is not a number (%s).Command not processed." % unitnum)
     nu = nunits[unittype]
     if iunitnum < 0 or iunitnum >= nu:
-        print("Error. Unit number (%d) out of range (0-%d). Command not processed" % (unitnum, nu))
+        log("Error. Unit number (%d) out of range (0-%d). Command not processed" % (unitnum, nu))
         return (None, None)
     t = None
     for k in targets:
         if k["type"] == unittype and k["slot"] == iunitnum: t = k 
     if t is None:
-        print("Error. Unable to find unit type %s with index %d. Command not processed." & (unittype, iunitnum))
+        log("Error. Unable to find unit type %s with index %d. Command not processed." & (unittype, iunitnum))
         return (None, None)
     return (unittype, iunitnum)
 
@@ -145,12 +147,12 @@ def process_admin_request(request):
     # targeted for a specific unit.  To deal with 
     # that, the request must have a unit type, and
     # a unit number.
-    print("Handling general unit admin command.")
+    log("Handling general unit admin command.")
     unittype, unitnum = extract_type_unit(request)
     if unittype is None or unitnum is None: return
     t = find_target(unittype, unitnum)
     if t is None:
-        print("Error -- unable to find target. type=%s, num=%d" % (unittype, unitnum))
+        log("Error -- unable to find target. type=%s, num=%d" % (unittype, unitnum))
         return 
     if unittype == "baskets": 
         process_basket_commands(request, t)
@@ -168,18 +170,18 @@ def process_unitstatus_request(request):
     if unittype is None or unitnum is None: return "{}"
     t = find_target(unittype, unitnum)
     if t is None:
-        print("Error -- unable to find target. type=%s, num=%d" % (unittype, unitnum))
+        log("Error -- unable to find target. type=%s, num=%d" % (unittype, unitnum))
         return "{}"
-    # print("Processing unit status request for type=%s num=%d." % (unittype, unitnum))
+    # log("Processing unit status request for type=%s num=%d." % (unittype, unitnum))
     status = t["unit"].get_rawstatus()
     if status is None: 
-        print("Status not valid from unit.")
+        log("Status not valid from unit.")
         return "{}"
-    # print("type(status)", type(status))
-    # print("status", status)
+    # log("type(status)", type(status))
+    # log("status", status)
     try: 
         sj = json.dumps(status, indent=2)
     except BaseException as err:
-        print("Error with converting to json. err={0}".format(err))
+        log("Error with converting to json. err={0}".format(err))
         return "{}"
     return sj

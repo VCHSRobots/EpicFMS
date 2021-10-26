@@ -13,6 +13,8 @@ function loadStatusData() {
         .then(function (data) {
             fill_admin_status(data);
             load_slider_data();
+            load_basket_data();
+            load_mover_data();
         })
         .catch(function (err) {
             console.log('error: ' + err);
@@ -50,14 +52,16 @@ function set_value(id, v) {
 // Called about once per second to fill status info on admin page
 function fill_admin_status(data) {
     if (!data["LoggedIn"]) {
-        vis_off("mainarea")
-        vis_on("loginarea")
-        return 
+        vis_off("mainarea");
+        vis_on("loginarea");
+        return;
     }
-    vis_on("mainarea")
-    vis_off("loginarea")
-    var nhits = data["Hits"]
-    set_value("hitsvalue", nhits)
+    vis_on("mainarea");
+    vis_off("loginarea");
+    var nredhits = data["redhits"];
+    var nbluehits = data["bluehits"];
+    set_value("redscore", nredhits);
+    set_value("bluescore", nbluehits);
 }
 
 function change_tab(evt, tabname) {
@@ -86,21 +90,7 @@ function sendpassword() {
         .catch(function (err) { console.log("Unable to send password. Error: " + err)});
 }
 
-// Functions for the basket tab
-function setmotor(enable) {
-    var url = "admin?motor=" + enable
-    fetch(url)
-        .then(function () { console.log("Motor request sent to server.")})
-        .catch(function (err) { console.log("Unable to send motor request. Error: " + err)});
-}
 
-function setbasketmode() {
-    var sel = document.getElementById("basketgamemode");
-    var url = "admin?basketmode=" + sel.value 
-    fetch(url)
-        .then(function () { console.log("Basket mode request sent to server.")})
-        .catch(function (err) { console.log("Unable to send basket mode request. Error: " + err)});
-}
 
 function settestcb() {
   var cb = document.getElementById("testscoreboard");
@@ -249,7 +239,31 @@ function get_selectionbox_value(id) {
     return parseInt(elem.value)  
 }
 
+function get_textbox_value(id) {
+    elem = document.getElementById(id);
+    if (elem == null) {
+        console.log("Programming Error. Text Box not found: (", id, ")");
+        return "";
+    }
+    return elem.value;
+}
+
+function get_checkbox_value(id) {
+    elem = document.getElementById(id);
+    if (elem == null) {
+        console.log("Programming Error. Text Box not found: (", id, ")");
+        return "";
+    }
+    return elem.checked;
+}
+
 function fill_config_elements() {
+    fill_slider_config_elements();
+    fill_basket_config_elements();
+    fill_mover_config_elements();
+}
+
+function fill_slider_config_elements() {
     var sel = document.getElementById("sliderunitsel");
     var curindex = sel.value;
     clearSelBox(sel);
@@ -272,12 +286,78 @@ function fill_config_elements() {
     fill_slider_elements();
 }
 
+function fill_basket_config_elements() {
+    var sel = document.getElementById("basketunitsel");
+    var curindex = sel.value;
+    clearSelBox(sel);
+    if (config_data === null) {
+        console.log("config data is null.")
+        set_textbox("basketname", "", true);
+        set_textbox("basketip", "", true);
+        set_checkbox("basketenablecb", false, true);
+        return;
+    }
+    var nbaskets = config_data["baskets"].length;
+    var i;
+    for(i = 0; i < nbaskets; i++) {
+        var si = (i+1).toString();
+        addselection(sel, si, si, si)
+    }
+    var okay = setSelectionBox("basketunitsel", curindex);
+    if (!okay) setSelectionBox("basketunitsel", "1");
+    fill_basket_elements();
+}
+
+function fill_mover_config_elements() {
+    var sel = document.getElementById("moverunitsel");
+    var curindex = sel.value;
+    clearSelBox(sel);
+    if (config_data === null) {
+        console.log("config data is null.")
+        set_textbox("movername", "", true);
+        set_textbox("moverip", "", true);
+        set_checkbox("moverenablecb", false, true);
+        return;
+    }
+    var nmovers = config_data["movers"].length;
+    var i;
+    for(i = 0; i < nmovers; i++) {
+        var si = (i+1).toString();
+        addselection(sel, si, si, si)
+    }
+    var okay = setSelectionBox("moverunitsel", curindex);
+    if (!okay) setSelectionBox("moverunitsel", "1");
+    fill_mover_elements();
+}
+
 function get_current_slider_unit_index() {
     var indx = get_selectionbox_value("sliderunitsel");
     indx = indx - 1;
     var nsliders = config_data["sliders"].length;
     if (indx < 0 || indx >= nsliders) {
         console.log("Slider index out of range.");
+        return -1;
+    }
+    return indx;
+}
+
+function get_current_basket_unit_index() {
+    var indx = get_selectionbox_value("basketunitsel");
+    indx = indx - 1;
+    var nbaskets = config_data["baskets"].length;
+    if (indx < 0 || indx >= nbaskets) {
+        console.log("Basket index out of range.");
+        return -1;
+    }
+    return indx;
+}
+
+function get_current_mover_unit_index() {
+    var indx = get_selectionbox_value("moverunitsel");
+    indx = indx - 1;
+    var nmovers = config_data["movers"].length;
+    if (indx < 0 || indx >= nmovers) {
+        console.log("Mover index out of range.");
         return -1;
     }
     return indx;
@@ -297,22 +377,32 @@ function fill_slider_elements() {
     set_checkbox("sliderenablecb", config_data["sliders"][indx]["enabled"], true);
 }
 
-function get_textbox_value(id) {
-    elem = document.getElementById(id);
-    if (elem == null) {
-        console.log("Programming Error. Text Box not found: (", id, ")");
-        return "";
+function fill_basket_elements() {
+    indx = get_current_basket_unit_index();
+    if (indx < 0) {
+        // Clear all the page elements
+        set_textbox("basketname", "", true);
+        set_textbox("basketip", "", true);
+        set_checkbox("basketenablecb", false, true);
+        return;
     }
-    return elem.value;
+    set_textbox("basketname", config_data["baskets"][indx]["name"], true);
+    set_textbox("basketip", config_data["baskets"][indx]["ip"], true);
+    set_checkbox("basketenablecb", config_data["baskets"][indx]["enabled"], true);
 }
 
-function get_checkbox_value(id) {
-    elem = document.getElementById(id);
-    if (elem == null) {
-        console.log("Programming Error. Text Box not found: (", id, ")");
-        return "";
+function fill_mover_elements() {
+    indx = get_current_mover_unit_index();
+    if (indx < 0) {
+        // Clear all the page elements
+        set_textbox("movername", "", true);
+        set_textbox("moverip", "", true);
+        set_checkbox("moverenablecb", false, true);
+        return;
     }
-    return elem.checked;
+    set_textbox("movername", config_data["movers"][indx]["name"], true);
+    set_textbox("moverip", config_data["movers"][indx]["ip"], true);
+    set_checkbox("moverenablecb", config_data["movers"][indx]["enabled"], true);
 }
 
 function slider_configure() {
@@ -332,12 +422,64 @@ function slider_configure() {
         .catch(function (err) { console.log("Unable to change config. Error: " + err)});
 }
 
+function basket_configure() {
+    var indx = get_current_basket_unit_index();
+    if (indx < 0) return;
+    var map = {};
+    map["type"] = "baskets";
+    map["unit"] = indx;
+    map["ip"] = get_textbox_value("basketip");
+    map["name"] = get_textbox_value("basketname");
+    map["enabled"] = get_checkbox_value("basketenablecb");
+    var ss = btoa(JSON.stringify(map));
+    var url = "admin?config="+ss
+    fetch(url)
+        .then(function () { console.log("config change sent to server.");})
+        .then(function() {load_config();})
+        .catch(function (err) { console.log("Unable to change config. Error: " + err)});
+}
+
+function mover_configure() {
+    var indx = get_current_mover_unit_index();
+    if (indx < 0) return;
+    var map = {};
+    map["type"] = "movers";
+    map["unit"] = indx;
+    map["ip"] = get_textbox_value("moverip");
+    map["name"] = get_textbox_value("movername");
+    map["enabled"] = get_checkbox_value("moverenablecb");
+    var ss = btoa(JSON.stringify(map));
+    var url = "admin?config="+ss
+    fetch(url)
+        .then(function () { console.log("config change sent to server.");})
+        .then(function() {load_config();})
+        .catch(function (err) { console.log("Unable to change config. Error: " + err)});
+}
+
 function update_sliderstatus() {
     var num = get_current_slider_unit_index();
     var url = "/unitstatus?unittype=sliders&unitnum=" + num;
     fetch(url)
         .then(function(response) { return response.text(); })
         .then(function (data) { set_textbox("sliderstatus", data); })
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
+function update_basketstatus() {
+    var num = get_current_basket_unit_index();
+    var url = "/unitstatus?unittype=baskets&unitnum=" + num;
+    fetch(url)
+        .then(function(response) { return response.text(); })
+        .then(function (data) { set_textbox("basketstatus", data); })
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
+function update_moverstatus() {
+    var num = get_current_mover_unit_index();
+    var url = "/unitstatus?unittype=movers&unitnum=" + num;
+    fetch(url)
+        .then(function(response) { return response.text(); })
+        .then(function (data) { set_textbox("moverstatus", data); })
         .catch(function (err) { console.log('error: ' + err); return; })
 }
 
@@ -352,6 +494,28 @@ function load_slider_data() {
         .catch(function (err) { console.log('error: ' + err); return; })
 }
 
+function load_basket_data() {
+    if (!is_tab_vis("baskettab")) return;
+    var num = get_current_basket_unit_index();
+    if (num < 0) return;
+    var url = "/unitstatus?unittype=baskets&unitnum=" + num;
+    fetch(url)
+        .then(function(response) { return response.text(); })
+        .then(function(textdata) { fill_basket_tab(textdata); })
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
+function load_mover_data() {
+    if (!is_tab_vis("movertab")) return;
+    var num = get_current_mover_unit_index();
+    if (num < 0) return;
+    var url = "/unitstatus?unittype=movers&unitnum=" + num;
+    fetch(url)
+        .then(function(response) { return response.text(); })
+        .then(function(textdata) { fill_mover_tab(textdata); })
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
 function fill_slider_tab(textdata) {
     set_textbox("sliderstatus", textdata); 
     var data = JSON.parse(textdata);
@@ -360,16 +524,20 @@ function fill_slider_tab(textdata) {
     else                          set_interhtml("sliderhitboxvalue", n);
 }
 
-function move_slider(place) {
-    var num = get_current_slider_unit_index();
-    if (num < 0) return;
-    var url = "/admin?unittype=sliders&unitnum=" + num
-    if (place == -1) url = url + "&center=1";
-    if (place == 0) url = url + "&close=1";
-    if (place== 1) url = url + "&open=1";
-    fetch(url)
-        .then(function(response) { return})
-        .catch(function (err) { console.log('error: ' + err); return; })
+function fill_basket_tab(textdata) {
+    set_textbox("basketstatus", textdata); 
+    var data = JSON.parse(textdata);
+    var n = data["hits"]
+    if (typeof n === 'undefined') set_interhtml("baskethitboxvalue", 0);
+    else                          set_interhtml("baskethitboxvalue", n);
+}
+
+function fill_mover_tab(textdata) {
+    set_textbox("moverstatus", textdata); 
+    var data = JSON.parse(textdata);
+    var n = data["hits"]
+    if (typeof n === 'undefined') set_interhtml("moverhitboxvalue", 0);
+    else                          set_interhtml("moverhitboxvalue", n);
 }
 
 function slider_selftest() {
@@ -382,11 +550,31 @@ function slider_selftest() {
         .catch(function (err) { console.log('error: ' + err); return; })
 }
 
+function basket_selftest() {
+    var num = get_current_basket_unit_index();
+    if (num < 0) return;
+    var url = "/admin?unittype=baskets&unitnum=" + num
+    url += "&selftest=1"
+    fetch(url)
+        .then(function(response) { return})
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
+function mover_selftest() {
+    var num = get_current_mover_unit_index();
+    if (num < 0) return;
+    var url = "/admin?unittype=movers&unitnum=" + num
+    url += "&selftest=1"
+    fetch(url)
+        .then(function(response) { return})
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
 function slider_resethits() {
     var num = get_current_slider_unit_index();
     if (num < 0) return;
     var url = "/admin?unittype=sliders&unitnum=" + num
-    url += "&resethitst=1"
+    url += "&resethits=1"
     fetch(url)
         .then(function(response) { return})
         .catch(function (err) { console.log('error: ' + err); return; })
@@ -416,4 +604,35 @@ function slider_save_pwm() {
     fetch(url)
         .then(function(response) { return})
         .catch(function (err) { console.log('error: ' + err); return; })
+}
+
+function move_slider(place) {
+    var num = get_current_slider_unit_index();
+    if (num < 0) return;
+    var url = "/admin?unittype=sliders&unitnum=" + num
+    if (place == -1) url = url + "&center=1";
+    if (place == 0) url = url + "&close=1";
+    if (place== 1) url = url + "&open=1";
+    fetch(url)
+        .then(function(response) { return})
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
+function set_basket_motor(enable) {
+    var num = get_current_basket_unit_index();
+    if (num < 0) return;
+    var url = "/admin?unittype=baskets&unitnum=" + num +"&motor=" + enable
+    fetch(url)
+        .then(function () { console.log("Motor request sent to server.")})
+        .catch(function (err) { console.log("Unable to send motor request. Error: " + err)});
+}
+
+function set_basket_mode() {
+    var num = get_current_basket_unit_index();
+    if (num < 0) return;
+    var sel = document.getElementById("basketgamemode");
+    var url = "/admin?unittype=baskets&unitnum=" + num + "&basketmode=" + sel.value
+    fetch(url)
+        .then(function () { console.log("Basket mode request sent to server.")})
+        .catch(function (err) { console.log("Unable to send basket mode request. Error: " + err)});
 }
