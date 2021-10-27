@@ -24,10 +24,10 @@ Finally, V1 boards are not numbered. (boo).
 | A2    | Sept 21   | V1    |  No  |   |    |Made by Chris, cap blew up  |
 | A3    | Sept 21   | V1    |      |   | Y  |Many mods, For Basket       |
 | 1     | 10/21/21  | V3    |      | Y |    |Runs pcb_test okay.         |
-| 2     | 10/21/21  | V3    |      |   |    |Runs pcb_test okay.         |
+| 2     | 10/21/21  | V3    |  n   |   |    |Runs pcb_test okay.         |
 | 3     | 10/21/21  | V3    |      |   |    |Runs pcb_test okay.         |
 | 4     | 10/21/21  | V3    |      | Y |    |Runs pcb_test okay.         |
-| 5     | 10/21/21  | V3    |      |   |    |Runs pcb_test okay.         |
+| 5     | 10/21/21  | V3    |  n   |   |    |Runs pcb_test okay.         |
 | 6     | 10/21/21  | V3    |      | Y |    |Runs pcb_test okay.         |
 | 7     | 10/21/21  | V3    |  No  |   |    |Fails test.                 |
 | 8     | 10/21/21  | V3    |  No  |   |    |Fails test.                 |
@@ -37,3 +37,12 @@ Finally, V1 boards are not numbered. (boo).
 | 12    | 10/21/21  | V3    |  No  |   |    |Fails test.                 |
 | 13    | 10/21/21  | V3    |  No  |   |    |Completely Ruined.          |
 | 14    | 10/21/21  | V3    |  No  |   |    |Unfinished, needs ESP8266   |
+
+Work on Tuesday, 10/26:
+PCB-2 was in first Ring, working great.  Working on second ring
+and hooked it up to PCB-2. PCB-2 got really hot.  After cooling, one of
+the IR beams will not work.  It still connects, but suppected burnout
+on GPIO pins.
+
+PCB-5 was also used on bad ring.  It will connect, but will not
+work with the IR Beams.  Suppected burnout on GPIO pins.
