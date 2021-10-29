@@ -5,6 +5,7 @@
       <title>EpicFms Admin</title>
       <link rel="stylesheet" type="text/css" href="../static/css/style.css">
       <link rel="stylesheet" type="text/css" href="../static/css/admin.css">
+      <script src="../static/javascript/utils.js"></script>
       <script src="../static/javascript/admin.js"></script>
   <style>
         #screen_area {width: 1024 px;}
@@ -49,14 +50,33 @@
           
           <div id="gametab" class="tabcontent">
             <div class="tabtitle">Game</div>
-            <div class="inputwidget">
-              <div class="cblabel">Test score board</div> 
-              <input class="cbinput" id="testscoreboard" type="checkbox" onchange="settestcb()">
-            </div>
           </div>
        
           <div id="setuptab" class="tabcontent">
             <div class="tabtitle">Setup</div>
+            <div style="clear: both;"></div>
+            <div id="scoreboardtestdiv">
+              <div class="cblabel">Run scoreboard test</div> 
+              <input class="cbinput" id="testscoreboard" type="checkbox" onchange="update_scoreboare_test()">
+            </div>
+            <div id="teamdiv">
+              <div class="teamnamediv">
+                <div id="teamnamebluelabel" class="teamnamelabel gplabel">Blue:</div>
+                <input type="text" class="teamnametextbox" id="blueteamname" onchange='make_dirty("blueteamname")'>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="teamnamediv">
+                <div id="teamnameredlabel" class="teamnamelabel gplabel">Red:</div>
+                <input type="text" class="teamnametextbox" id="redteamname" onchange='make_dirty("redteamname")'>
+              </div>  
+              <div style="clear: both;"></div>
+              <div id="teamnameupdatediv">
+                <button class="updatebutton" id="teamnamesubmit" onclick="update_teamnames()">Submit</button>
+              </div>
+              <div id="teamnameswapdiv">
+                <button class="updatebutton" id="teamnameswap" onclick="swap_teamnames()">Swap</button>
+              </div>
+            </div>
           </div>
 
           <div id="baskettab" class="tabcontent">

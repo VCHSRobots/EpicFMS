@@ -177,7 +177,7 @@ def process_admin_request(request):
       # Unfortunatly a config change means reloading everything
       reload_all_targets() 
       return
-    
+
     # if the reequests falls to this point, it is
     # targeted for a specific unit.  To deal with 
     # that, the request must have a unit type, and

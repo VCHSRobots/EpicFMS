@@ -15,3 +15,17 @@ def ip_addr_okay(ip):
         i = int(n) 
         if i < 0 or i > 255: return False 
     return True
+
+def make_bool(arg):
+    if type(arg) is bool: return arg
+    if type(arg) is int:
+        if arg == 0: return False
+        else: return True
+    if type(arg) is str:
+        if arg.lower() == "y" or arg.lower() == "yes": return True
+        if arg.lower() == "t" or arg.lower() == "true": return True
+        return False 
+    if type(arg) is float:
+        if arg == 0.0: return False
+        return True
+    return False

@@ -56,14 +56,14 @@ border: none; }
 .iptextbox {margin-left: 10px; width: 100px; font-size: 14pt;}
 .unitnamediv {float: left; margin-left: 20px;}
 .namelabel {float: left; font-size: 14pt; margin-top: 8px; margin-right: -2px;}
-.nametextbox {margin-left: 10px; width: 100px; font-size: 14pt;}
+.nametextbox {margin-left: 10px; width: 110px; font-size: 14pt;}
 .unitenablediv {float: left; margin-left: 20px;}
 .enablelabel {float: left; margin-top: 8px; font-size: 14pt;}
 .cbinput {margin-left: 10px; width: 18px; height: 18px; margin-top: 10px;}
 .uintchangerefreshdiv {float: left; margin-left: 40px;}
 
 .pwmbar {width: 250px; height: 40px;}
-.pwmlabel {float: left; olor: #dd999e; font-size: 12pt; margin-left: 10px; margin-right: 10px; margin-top: 10px;}
+.pwmlabel {float: left; color: #dd999e; font-size: 12pt; margin-left: 10px; margin-right: 10px; margin-top: 10px;}
 .pwmtextboxdiv {float: left;}
 .pwmtextbox {width: 50px; height: 15px; font-size: 12pt;}
 .scbutton {float: left; margin-left: 20px; width: 120px; font-size: 16pt;}
@@ -106,3 +106,11 @@ border: none; }
 #moverpwmbox {float: left; margin-left: 50px; border: 2px solid #886060; width: 150px; height: 150px; }
 #moverpwmboxlabel {color: #dd999e; font-size: 12pt; margin-left: 10px; margin-top: 5px;}
 #moversavechangebuttons {margin-left: 10px;}
+
+#teamdiv {margin-top: 20px; margin-left: 10px; width: 360px; height: 80px; border: 2px solid #886060}
+#teamnamebluelabel {color: blue;}
+#teamnameredlabel {color: red;}
+.teamnamelabel {float: left; margin-left: 10px; margin-top: 5px; width: 70px; }
+.teamnametextbox {float: left;margin-left: 10px; margin-top: 10px; }
+#teamnameupdatediv {position: relative; top: -70px; left: 280px;}
+#teamnameswapdiv {position: relative; top: -70px; left: 280px;}

@@ -9,40 +9,40 @@ from fmslogger import log
 # This is the loaded version for use while running
 fms_config = {
     "baskets" : [
-        { "name" : "Unit A", "ip" : "10.0.2.60", "enabled" : True, "team" : "red"},
-        { "name" : "Unit B", "ip" : "", "enabled" : False, "team" : "blue"}
+        { "name" : "Basket-A", "ip" : "10.0.2.60", "enabled" : True, "team" : "red"},
+        { "name" : "Basket-B", "ip" : "", "enabled" : False, "team" : "blue"}
     ],
     "sliders" : [
-        { "name" : "Unit A", "ip" : "10.0.2.73", "enabled" : True, "team" : "red"},
-        { "name" : "Unit B", "ip" : "10.0.2.75", "enabled" : True, "team" : "blue"},
-        { "name" : "Unit C", "ip" : "10.0.2.77", "enabled" : True, "team" : "red"},
-        { "name" : "Unit D", "ip" : "10.0.2.83", "enabled" : True, "team" : "blue"},
-        { "name" : "Unit E", "ip" : "10.0.2.99", "enabled" : False, "team" : "red"},
-        { "name" : "Unit F", "ip" : "10.0.2.99", "enabled" : False, "team" : "blue"}
+        { "name" : "Slider-Low-A", "ip" : "10.0.2.73", "enabled" : True, "team" : "red"},
+        { "name" : "Slider-Low-B", "ip" : "10.0.2.75", "enabled" : True, "team" : "blue"},
+        { "name" : "Slider-Mid-A", "ip" : "10.0.2.77", "enabled" : True, "team" : "red"},
+        { "name" : "Slider-Mid-B", "ip" : "10.0.2.83", "enabled" : True, "team" : "blue"},
+        { "name" : "Slider-Top-A", "ip" : "10.0.2.99", "enabled" : False, "team" : "red"},
+        { "name" : "Slider-Top-B", "ip" : "10.0.2.99", "enabled" : False, "team" : "blue"}
     ],
     "movers"  : [
-        { "name" : "Unit A", "ip" : "10.0.2.71", "enabled" : True, "team" : "red"},
-        { "name" : "Unit B", "ip" : "10.0.2.74", "enabled" : True, "team" : "blue"}
+        { "name" : "Mover-A", "ip" : "10.0.2.71", "enabled" : True, "team" : "red"},
+        { "name" : "Mover-B", "ip" : "10.0.2.74", "enabled" : True, "team" : "blue"}
     ]
 }
 
 # If a conf file is not found, this will be loaded for running.
 fms_defualt_config = {
     "baskets" : [
-        { "name" : "Unit A", "ip" : "10.0.2.60", "enabled" : True, "team" : "red"},
-        { "name" : "Unit B", "ip" : "", "enabled" : False, "team" : "blue"}
+        { "name" : "Basket-A", "ip" : "10.0.2.60", "enabled" : True, "team" : "red"},
+        { "name" : "Basket-B", "ip" : "", "enabled" : False, "team" : "blue"}
     ],
     "sliders" : [
-        { "name" : "Unit A", "ip" : "10.0.2.73", "enabled" : True, "team" : "red"},
-        { "name" : "Unit B", "ip" : "10.0.2.75", "enabled" : True, "team" : "blue"},
-        { "name" : "Unit C", "ip" : "10.0.2.77", "enabled" : True, "team" : "red"},
-        { "name" : "Unit D", "ip" : "10.0.2.83", "enabled" : True, "team" : "blue"},
-        { "name" : "Unit E", "ip" : "10.0.2.99", "enabled" : False, "team" : "red"},
-        { "name" : "Unit F", "ip" : "10.0.2.99", "enabled" : False, "team" : "blue"}
+        { "name" : "Slider-Low-A", "ip" : "10.0.2.73", "enabled" : True, "team" : "red"},
+        { "name" : "Slider-Low-B", "ip" : "10.0.2.75", "enabled" : True, "team" : "blue"},
+        { "name" : "Slider-Mid-A", "ip" : "10.0.2.77", "enabled" : True, "team" : "red"},
+        { "name" : "Slider-Mid-B", "ip" : "10.0.2.83", "enabled" : True, "team" : "blue"},
+        { "name" : "Slider-Top-A", "ip" : "10.0.2.99", "enabled" : False, "team" : "red"},
+        { "name" : "Slider-Top-B", "ip" : "10.0.2.99", "enabled" : False, "team" : "blue"}
     ],
     "movers"  : [
-        { "name" : "Unit A", "ip" : "10.0.2.71", "enabled" : True, "team" : "red"},
-        { "name" : "Unit B", "ip" : "10.0.2.74", "enabled" : True, "team" : "blue"}
+        { "name" : "Mover-A", "ip" : "10.0.2.71", "enabled" : True, "team" : "red"},
+        { "name" : "Mover-B", "ip" : "10.0.2.74", "enabled" : True, "team" : "blue"}
     ]
 }
 

@@ -2,7 +2,8 @@
 var last_update = window.performance.now();
 var blink_count = 0;
 var config_data = null;  // Configuration data
-
+var game_config = null   // Game configuration 
+var game_config_dirty = true; 
 
 // Load status data in the background.
 function loadStatusData() {
@@ -15,6 +16,7 @@ function loadStatusData() {
             load_slider_data();
             load_basket_data();
             load_mover_data();
+            load_game_config();
         })
         .catch(function (err) {
             console.log('error: ' + err);
@@ -27,26 +29,6 @@ function loadStatusData() {
 function init_loading() {
     setInterval(loadStatusData, 1000)
     document.getElementById("gametab").style.display = "block"
-}
-
-function vis_off(id) {
-    var e = document.getElementById(id)
-    e.style.visibility = "hidden";
-}
-
-function vis_on(id) { 
-    var e = document.getElementById(id)
-    e.style.visibility = "visible";
-}
-
-function is_tab_vis(id) { 
-    var e = document.getElementById(id)
-    if (e.style.display=="block") return true;
-    return false;
-}
-
-function set_value(id, v) {
-    document.getElementById(id).innerHTML = v
 }
 
 // Called about once per second to fill status info on admin page
@@ -90,18 +72,6 @@ function sendpassword() {
         .catch(function (err) { console.log("Unable to send password. Error: " + err)});
 }
 
-
-
-function settestcb() {
-  var cb = document.getElementById("testscoreboard");
-  var url = "admin?scoretestmode="
-  if (cb.checked) url += "1";
-  else            url += "0";
-  fetch(url)
-      .then(function () { console.log("Test mode request sent to server.")})
-      .catch(function (err) { console.log("Unable to send test mode request. Error: " + err)});
-}
-
 function load_config() {
     var url = "getconfig";
     fetch(url)
@@ -118,143 +88,35 @@ function load_config() {
         });
 }
 
-function clearSelBox(sel) {
-    var n = sel.length;
-    var i;
-    for (i = 0; i < n; i++) {
-        sel.remove(0);
-    }
+function load_game_config() {
+    if (!game_config_dirty) return;
+    var url = "getgameconfig";
+    fetch(url)
+        .then(function(response) {
+            return response.json();
+        })
+        .then(function (data) {
+            game_config = JSON.parse(JSON.stringify(data))
+            fill_game_config_elements();
+            game_config_dirty = false;
+        })
+        .catch(function (err) {
+            console.log('error: ' + err);
+            return
+        });
 }
 
-function addselection(selbox, txt, lab, val) {
-    var option = document.createElement("option");
-    option.text = txt;
-    option.label = lab;
-    option.value = val;
-    selbox.add(option);
-}
-
-function setSelectionBox(selid, txt) {
-    //console.log("in setSelectioBox. Txt=", txt)
-    var selbox = document.getElementById(selid);
-    var i;
-    // Look for an exact match, in either text or values.
-    for(i = 0; i < selbox.options.length; i++) {
-      var opt = selbox.options[i];
-      if (opt.value == txt) {
-          selbox.value = opt.value;
-          //console.log("setting to (1):", selbox.value)
-          return true;
-      }
-      if (opt.text == txt) {
-          selbox.value = opt.value;
-          //console.log("setting to (2):", selbox.value)
-          return true;
-      }
-    }
-    if (txt == "") {
-        // This means that a correct default was not 
-        // provided, so the current selection is valid.
-        return true
-    }
-    // Return false if no valid selection was found.
-    return false;
-}
-
-function setSelectionBox(selid, txt) {
-    //console.log("in setSelectioBox. Txt=", txt)
-    var selbox = document.getElementById(selid);
-    if (selbox == null) {
-        console.log("Programming error: Selection box not found. (", selid, ")");
+function fill_game_config_elements() {
+    if (game_config === null) {
+        console.log("game config data is null");
+        set_textbox("blueteamname", "", true);
+        set_textbox("redteamname", "", true);
+        set_checkbox("testscoreboard", false, true);
         return;
     }
-    var i;
-    // Look for an exact match, in either text or values.
-    for(i = 0; i < selbox.options.length; i++) {
-      var opt = selbox.options[i];
-      if (opt.value == txt) {
-          selbox.value = opt.value;
-          //console.log("setting to (1):", selbox.value)
-          return true;
-      }
-      if (opt.text == txt) {
-          selbox.value = opt.value;
-          //console.log("setting to (2):", selbox.value)
-          return true;
-      }
-    }
-    if (txt == "") {
-        // This means that a correct default was not 
-        // provided, so the current selection is valid.
-        return true
-    }
-    // Return false if no valid selection was found.
-    return false;
-}
-
-function make_dirty(elemid) {
-    var elem = document.getElementById(elemid);
-    elem.style.backgroundColor = '#dd999e';
-}
-
-function make_clean(elemid) {
-    var elem = document.getElementById(elemid);
-    elem.style.backgroundColor = '#ffffff';
-}
-
-function set_textbox(id, txt, makeclean) {
-    var elem = document.getElementById(id);
-    if (elem == null) {
-        console.log("Programming error. Bad id for text box (", id, ")");
-        return;
-    }
-    elem.value = txt;
-    if(makeclean) make_clean(id);
-}
-
-function set_interhtml(id, txt) {
-    var elem = document.getElementById(id);
-    if (elem == null) {
-        console.log("Programming error. Bad id for text box (", id, ")");
-        return;
-    }
-    elem.innerHTML = txt;
-}
-
-function set_checkbox(id, val, makeclean) {
-    var elem = document.getElementById(id);
-    if (elem == null) {
-        console.log("Programming error. Bad id for check box (", id, ")");
-        return;
-    }
-    elem.checked = val   
-}
-
-function get_selectionbox_value(id) {
-    var elem = document.getElementById(id);
-    if (elem == null) {
-        console.log("Programming error. Bad id for selection box (", id, ")");
-        return 0;
-    }  
-    return parseInt(elem.value)  
-}
-
-function get_textbox_value(id) {
-    elem = document.getElementById(id);
-    if (elem == null) {
-        console.log("Programming Error. Text Box not found: (", id, ")");
-        return "";
-    }
-    return elem.value;
-}
-
-function get_checkbox_value(id) {
-    elem = document.getElementById(id);
-    if (elem == null) {
-        console.log("Programming Error. Text Box not found: (", id, ")");
-        return "";
-    }
-    return elem.checked;
+    set_textbox("blueteamname", game_config["teamnames"]["blue"], true);
+    set_textbox("redteamname", game_config["teamnames"]["red"], true);
+    set_checkbox("testscoreboard", game_config["runscoreboardtest"], true);
 }
 
 function fill_config_elements() {
@@ -421,6 +283,42 @@ function slider_configure() {
         .then(function() {load_config();})
         .catch(function (err) { console.log("Unable to change config. Error: " + err)});
 }
+
+function update_teamnames() {
+    var map = {};
+    var names = {"blue" : get_textbox_value("blueteamname"), "red": get_textbox_value("redteamname")}
+    map["teamnames"] = names
+    var ss = btoa(JSON.stringify(map));
+    var url = "admin?gameconfig="+ss
+    fetch(url)
+        .then(function () { console.log("Game config change sent to server.");})
+        .then(function() {game_config_dirty = true;})
+        .catch(function (err) { console.log("Unable to change config. Error: " + err)});
+}
+
+function swap_teamnames() {
+    var map = {};
+    var names = {"red" : get_textbox_value("blueteamname"), "blue": get_textbox_value("redteamname")} 
+    map["teamnames"] = names
+    var ss = btoa(JSON.stringify(map));
+    var url = "admin?gameconfig="+ss
+    fetch(url)
+        .then(function () { console.log("Game config change sent to server.");})
+        .then(function() {game_config_dirty = true;})
+        .catch(function (err) { console.log("Unable to change config. Error: " + err)});    
+}
+
+function update_scoreboare_test() {
+    var cb = document.getElementById("testscoreboard");
+    var map = {}
+    map["runscoreboardtest"] = cb.checked
+    var ss = btoa(JSON.stringify(map));
+    var url = "admin?gameconfig="+ss
+    fetch(url)
+        .then(function () { console.log("Game config change sent to server.")})
+        .then(function() {game_config_dirty = true;})
+        .catch(function (err) { console.log("Unable to change config. Error: " + err)});
+  }
 
 function basket_configure() {
     var indx = get_current_basket_unit_index();

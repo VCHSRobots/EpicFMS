@@ -9,7 +9,7 @@ import datetime
 import timercb
 import score_sender
 import target_manager
-import time
+import game_manager
 import security
 import settings
 import fmslogger
@@ -56,18 +56,15 @@ def setup():
     if not pw_manager.is_loggedin(request.remote_addr):
       return render_template('admin.html', **dummy_params)
 
-    # Temperarily handle general game stuff here
-    testmode = request.args.get("scoretestmode", "dummy")
-    if testmode != "dummy":
-      if testmode == "1":
-        scoreoutput.testing(True)
-        log("setting test output to true")
-      else: 
-        log("setting test output to false")
-        scoreoutput.testing(False)
-        scoreoutput.clear()
+    # Handle game commands
+    #*** TODO
+
+    # Handle game config requests
+    config = request.args.get("gameconfig", "dummy")
+    if config != "dummy":
+      game_manager.process_gameconfig_update(config)
       return render_template('admin.html', **dummy_params)
-    
+   
     # Handle requests for target units in manager...
     target_manager.process_admin_request(request) 
     return render_template('admin.html', **dummy_params)
@@ -101,6 +98,13 @@ def setup():
   @webapp.route("/getconfig")
   def rawconfig():
     tout = json.dumps(settings.fms_config) 
+    return tout
+
+ #Returns the game configuration settings as JSON
+  @webapp.route("/getgameconfig")
+  def getgameconfig():
+    config = game_manager.get_game_config()
+    tout = json.dumps(config) 
     return tout
 
 # Main loop here.  Does work that is not the web server.

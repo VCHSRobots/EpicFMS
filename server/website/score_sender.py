@@ -7,6 +7,7 @@
 
 import json
 import time
+import game_manager
 
 class TeamScore():
     # Simple class to layout the team score structure that works with javascript via json.
@@ -63,8 +64,21 @@ class ScoreSender():
       self.score["Blue"]["TeamName"] = "Blue"
       self.score["Blue"]["TeamName"] = "Red"
 
+    def load_current_score(self):
+        self.score["GameMode"] = game_manager.get_gamemode()
+        self.score["Timer"] = game_manager.get_time() 
+        self.score["TimerLable"] = game_manager.get_time_label()
+        b, r = game_manager.get_score()
+        bn, rn = game_manager.get_teamnames()
+        self.score["Blue"]["Score"] = b
+        self.score["Red"]["Score"] = r
+        self.score["Blue"]["TeamName"] = bn
+        self.score["Red"]["TeamName"] = rn       
+
     def update(self):
-        # Update will be called about 10 Hz.  
+        # Update will be called about 10 Hz. 
+        self.doing_test = game_manager.get_runscoreboardtest()
+        if not self.doing_test: self.load_current_score()
         self.update_count += 1
         t = int(time.monotonic() - self.t0)
         if self.doing_test:
