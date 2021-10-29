@@ -44,7 +44,7 @@
             <button class="tabbutton" onclick="change_tab(event, 'setuptab')">Setup</button>
             <button class="tabbutton" onclick="change_tab(event, 'baskettab')">Baskets</button>
             <button class="tabbutton" onclick="change_tab(event, 'slidertab')">Sliders</button>
-            <button class="tabbutton" onclick="change_tab(event, 'movingtab')">Movers</button>
+            <button class="tabbutton" onclick="change_tab(event, 'movertab')">Movers</button>
           </div>
           
           <div id="gametab" class="tabcontent">
@@ -191,7 +191,7 @@
             </div>
           </div>
           
-          <div id="movingtab" class="tabcontent">
+          <div id="movertab" class="tabcontent">
             <div class="tabtitle">Movers</div>
             <div class="unitbar">
               <div class="unitselectiondiv">
@@ -216,6 +216,21 @@
                 <button class="gpbutton" id="moverchangebutton" onclick="mover_configure()">Change</button>
                 <button class="gpbutton" id="moverrefreshbutton" onclick="load_config()">Refresh</button>
               </div>
+            </div>
+            <div style="clear: both;"></div>
+            <div id="movercontrolbuttons">
+              <button class="scbutton" id="moverselftestbutton" onclick="mover_selftest()">Selftest</button>
+              <button class="scbutton" id="moverresetbutton" onclick="mover_resethits()">Reset</button>
+            </div>
+            <div style="clear: both;"></div>
+            <div id="moverstatusdiv">
+              <div class=gplabel id="moverstatuslabel">Mover Status</div>
+              <button class="updatebutton" id="moverstatusupdate" onclick="update_moverstatus()">Update</button>
+              <textarea class="gptextarea" id="moverstatus"></textarea>
+            </div>
+            <div id="moverhitbox">
+              <div class="gplabel" id="moverhitboxlabel">Hits</div>
+              <div id="moverhitboxvalue">00</div>
             </div>
           </div>
        </div>

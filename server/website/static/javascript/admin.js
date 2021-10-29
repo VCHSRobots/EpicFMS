@@ -580,6 +580,16 @@ function slider_resethits() {
         .catch(function (err) { console.log('error: ' + err); return; })
 }
 
+function mover_resethits() {
+    var num = get_current_mover_unit_index();
+    if (num < 0) return;
+    var url = "/admin?unittype=movers&unitnum=" + num
+    url += "&resethits=1"
+    fetch(url)
+        .then(function(response) { return})
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
 function slider_set_pwm() {
     var num = get_current_slider_unit_index();
     if (num < 0) return;

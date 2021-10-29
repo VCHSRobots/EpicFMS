@@ -3,6 +3,7 @@
 
 import basket_unit
 import slider_unit
+import mover_unit
 import settings
 import json
 from fmslogger import log
@@ -19,7 +20,7 @@ def set_up_targets():
             name, ip, en, team = k["name"], k["ip"], k["enabled"], k["team"]
             if type == "baskets": u = basket_unit.BasketUnit(ip)
             if type == "sliders": u = slider_unit.SliderUnit(ip)
-            if type == "movers": u = None
+            if type == "movers": u = mover_unit.MoverUnit(ip)
             if u is not None:
                 u.set_enable(en)
                 t = {"unit" : u, "type" : type, "slot" : islot, "config" : k, "team": team, "name" : name}
@@ -56,54 +57,88 @@ def find_target(unittype, unitnum):
     return None
 
 def process_basket_commands(request, t):
+    unitid = (t["type"], t["slot"])
     if request.args.get("motor", -1) != -1:
         enable = int(request.args.get("motor", 0))
         log("Enable = %d" % enable)
-        if enable == 1: t["unit"].turn_motor_on()
-        else:           t["unit"].turn_motor_off()
+        if enable == 1: 
+            t["unit"].turn_motor_on()
+            log("Motor ON command sent to unit %s-%d" % unitid)
+        else:
+            t["unit"].turn_motor_off()
+            log("Motor OFF command sent to unit %s-%d" % unitid)
     basketmode = request.args.get("basketmode", "dummy")
     if basketmode != "dummy":
         t["unit"].set_game_mode(basketmode)
+        log("Gamemode set to %s for unit %s-%d" % (basketmode, unitid[0], unitid[1]))
 
 def process_slider_commands(request, t):
+    unitid = (t["type"], t["slot"])
     if request.args.get("open", -1) != -1:
         doit = int(request.args.get("open", 0))
-        if doit == 1: t["unit"].open_door()
+        if doit == 1: 
+            t["unit"].open_door()
+            log("Open command sent to unit %s-%d" % unitid)
         return 
     if request.args.get("close", -1) != -1:
         doit = int(request.args.get("close", 0))
-        if doit == 1: t["unit"].close_door()
+        if doit == 1: 
+            t["unit"].close_door()
+            log("Close command sent to unit %s-%d" % unitid)
         return 
     if request.args.get("center", -1) != -1:
         doit = int(request.args.get("center", 0))
-        if doit == 1: t["unit"].center_door()
+        if doit == 1: 
+            t["unit"].center_door()
+            log("Center command sent to unit %s-%d" % unitid)
         return    
     if request.args.get("openpwm", -1) != -1:
         pwm =  int(request.args.get("openpwm", 0))
         t["unit"].set_open_pwm(pwm)
+        log("Open pwm set to %d for unit %s-%d" % (pwm, unitid[0], unitid[1]))
         return
     if request.args.get("closepwm", -1) != -1:
         pwm =  int(request.args.get("closepwm", 0))
         t["unit"].set_close_pwm(pwm)
+        log("Close pwm set to %d for unit %s-%d" % (pwm, unitid[0], unitid[1]))
         return
     if request.args.get("gamemode", -1) != -1:
         gm = request.requests.args.get("gamemode")
         t["unit"].set_game_mode(gm)
+        log("Gamemode set to %s for unit %s-%d" % (gm, unitid[0], unitid[1]))
         return 
     if request.args.get("selftest", -1) != -1:
         t["unit"].run_detector_test()
+        log("Selftest Performed for unit %s-%d" % unitid)
         return 
     if request.args.get("resethits", -1) != -1:
         t["unit"].reset_hits()
         t["unit"].reset_hits_on_unit()
+        log("Hits Reset for unit %s-%d" % unitid)
         return
     if request.args.get("saveconfig", -1) != -1:
         t["unit"].save_config()
+        log("Config saved for unit %s-%d" % unitid)
         return
     log("Invalid slider command.")
 
 def process_mover_commands(request, t):
-    pass
+    unitid = (t["type"], t["slot"])
+    if request.args.get("gamemode", -1) != -1:
+        gm = request.requests.args.get("gamemode")
+        t["unit"].set_game_mode(gm)
+        log("Gamemode set to %s for unit %s-%d" % (gm, unitid[0], unitid[1]))
+        return 
+    if request.args.get("selftest", -1) != -1:
+        t["unit"].run_detector_test()
+        log("Selftest Performed for unit %s-%d" % unitid)
+        return 
+    if request.args.get("resethits", -1) != -1:
+        t["unit"].reset_hits()
+        t["unit"].reset_hits_on_unit()
+        log("Hits Reset for unit %s-%d" % unitid)
+        return
+    log("Invalid mover command.")
 
 def extract_type_unit(request):
     unittype = request.args.get("unittype", "dummy")
@@ -147,7 +182,7 @@ def process_admin_request(request):
     # targeted for a specific unit.  To deal with 
     # that, the request must have a unit type, and
     # a unit number.
-    log("Handling general unit admin command.")
+    log("Handling general unit admin command: %s" % request.url)
     unittype, unitnum = extract_type_unit(request)
     if unittype is None or unitnum is None: return
     t = find_target(unittype, unitnum)
@@ -175,7 +210,8 @@ def process_unitstatus_request(request):
     # log("Processing unit status request for type=%s num=%d." % (unittype, unitnum))
     status = t["unit"].get_rawstatus()
     if status is None: 
-        log("Status not valid from unit.")
+        prgerr = t["unit"].progerror
+        log("Status not valid from unit. unittype=%s, unitnum=%d, progerror=%d" % (unittype, unitnum, prgerr))
         return "{}"
     # log("type(status)", type(status))
     # log("status", status)

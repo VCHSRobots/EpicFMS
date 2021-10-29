@@ -309,10 +309,10 @@ void on_status(char *json) {
   sprintf(lineout, "\"hitdetector_fail_code\" : %d, \n", hitdetector.get_fail_code());
   strncat(json, lineout, MAX_STATUS_CHARS);
 
-  sprintf(lineout, "\"batvolts\" : %8.2f \n", vbattery);
+  sprintf(lineout, "\"batvolts\" : %8.2f, \n", vbattery);
   strncat(json, lineout, MAX_STATUS_CHARS);
 
-  sprintf(lineout, "\"batlow\" : %df \n", battery_low);
+  sprintf(lineout, "\"batlow\" : %d \n", battery_low);
   strncat(json, lineout, MAX_STATUS_CHARS);
 
   strncat(json, "}\n", MAX_STATUS_CHARS);
