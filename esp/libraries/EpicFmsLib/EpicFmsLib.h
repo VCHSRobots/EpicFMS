@@ -8,7 +8,8 @@
 #ifndef EPICFMSLIB_H
 #define EPICFMSLIB_H
 
-#include "neo_conductor.h"
+#include "neo_base.h"
+#include "neo_mover.h"
 #include "basketmotor.h"
 #include "hitdetector.h"
 #include "hitdetector4.h"

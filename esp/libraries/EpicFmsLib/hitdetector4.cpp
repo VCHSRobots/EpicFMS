@@ -184,7 +184,6 @@ long HitDetector4::value(void) {
 
 // Returns the status of the detector. See the HDSTATUS_xxx defines.
 int HitDetector4::get_status(void) {
-    char lineout[100];
     if (!_started) return HDSTATUS_OFF;
     if (_selftest_state != 0) return HDSTATUS_INSELFTEST;
     if (s_inerror) return HDSTATUS_ERROR;

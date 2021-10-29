@@ -1,4 +1,4 @@
-// neo_basket.cpp -- Basket Status on Neo Strip -- for Offline and Debug modes
+// neo_basket.cpp -- Basket Status on Neo Strip -- for all modes
 // dlb, Oct 2021
 
 #include "neo_conductor.h"
@@ -81,14 +81,14 @@ void NeoConductor::stage_basket_online(Neo_Basket_Params *p, bool same, uint32_t
              _delay_time = 30;
              last_side++;
             return;
-        case GMODE_UNITERR: // Super Fast running yellow
+        case GMODE_UNITERR: // Super Fast running red
             update_count++;
             if (update_count < 1) { _delay_time = 10; return;
             show_solidcolor(0, 0, 0);
             }
             update_count = 0;
              if (last_side>_np) { last_side=0; return;}
-             show_one(last_side, 150, 255, 0);
+             show_one(last_side, 255, 0, 0);
              _delay_time = 10;
              last_side++;
              return;
@@ -123,8 +123,7 @@ void NeoConductor::stage_basket_online(Neo_Basket_Params *p, bool same, uint32_t
                     last_side++;
                     return;
                 }
-                
-                if (last_side >= 4 & last_side <=6){
+                if (last_side >= 4 && last_side <=6){
                     show_solidcolor(ENEO_GREEN);
                     last_side++;
                     return;
@@ -143,19 +142,19 @@ void NeoConductor::stage_basket_online(Neo_Basket_Params *p, bool same, uint32_t
             last_side =1;
             _delay_time = 500;
             return;
-        case GMODE_POSTWAIT: //red slow chasing
+        case GMODE_POSTWAIT: //yellow slow chasing
             if (last_side > _np) { last_side=0; return;}
-             show_one(last_side, ENEO_GREEN_DIM);
+             show_one(last_side, ENEO_YELLOW);
              _delay_time = 100;
              last_side++;
              return;
-        case GMODE_POSTRESULT:
+        case GMODE_POSTRESULT: // random flashing
             if (last_side > _np) { last_side=0; return;}
              show_one(last_side, random(0,255),random(0,255),random(0,255));
-             _delay_time = 10;
+             _delay_time = 25;
              last_side++;
              return;
-        default: // All other modes for now... pink blink
+        default: // All other modes for now... pink/yellow blink
             last_side++;
             if (last_side == 1) {
                 show_solidcolor(ENEO_PINK);
@@ -164,7 +163,7 @@ void NeoConductor::stage_basket_online(Neo_Basket_Params *p, bool same, uint32_t
                 show_solidcolor(ENEO_YELLOW);
                 last_side = 1;
             }
-            _delay_time = 50;
+            _delay_time = 100;
             return;
     }
 }
