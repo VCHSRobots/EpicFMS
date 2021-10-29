@@ -10,6 +10,7 @@
 
 #include "neo_base.h"
 #include "neo_mover.h"
+#include "neo_basket.h"
 #include "basketmotor.h"
 #include "hitdetector.h"
 #include "hitdetector4.h"

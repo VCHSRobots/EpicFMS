@@ -1,7 +1,7 @@
 // neo_mover.cpp -- Mover Status on Neo Strip
 // dlb, Oct 2021
 
-// This calls inherites NeoBase which does all the hard work in setting
+// This class inherites NeoBase which does all the hard work in setting
 // up the pattern on the LEDs.  Here we override some bahaviour to show
 // when the battery is low, and when a hit is detected.
 
@@ -36,8 +36,8 @@ void NeoMover::show_hit(void) {
     show();
 }
 
-// This smash function should be called by update when parameters change
-// or fouce 
+// This smash function will be called by update when parameters change
+// or after last requested delay. 
 void NeoMover::smash(int gamemode, bool changed, uint32_t telp) {
     if (_showing_hit) {
         if(millis() - _time_of_hit > 50) {

@@ -1,4 +1,4 @@
-// neo_mover.h -- sub class for managing neo strip on mover targer
+// neo_mover.h -- sub class for managing neo strip on mover target
 // dlb, Oct 2021
 
 #ifndef NEO_MOVER_H

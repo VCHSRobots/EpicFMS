@@ -9,40 +9,40 @@ from fmslogger import log
 # This is the loaded version for use while running
 fms_config = {
     "baskets" : [
-        { "name" : "Unit A", "ip" : "10.0.2.43", "enabled" : True, "team" : "red"},
+        { "name" : "Unit A", "ip" : "10.0.2.60", "enabled" : True, "team" : "red"},
         { "name" : "Unit B", "ip" : "", "enabled" : False, "team" : "blue"}
     ],
     "sliders" : [
-        { "name" : "Unit A", "ip" : "10.0.2.42", "enabled" : True, "team" : "red"},
-        { "name" : "Unit B", "ip" : "", "enabled" : False, "team" : "blue"},
-        { "name" : "Unit C", "ip" : "", "enabled" : False, "team" : "red"},
-        { "name" : "Unit D", "ip" : "", "enabled" : False, "team" : "blue"},
-        { "name" : "Unit E", "ip" : "", "enabled" : False, "team" : "red"},
-        { "name" : "Unit F", "ip" : "", "enabled" : False, "team" : "blue"}
+        { "name" : "Unit A", "ip" : "10.0.2.73", "enabled" : True, "team" : "red"},
+        { "name" : "Unit B", "ip" : "10.0.2.75", "enabled" : True, "team" : "blue"},
+        { "name" : "Unit C", "ip" : "10.0.2.77", "enabled" : True, "team" : "red"},
+        { "name" : "Unit D", "ip" : "10.0.2.83", "enabled" : True, "team" : "blue"},
+        { "name" : "Unit E", "ip" : "10.0.2.99", "enabled" : False, "team" : "red"},
+        { "name" : "Unit F", "ip" : "10.0.2.99", "enabled" : False, "team" : "blue"}
     ],
     "movers"  : [
-        { "name" : "Unit A", "ip" : "", "enabled" : False, "team" : "red"},
-        { "name" : "Unit B", "ip" : "", "enabled" : False, "team" : "blue"}
+        { "name" : "Unit A", "ip" : "10.0.2.71", "enabled" : True, "team" : "red"},
+        { "name" : "Unit B", "ip" : "10.0.2.74", "enabled" : True, "team" : "blue"}
     ]
 }
 
 # If a conf file is not found, this will be loaded for running.
 fms_defualt_config = {
     "baskets" : [
-        { "name" : "Default A", "ip" : "10.0.2.43", "enabled" : False, "team" : "red"},
+        { "name" : "Unit A", "ip" : "10.0.2.60", "enabled" : True, "team" : "red"},
         { "name" : "Unit B", "ip" : "", "enabled" : False, "team" : "blue"}
     ],
     "sliders" : [
-        { "name" : "Unit A", "ip" : "10.0.2.42", "enabled" : False, "team" : "red"},
-        { "name" : "Unit B", "ip" : "", "enabled" : False, "team" : "blue"},
-        { "name" : "Unit C", "ip" : "", "enabled" : False, "team" : "red"},
-        { "name" : "Unit D", "ip" : "", "enabled" : False, "team" : "blue"},
-        { "name" : "Unit E", "ip" : "", "enabled" : False, "team" : "red"},
-        { "name" : "Unit F", "ip" : "", "enabled" : False, "team" : "blue"}
+        { "name" : "Unit A", "ip" : "10.0.2.73", "enabled" : True, "team" : "red"},
+        { "name" : "Unit B", "ip" : "10.0.2.75", "enabled" : True, "team" : "blue"},
+        { "name" : "Unit C", "ip" : "10.0.2.77", "enabled" : True, "team" : "red"},
+        { "name" : "Unit D", "ip" : "10.0.2.83", "enabled" : True, "team" : "blue"},
+        { "name" : "Unit E", "ip" : "10.0.2.99", "enabled" : False, "team" : "red"},
+        { "name" : "Unit F", "ip" : "10.0.2.99", "enabled" : False, "team" : "blue"}
     ],
     "movers"  : [
-        { "name" : "Unit A", "ip" : "", "enabled" : False, "team" : "red"},
-        { "name" : "Unit B", "ip" : "", "enabled" : False, "team" : "blue"}
+        { "name" : "Unit A", "ip" : "10.0.2.71", "enabled" : True, "team" : "red"},
+        { "name" : "Unit B", "ip" : "10.0.2.74", "enabled" : True, "team" : "blue"}
     ]
 }
 
@@ -78,6 +78,10 @@ def load_settings():
     f.close()
     log("Configuration Settings Loaded")
 
+def load_defautls():
+    global fms_config, fms_defualt_config 
+    fms_config = copy.deepcopy(fms_defualt_config)
+    return
 
 def convert_to_index(x):
     try:

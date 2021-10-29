@@ -49,7 +49,7 @@
 // HitDetector hitdetector = HitDetector(PIN_IRE, PIN_IRD);
 // EpicFmsWiFi fmswifi = EpicFmsWiFi(WIFISSID, WIFIPK, "Basket Target");
 
-NeoConductor neopixels(PIN_NEO, PIN_NONE, NPIXELS, NPIXELS);
+NeoBasket neopixels(PIN_NEO, PIN_NONE, NPIXELS, NPIXELS);
 BasketMotor bmotor(PIN_PWM, PIN_A, PIN_B);
 HitDetector hitdetector(PIN_IRE, PIN_IRD);
 EpicFmsWiFi fmswifi(WIFISSID, WIFIPK, "Basket Target");
@@ -82,7 +82,6 @@ void setup(void) {
 
   Serial.println("Setting up Neo pixels.");
   neopixels.begin();
-  neopixels.show_solidcolor(0, 128, 0);
  
   Serial.println("Setting up wifi.");
   fmswifi.set_oncommand(on_command);
@@ -124,7 +123,8 @@ void update_neo() {
   long nrevs_ticks = (encoder_ticks >> 10) * 1024; 
   p.revs = float(encoder_ticks - nrevs_ticks) / 1024.0;
   p.hitcount = hitdetector.value();
-  neopixels.show_basketstatus(&p);
+  neopixels.set_params(&p);
+  neopixels.update(game_mode);
 }
 
 // Here, we determine the game-mode that we think we should use.

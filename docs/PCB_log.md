@@ -16,27 +16,53 @@ as follows:
 
 So, for now on, a V2 board with the above mods is refered to as a V3 board.  So far all V2 boards have been converted, so we only have V1 boards and V3 boards.  Moreover, all V1 boards in use have been moded for use in the basket targets, so they are not really V1 boards.
 
-Finally, V1 boards are not numbered. (boo).
+10/29: Update on mods:  It has been found that HITRST to D0 causes problems. Since 
+HITRST is a minor feature, this mod may not be found on many boards.
 
-|SN     | Date Made | BType | Okay |HS |Mods| Notes                      |
-|-------|-----------|-------|------|---|----| -------------------------- |
-| A1    | Sept 21   | V1    |      |   |    |Original, made by Mr.B      |
-| A2    | Sept 21   | V1    |  No  |   |    |Made by Chris, cap blew up  |
-| A3    | Sept 21   | V1    |      |   | Y  |Many mods, For Basket       |
-| 1     | 10/21/21  | V3    |      | Y |    |Runs pcb_test okay.         |
-| 2     | 10/21/21  | V3    |  n   |   |    |Runs pcb_test okay.         |
-| 3     | 10/21/21  | V3    |      |   |    |Runs pcb_test okay.         |
-| 4     | 10/21/21  | V3    |      | Y |    |Runs pcb_test okay.         |
-| 5     | 10/21/21  | V3    |  n   |   |    |Runs pcb_test okay.         |
-| 6     | 10/21/21  | V3    |      | Y |    |Runs pcb_test okay.         |
-| 7     | 10/21/21  | V3    |  No  |   |    |Fails test.                 |
-| 8     | 10/21/21  | V3    |  No  |   |    |Fails test.                 |
-| 9     | 10/21/21  | V3    |  No  | Y |    |Fails test.                 |
-| 10    | 10/21/21  | V3    |  No  |   |    |Fails test.                 |
-| 11    | 10/21/21  | V3    |  No  | Y |    |Fails test. Gets really hot.|
-| 12    | 10/21/21  | V3    |  No  |   |    |Fails test.                 |
-| 13    | 10/21/21  | V3    |  No  |   |    |Completely Ruined.          |
-| 14    | 10/21/21  | V3    |  No  |   |    |Unfinished, needs ESP8266   |
+### Manufacturing Log
+
+|SN     | Date Made | BType | Okay |HS |Mods| Notes                      |How Used  |
+|-------|-----------|-------|------|---|----| -------------------------- |----------|
+| A1    | Sept 21   | V1    |      |   |    |Original, made by Mr.B      |          |
+| A2    | Sept 21   | V1    |  No  |   |    |Made by Chris, cap blew up  |          |
+| A3    | Sept 21   | V1    |      |   | Y  |Many mods, For Basket       | Basket   |
+| 1     | 10/21/21  | V3    |      | Y |    |Runs pcb_test okay.         | Mover    |
+| 2     | 10/21/21  | V3    |  No  |   |    |Runs pcb_test okay.         |          |
+| 3     | 10/21/21  | V3    |      |   |    |Runs pcb_test okay.         | Slider   |
+| 4     | 10/21/21  | V3    |      | Y |    |Runs pcb_test okay.         | Mover    |
+| 5     | 10/21/21  | V3    |      |   |    |Bad Mod, now okay.          | Slider   |
+| 6     | 10/21/21  | V3    |      | Y |    |Runs pcb_test okay.         |          |
+| 7     | 10/21/21  | V3    |  No  |   |    |Fails test.                 | Slider   |
+| 8     | 10/21/21  | V3    |  No  |   |    |Fails test.                 |          |
+| 9     | 10/21/21  | V3    |  No  | Y |    |Fails test.                 |          |
+| 10    | 10/21/21  | V3    |  No  |   |    |Fails test.                 |          |
+| 11    | 10/21/21  | V3    |  No  | Y |    |Fails test. Gets really hot.|          |
+| 12    | 10/21/21  | V3    |  No  |   |    |Something wrong on Detector |          |
+| 13    | 10/21/21  | V3    |      |   |    |Fixed with Paul's Help      | Slider   |
+
+HS=HeatSink
+
+### Address Assignements
+
+|Board  |WiFi Name   |Mac               |IP Addr    |How Used |
+|-------|------------|------------------|-----------|---------|
+|PCB-A3 |Basket-1    |BC:FF:4D:2B:AD:82 |10.0.2.60  |Basket   |  
+|PCB-01 |Mover-1     |30:83:98:B6:34:A1 |10.0.2.71  |Mover    |  
+|PCB-03 |Slider-1    |8C:CE:4E:E3:42:36 |10.0.2.73  |Slider   |  
+|PCB-04 |Mover-2     |A8:48:FA:C0:81:A7 |10.0.2.74  |Mover    |  
+|PCB-05 |Slider-2    |30:83:98:B5:5D:FF |10.0.2.75  |Slider   |  
+|PCB-07 |Slider-3    |BC:FF:4D:2B:A7:02 |10.0.2.77  |Slider   |  
+|PCB-13 |Slider-4    |BC:FF:4D:2A:EB:3D |10.0.2.83  |Slider   |  
+
+IP addresses are fixed to MAC addresses and assigned by the LinkSys router,
+via DHCP. The scheme is to tie address to Board SN, the V1 boards (A series) start 
+at 10.0.0.60, and the V3 boards start at 10.0.2.71.  
+
+The above scheme is not strickly necessary, but helps with the 
+default assignments in the Epic FMS web server.
+
+
+### Work Log
 
 Work on Tuesday, 10/26:
 PCB-2 was in first Ring, working great.  Working on second ring
@@ -46,3 +72,11 @@ on GPIO pins.
 
 PCB-5 was also used on bad ring.  It will connect, but will not
 work with the IR Beams.  Suppected burnout on GPIO pins.
+
+Work on Thrusday, 10/28:
+PCB-5 was misswired, a bad mod. Fixed the mod, and PCB-5 now okay.
+Also, resodered PCB-13, works not.  And finshed PCB-12 with new ESP, and
+something seems to be wrong... Set aside for debugging later.
+
+
+

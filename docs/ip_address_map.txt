@@ -1,8 +1,0 @@
-
-IP Addresses for various components
-
-Device     Mac      
-PCB-7      BC-FF-4D-2B-A7-02   
-
-
-pcb-4      a8.48.fa.c0.81.a7
