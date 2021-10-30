@@ -50,13 +50,54 @@
           
           <div id="gametab" class="tabcontent">
             <div class="tabtitle">Game</div>
+            <div id="gamecontrolarea">
+              <button class="scbutton" id="gameresetbtn" onclick="send_game_button('reset')">Reset</button>
+              <button class="scbutton" id="gamestartbtn" onclick="send_game_button('start')">Start</button>
+              <button class="scbutton" id="gameabortbtn" onclick="send_game_button('abort')">Abort</button>
+            </div>
+            <div id="unitstatusarea">
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Mover-1</div>
+                <div class="unitstatusindicator" id="mover1indicator"></div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Mover-2</div>
+                <div class="unitstatusindicator" id="mover2indicator"></div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Slider-1</div>
+                <div class="unitstatusindicator" id="slider1indicator"></div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Slider-2</div>
+                <div class="unitstatusindicator" id="slider2indicator"></div>
+              </div>
+              <div style="clear: both;"></div>
+            </div>
+            <div id="endgamearea">
+              <div class="wincbarea">
+                <div class="wincblabel">Blue Win:</div>
+                <input type="checkbox" id="bluewincb" class="winnercb" onchange='update_winner()'>
+              </div>
+              <div class="wincbarea">
+                <div class="wincblabel">Red Win:</div>
+                <input type="checkbox" id="redwincb" class="winnercb" onchange='update_winner()'>
+              </div>
+            </div>
+            <div style="clear: both;"></div>
+            <div id="gamestatusmsgarea">
+               <div id="gamestatusmsg">(no message from the server...)</div>
+            </div>
           </div>
-       
+
           <div id="setuptab" class="tabcontent">
             <div class="tabtitle">Setup</div>
             <div style="clear: both;"></div>
             <div id="scoreboardtestdiv">
-              <div class="cblabel">Run scoreboard test</div> 
+              <div id="scoreboardtestlabel" class="cblabel">Run scoreboard test:</div> 
               <input class="cbinput" id="testscoreboard" type="checkbox" onchange="update_scoreboare_test()">
             </div>
             <div id="teamdiv">
@@ -77,6 +118,80 @@
                 <button class="updatebutton" id="teamnameswap" onclick="swap_teamnames()">Swap</button>
               </div>
             </div>
+            <div id="unitsetuparea">
+              <button class="updatebutton" id="unitselectionsubmit" onclick="update_unit_sides()">Submit</button>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Mover-1</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot1" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Mover-2</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot2" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Slider-1</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot3" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Slider-2</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot4" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Slider-3</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot5" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Slider-4</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot6" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Slider-5</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot7" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Slider-6</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot8" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Basket-1</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot9" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Basket-2</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot10" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <div id="baskettab" class="tabcontent">

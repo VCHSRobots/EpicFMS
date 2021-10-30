@@ -48,7 +48,7 @@ function setSelectionBox(selid, txt) {
     // Look for an exact match, in either text or values.
     for(i = 0; i < selbox.options.length; i++) {
       var opt = selbox.options[i];
-      if (opt.value == txt) {
+      if (opt.value.toLowerCase() == txt.toLowerCase()) {
           selbox.value = opt.value;
           //console.log("setting to (1):", selbox.value)
           return true;
@@ -132,4 +132,14 @@ function get_checkbox_value(id) {
         return "";
     }
     return elem.checked;
+}
+
+function set_indicator_color(id, status) {
+    elem = document.getElementById(id);
+    if (elem == null) {
+        console.log("Programming Error. Text Box not found: (", id, ")");
+        return "";
+    }
+    if (status == "okay") elem.style.backgroundColor = '#00ff00'
+    else elem.style.backgroundColor = '#ff0000'
 }

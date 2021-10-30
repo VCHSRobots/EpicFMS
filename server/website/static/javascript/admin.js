@@ -44,6 +44,11 @@ function fill_admin_status(data) {
     var nbluehits = data["bluehits"];
     set_value("redscore", nredhits);
     set_value("bluescore", nbluehits);
+    set_value("gamestatusmsg", data["gamestatusmsg"]);
+    set_indicator_color("mover1indicator", data["mover1"]);
+    set_indicator_color("mover2indicator", data["mover2"]);
+    set_indicator_color("slider1indicator", data["slider1"]);
+    set_indicator_color("slider2indicator", data["slider2"]);
 }
 
 function change_tab(evt, tabname) {
@@ -117,6 +122,22 @@ function fill_game_config_elements() {
     set_textbox("blueteamname", game_config["teamnames"]["blue"], true);
     set_textbox("redteamname", game_config["teamnames"]["red"], true);
     set_checkbox("testscoreboard", game_config["runscoreboardtest"], true);
+
+    var units = ["mover-1", "mover-2", "sider-1", "slider-2", "sider-3", "slider-4",
+                 "sider-5", "slider-6", "basket-1", "basket-2"]; 
+
+    if (game_config.hasOwnProperty("unitassignments")) {
+        for(const unitname in game_config.unitassignments) {
+            var i;
+            for(i = 0; i < units.length; i++) {
+                if (units[i] == unitname) {
+                    var id = "unitselslot" + (i+1);
+                    var v = game_config.unitassignments[unitname]
+                    setSelectionBox(id, v)
+                }
+            }
+        }
+    }
 }
 
 function fill_config_elements() {
@@ -319,6 +340,50 @@ function update_scoreboare_test() {
         .then(function() {game_config_dirty = true;})
         .catch(function (err) { console.log("Unable to change config. Error: " + err)});
   }
+
+function unit_side_changed() {
+    // Pass for now.
+}
+
+function send_game_button(btn) {
+    var url = "admin?gamecommand=1&button=" + btn
+    fetch(url)
+        .then(function () { console.log("Game command sent to server.");})
+        .catch(function (err) { console.log("Unable to change config. Error: " + err)});
+}
+
+function update_winner() {
+    var wb = document.getElementById("bluewincb").checked;
+    var wr = document.getElementById("redwincb").checked;
+    var x;
+    if (wb && wr) x = "br"
+    else if (wb) x = "b"
+    else if (wr) x = "r"
+    else x = "0"
+    var url = "admin?gamecommand=1&winner=" + x
+    fetch(url)
+        .then(function () { console.log("Game command sent to server.");})
+        .catch(function (err) { console.log("Unable to change config. Error: " + err)});
+}
+
+function update_unit_sides() {
+    var units = ["mover-1", "mover-2", "sider-1", "slider-2", "sider-3", "slider-4",
+                 "sider-5", "slider-6", "basket-1", "basket-2"]; 
+    var i;
+    unitmap = {};
+    for(i = 0; i < units.length; i++) {
+        var unitname = units[i];
+        var id = "unitselslot" + (i+1)
+        unitmap[unitname] = document.getElementById(id).value
+    }
+    var map = {"unitassignments" : unitmap }
+    var ss = btoa(JSON.stringify(map));
+    var url = "admin?gameconfig="+ss
+    fetch(url)
+        .then(function () { console.log("Game config change sent to server.");})
+        .then(function() {game_config_dirty = true;})
+        .catch(function (err) { console.log("Unable to change config. Error: " + err)});
+}
 
 function basket_configure() {
     var indx = get_current_basket_unit_index();

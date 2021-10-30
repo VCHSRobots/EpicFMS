@@ -107,10 +107,31 @@ border: none; }
 #moverpwmboxlabel {color: #dd999e; font-size: 12pt; margin-left: 10px; margin-top: 5px;}
 #moversavechangebuttons {margin-left: 10px;}
 
+#scoreboardtestdiv {position: relative; top: -20px; left: 700px;}
+#scoreboardtestlabel {font-size: 14pt; margin-top: 10px;}
 #teamdiv {margin-top: 20px; margin-left: 10px; width: 360px; height: 80px; border: 2px solid #886060}
 #teamnamebluelabel {color: blue;}
 #teamnameredlabel {color: red;}
 .teamnamelabel {float: left; margin-left: 10px; margin-top: 5px; width: 70px; }
-.teamnametextbox {float: left;margin-left: 10px; margin-top: 10px; }
+.teamnametextbox {float: left; margin-left: 10px; margin-top: 10px; }
 #teamnameupdatediv {position: relative; top: -70px; left: 280px;}
 #teamnameswapdiv {position: relative; top: -70px; left: 280px;}
+
+#unitsetuparea {width: 200px; height: 350px; border: 2px solid #886060; position: relative; top: -130px; left: 430px;}
+.unitsetupline {height: 30px; width: 200px;}
+.unitsetuplabel {float: left; margin-left: 10px; margin-top: 10px; width: 80px; font-size: 12pt;} 
+.unitselection {width: 60px; height: 20px;}
+#unitselectionsubmit {position: relative; left: 130px; margin-bottom: 10px;}
+
+#gamecontrolarea {width: 800px; height: 50px; position: relative; top: 60px;}
+#unitstatusarea {width: 150px; height: 150px; margin-left: 10px; margin-top: 10px; border: 1px solid #886060;
+  position: relative; top: -30px; left: 700px;}
+.unitstatusbox {display: block; height: 30px; width: 150px; margin-left: 10px}
+.unitstatuslabel {float: left; color: #886060; font-size: 15pt; margin-left: 10px; margin-top: 10px; width: 80px;}
+.unitstatusindicator {float: left; margin-left: 10px; margin-top: 10px; width: 20px; height: 20px; background-color: red;}
+#endgamearea {margin-left: 120px; margin-top: -80px; width: 160px; height: 60px; border: 1px solid #886060; }
+.wincblabel {margin-top: -22px; margin-bottom: 23px; float: left; width: 100px; font-size: 16pt;}
+#gamestatusmsgarea {margin-left: 30px; margin-top: 50px; width: 900px; height: 20px; border: 3px solid #886060;}
+#gamestatusmsg {background-color: lightgray; color: black; font-size: 14pt; }
+.winnercb {width: 20px; height: 20px; }
+

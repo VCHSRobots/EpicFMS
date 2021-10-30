@@ -23,7 +23,6 @@ doneevent = Event()
 loopcount = 0
 scoreoutput  = score_sender.ScoreSender() 
 scoreoutput.update()
-scoreoutput.testing(True)  # Remove this for production 
 dummy_params = { "dummy" : 0}
 pw_manager = security.Security()
 settings.load_settings()
@@ -57,7 +56,10 @@ def setup():
       return render_template('admin.html', **dummy_params)
 
     # Handle game commands
-    #*** TODO
+    gamecmd = request.args.get("gamecommand", "dummy")
+    if gamecmd != "dummy":
+      game_manager.process_game_command(request)
+      return render_template('admin.html', **dummy_params)
 
     # Handle game config requests
     config = request.args.get("gameconfig", "dummy")
@@ -88,9 +90,8 @@ def setup():
   # Temp for NOW.  MUST REDO.
   @webapp.route("/rawstatus")
   def rawstatus():
-    okay = pw_manager.is_loggedin(request.remote_addr)
-    nredhits, nbluehits = target_manager.get_hits()
-    status = {"LoggedIn" : okay, "redhits" : nredhits, "bluehits" : nbluehits}
+    pwokay = pw_manager.is_loggedin(request.remote_addr)
+    status = game_manager.get_raw_status(pwokay)
     tout = json.dumps(status) 
     return tout
 

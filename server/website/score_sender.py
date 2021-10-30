@@ -73,7 +73,9 @@ class ScoreSender():
         self.score["Blue"]["Score"] = b
         self.score["Red"]["Score"] = r
         self.score["Blue"]["TeamName"] = bn
-        self.score["Red"]["TeamName"] = rn       
+        self.score["Red"]["TeamName"] = rn
+        self.score["Red"]["ShowWinBanner"] = game_manager.red_win
+        self.score["Blue"]["ShowWinBanner"] = game_manager.blue_win
 
     def update(self):
         # Update will be called about 10 Hz. 
