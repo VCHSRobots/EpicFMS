@@ -23,7 +23,7 @@ def set_up_targets():
             if type == "movers": u = mover_unit.MoverUnit(ip)
             if u is not None:
                 u.set_enable(en)
-                t = {"unit" : u, "type" : type, "slot" : islot, "config" : k, "team": team, "name" : name}
+                t = {"unit" : u, "type" : type, "slot" : islot, "config" : k, "team": team, "name" : name, "enabled": en}
                 targets.append(t)
                 islot += 1
         nunits[type] = islot
@@ -44,12 +44,37 @@ def reload_all_targets():
     set_up_targets()
     begin_all()
 
-def get_hits():
-    red, blue = 0, 0
+def open_slider_units():
     for t in targets:
-        if t["team"] == "red": red += t["unit"].get_hits() 
-        if t["team"] == "blue": blue += t["unit"].get_hits()
-    return (red, blue)
+        if t["type"] == "sliders" and t["enabled"]:
+            t["unit"].open_door()
+
+def close_slider_units():
+    for t in targets:
+        if t["type"] == "sliders" and t["enabled"]:
+            t["unit"].close_door()
+
+def set_start_counts():
+    for t in targets:
+        t["unit"].reset_hits()
+
+def broadcast_status(gamemode):
+    for t in targets:
+        t["unit"].set_game_mode(gamemode)
+
+def get_hits(unittype, unitnum):
+    t = find_target(unittype, unitnum)
+    if t is None: 
+        log("Invaid args sent to get_hits: %s-%d" % (unittype, unitnum))
+        return 0
+    return t["unit"].get_hits()
+
+def target_okay(unittype, unitnum):
+    t = find_target(unittype, unitnum)
+    if t is not None:
+        return t["unit"].is_game_ready()
+    log("Invaid args sent to target_okay: %s-%d" % (unittype, unitnum))
+    return False
 
 def find_target(unittype, unitnum):
     for t in targets:

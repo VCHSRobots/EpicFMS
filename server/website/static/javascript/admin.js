@@ -45,6 +45,8 @@ function fill_admin_status(data) {
     set_value("redscore", nredhits);
     set_value("bluescore", nbluehits);
     set_value("gamestatusmsg", data["gamestatusmsg"]);
+    set_value("gamemodediv", data["gamemode"]);
+    set_value("clockdiv", data["clock"]);
     set_indicator_color("mover1indicator", data["mover1"]);
     set_indicator_color("mover2indicator", data["mover2"]);
     set_indicator_color("slider1indicator", data["slider1"]);

@@ -265,11 +265,12 @@ void NeoBase::stage_online(int game_mode, bool new_mode, uint32_t telp) {
              _delay_time = 10;
              last_side++;
              return;
-        case GMODE_TELEOP: //Breathing Purple
-            if (last_side> 250) { last_side= 50; return;}
-             stage_solidcolor(last_side - 50, 0, last_side);
-             _delay_time = 10;
-             last_side++;
+        case GMODE_TELEOP: // Breathing blue
+            //if (last_side > 100) { last_side= 50; return;}
+             //stage_solidcolor(last_side - 50, 0, last_side);
+             stage_solidcolor(0, 0, 129);
+             _delay_time = 200;
+             //last_side++;
              return;
         case GMODE_MATCHCOUNTDOWN: //red, yellow, blue, green
             _delay_time = 1000;
@@ -306,7 +307,7 @@ void NeoBase::stage_online(int game_mode, bool new_mode, uint32_t telp) {
             return;
         case GMODE_MATCHFINAL: //END of match (for the last 30 secs of the match)
             if (last_side == 1) { last_side = 0; stage_solidcolor(ENEO_BLACK); _delay_time= 500; return;}
-            stage_solidcolor( 150, 0, 255);
+            stage_solidcolor( 0, 0, 200);
             last_side =1;
             _delay_time = 500;
             return;

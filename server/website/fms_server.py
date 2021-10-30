@@ -25,6 +25,7 @@ scoreoutput  = score_sender.ScoreSender()
 scoreoutput.update()
 dummy_params = { "dummy" : 0}
 pw_manager = security.Security()
+game_manager.ss_obj = scoreoutput
 settings.load_settings()
 target_manager.set_up_targets()
 target_manager.begin_all()
@@ -111,6 +112,7 @@ def setup():
 # Main loop here.  Does work that is not the web server.
 def mainloop():
     global loopcount, scoreoutput
+    game_manager.update_game()
     scoreoutput.update()
     pw_manager.clean_up(7200)   # Require new login every 2 hours
     loopcount += 1

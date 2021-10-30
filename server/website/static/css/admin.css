@@ -28,7 +28,7 @@
 border: none; }
 #gamemodediv {text-align: left; width: 200px; position: relative; top: 10px; left: 20px;}
 #clockdiv {color: white; font-size: 30pt; width: 150px; height: 30px; 
-    position: relative; top: -25px; left: 300px; }
+    position: relative; top: -25px; left: 270px; }
 .scoreside {float: left; margin-left: 20px; border: 2px solid; width: 150px; height: 70px;}
 #bluescorediv {background-color: #9c9cda;}
 #redscorediv {background-color: #e48181;}

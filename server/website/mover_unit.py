@@ -268,7 +268,7 @@ class MoverUnit():
     def battery_okay(self):
         # Returns True if the unit is not reporting battery low.
         if not self.validstatus: return False
-        v = self.status("batlow")
+        v = self.status["batlow"]
         if (v == 0): return True
         return False
 
@@ -295,3 +295,11 @@ class MoverUnit():
             fmt = "%s = %s"
             for k in requried_status_keys:
                 log(fmt % (k.ljust(20), _status[k]))
+
+    def is_game_ready(self):
+        # Returns true if unit is on-line with no errors.
+        if not self.connected: return False 
+        if not self.validstatus: return False
+        if not self.battery_okay(): return False
+        if not self.is_detector_okay(): return False
+        return True

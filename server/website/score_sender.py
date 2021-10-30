@@ -8,6 +8,7 @@
 import json
 import time
 import game_manager
+import copy
 
 class TeamScore():
     # Simple class to layout the team score structure that works with javascript via json.
@@ -19,19 +20,19 @@ class TeamScore():
             "GameElement" : { "Basket" : False, "Sliders" : False, "Moving" : False},
             "CheckMarks" :  { "Basket" : False, "Moving" : False, "Slider1" : False,
                                 "Slider2" : False, "Slider3" : False },
-            "AutoScore" : { "Checkmark" : True, "XMark" : False, "ShowScore": True, "Score": 0 },
+            "AutoScore" : { "Checkmark" : False, "XMark" : False, "ShowScore": False, "Score": 0 },
             "Grid" : {
                 "Auto"   : { "Basket" : "0x0", "Moving" : "0x0", "Sliders" : "0x0" },
                 "TeleOp" : { "Basket" : "0x0", "Moving" : "0x0", "Sliders" : "0x0" },
                 "EGame"  : { "Basket" : "0x0", "Moving" : "0x0", "Sliders" : "0x0" },
                 "Totals" : { "Basket" :   "0", "Moving" :   "0", "Sliders" :   "0" }
             },
-            "ShowLastLine" : True,
+            "ShowLastLine" : False,
             "Raking" : "0",
             "Adjustment" : "0"
         }
     def get_score(self):
-        return self.score
+        return copy.deepcopy(self.score)
 
 class ScoreSender():
     def __init__(self):
@@ -39,10 +40,10 @@ class ScoreSender():
         blue_score = TeamScore().get_score()
         red_score = TeamScore().get_score()
         self.score = {  # These also work with javascript via json.
-            "Title" : "FOAM BALL BASH",
+            "Title" : "FOAM SHOOTOUT",
             "GameMode" : "Standby",  # Stuff like: 'Error, Standby, Countdown, GameOn, PostGame" 
-            "TimerLabel" : "Off", # Stuff like: Off, Auto, TeleOp, EndGame
-            "Timer" : "0", # Value to display on the timer -- may not be an integer!
+            "TimerLabel" : "", # Stuff like: Off, Auto, TeleOp, EndGame
+            "Timer" : "0:00", # Value to display on the timer -- may not be an integer!
             "Blue"  : blue_score,
             "Red" : red_score
         }
@@ -55,9 +56,9 @@ class ScoreSender():
         self.doing_test = enable 
 
     def clear(self):
-      self.score["Title"] = "FOAM BALL BASH"
+      self.score["Title"] = "FOAM SHOOTOUT"
       self.score["GameMode"] = "Standby"
-      self.score["TimerLabel"] = "Off"
+      self.score["TimerLabel"] = ""
       self.score["Timer"] = "0"
       self.score["Blue"] = TeamScore().get_score()
       self.score["Red"] = TeamScore().get_score()
@@ -67,7 +68,7 @@ class ScoreSender():
     def load_current_score(self):
         self.score["GameMode"] = game_manager.get_gamemode()
         self.score["Timer"] = game_manager.get_time() 
-        self.score["TimerLable"] = game_manager.get_time_label()
+        self.score["TimerLabel"] = game_manager.get_time_label()
         b, r = game_manager.get_score()
         bn, rn = game_manager.get_teamnames()
         self.score["Blue"]["Score"] = b
@@ -76,7 +77,28 @@ class ScoreSender():
         self.score["Red"]["TeamName"] = rn
         self.score["Red"]["ShowWinBanner"] = game_manager.red_win
         self.score["Blue"]["ShowWinBanner"] = game_manager.blue_win
+        self.score["Red"]["GameElement"]["Basket"] = game_manager.basket_okay("red")
+        self.score["Red"]["GameElement"]["Sliders"] = game_manager.slider_okay("red")
+        self.score["Red"]["GameElement"]["Moving"] = game_manager.mover_okay("red")
+        self.score["Blue"]["GameElement"]["Basket"] = game_manager.basket_okay("blue")
+        self.score["Blue"]["GameElement"]["Sliders"] = game_manager.slider_okay("blue")
+        self.score["Blue"]["GameElement"]["Moving"] = game_manager.mover_okay("blue")
 
+        self.score["Red"]["Grid"]["TeleOp"]["Basket"] = game_manager.get_grid("red", "basket", "teleop")
+        self.score["Red"]["Grid"]["TeleOp"]["Sliders"] = game_manager.get_grid("red", "sliders", "teleop")
+        self.score["Red"]["Grid"]["TeleOp"]["Moving"] = game_manager.get_grid("red", "mover", "teleop")
+        self.score["Blue"]["Grid"]["TeleOp"]["Basket"] = game_manager.get_grid("blue", "basket", "teleop")
+        self.score["Blue"]["Grid"]["TeleOp"]["Sliders"] = game_manager.get_grid("blue", "sliders", "teleop")
+        self.score["Blue"]["Grid"]["TeleOp"]["Moving"] = game_manager.get_grid("blue", "mover", "teleop")
+
+        self.score["Red"]["Grid"]["Totals"]["Basket"] = game_manager.get_grid_total("red", "basket")
+        self.score["Red"]["Grid"]["Totals"]["Sliders"] = game_manager.get_grid_total("red", "sliders")
+        self.score["Red"]["Grid"]["Totals"]["Moving"] = game_manager.get_grid_total("red", "mover")
+        self.score["Blue"]["Grid"]["Totals"]["Basket"] = game_manager.get_grid_total("blue", "basket")
+        self.score["Blue"]["Grid"]["Totals"]["Sliders"] = game_manager.get_grid_total("blue", "sliders")
+        self.score["Blue"]["Grid"]["Totals"]["Moving"] = game_manager.get_grid_total("blue", "mover")
+
+  
     def update(self):
         # Update will be called about 10 Hz. 
         self.doing_test = game_manager.get_runscoreboardtest()
@@ -145,7 +167,7 @@ class ScoreSender():
             self.score["Blue"]["Raking"] = "23"
             self.score["Blue"]["Adjustment"] = "10"
         if bigcycle > 1:
-            self.score["Timer"] = str(int(self.score["Timer"]) - 1)
+            self.score["Timer"] = str(13)
         if bigcycle == 2:
             self.score["GameMode"] = "Count Down!!!"     
         if bigcycle == 3:

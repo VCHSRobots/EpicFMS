@@ -328,6 +328,14 @@ class SliderUnit():
             for k in requried_status_keys:
                 log(fmt % (k.ljust(20), _status[k]))
 
+    def is_game_ready(self):
+        # Returns true if unit is on-line with no errors.
+        if not self.connected: return False 
+        if not self.validstatus: return False
+        if not self.battery_okay(): return False
+        if not self.is_detector_okay(): return False
+        return True
+
 if __name__ == "__main__":
     b = SliderUnit() 
     b.begin()
