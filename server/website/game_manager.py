@@ -13,12 +13,12 @@ game_config = {
     "teamnames" : {"blue": "Scrikien", "red": "Cncters"},
     "runscoreboardtest" : False,
     "unitassignments" : {"mover-1" : "red", "mover-2" : "blue",
-                          "slider-1" : "red", "slider-2" : "blue",
-                          "slider-3" : "none", "slider-4" : "none",
+                          "slider-1" : "red", "slider-2" : "red",
+                          "slider-3" : "blue", "slider-4" : "blue",
                           "slider-5" : "none", "slider-6" : "none", 
                           "basket-1" : "none", "basket-2" : "none" } }
 
-game_periods = {"countdown": 5, "auto" : 0, "teleop" : 20, "endgame" : 10}
+game_periods = {"countdown": 5, "auto" : 0, "teleop" : 240, "endgame" : 10}
 
 time0 = 0   # Time at start of countdone, or again at start of game
 total_game_secs = 0
