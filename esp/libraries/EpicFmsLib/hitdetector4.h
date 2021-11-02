@@ -24,6 +24,9 @@ class HitDetector4 {
     void reset_hits(void);     // Reset the hit count
     int get_fail_code(void);   // Returns a number indicating why selftest failed.
     void debug_report(void);   // Prints a debug report to the terminal.
+    void set_emitters(int x);  // Set condition of emitters.  (reset on selftest).
+    int get_emitters(void);    // Gets current condition of emitters as a hex number.
+    int get_detectors(void);   // Gets current condition of detectors as a hex number.
     const char *get_status_str(void); // Gets a short string to indicate status.
   private:
     bool _started = false;

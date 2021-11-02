@@ -345,8 +345,23 @@ void process_cmd(const char *name, const char *value) {
     hitdetector.reset_hits();
     return;
   }
+  if(strcmp(name, "set_emitters") == 0) {
+    hitdetector.set_emitters(iv);
+  }
   sprintf(lineout, "Unknown command received from server: %s = %s", name, value);
   Serial.println(lineout);
+}
+
+void binnary4_str(int x, char *s) {
+  if (x & 0x08) s[0] = '1'; 
+  else          s[0] = '0';
+  if (x & 0x04) s[1] = '1'; 
+  else          s[1] = '0';
+  if (x & 0x02) s[2] = '1'; 
+  else          s[2] = '0';
+  if (x & 0x01) s[3] = '1'; 
+  else          s[3] = '0';
+  s[4] = 0;
 }
 
 // Process status requests from the server here.
@@ -387,7 +402,13 @@ void on_status(char *json) {
   sprintf(lineout, "\"hitdetector_fail_code\" : %d, \n", hitdetector.get_fail_code());
   strncat(json, lineout, MAX_STATUS_CHARS);
 
-  sprintf(lineout, "\"batvolts\" : %8.2f \n", vbattery);
+  sprintf(lineout, "\"batvolts\" : %8.2f, \n", vbattery);
+  strncat(json, lineout, MAX_STATUS_CHARS);
+
+  char s1[6]; char s2[6];
+  binnary4_str(hitdetector.get_emitters(), s1);
+  binnary4_str(hitdetector.get_detectors(), s2);
+  sprintf(lineout, "\"irbeams\" : \"%s:%s\"\n", s1, s2);
   strncat(json, lineout, MAX_STATUS_CHARS);
 
   strncat(json, "}\n", MAX_STATUS_CHARS);

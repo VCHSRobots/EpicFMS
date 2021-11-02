@@ -41,6 +41,7 @@ bool s_object_declared = false;
 int s_emitter_pins[4]; // The four emitter pins
 int s_detector_pins[4]; // The four detector pins
 int s_emitter_indexes[4]; // Index of emitter that matches detector
+int s_emitter_status = 0;    // Hex value indicating which emitters on on.
 volatile long s_hitcount = 0; // count of valid hits detected
 volatile bool s_inerror = false;
 volatile uint32_t s_last_hit_time = millis();
@@ -136,6 +137,7 @@ void HitDetector4::begin(void) {
         digitalWrite(epin, HIGH);  // Turn on IR Beam.
         attachInterrupt(dpin, isr_irbeam4, CHANGE);
     }
+    s_emitter_status = 0x0f;
     s_last_pin_change_time = millis() - 20; // 20ms in the past
     s_last_hit_time = millis() - 100; // 100ms in the past
     _started = true;
@@ -239,8 +241,42 @@ void HitDetector4::debug_report(void) {
     }
     sprintf(lineout, "Hit Count=%ld, IR Det Status = %s, inerr=%d, isrcnt=%ld", s_hitcount, state, s_inerror, s_isrcnt);
     Serial.println(lineout);
-    sprintf(lineout, "Hit isr cnts: ac=%ld, bc=%ld, cc=%ld, cd=%ld", s_ac, s_bc, s_cc, s_dc);
+    int x = get_detectors();
+    sprintf(lineout, "Emitters = x%02x Detectors = x%02x, Hit isr cnts: ac=%ld, bc=%ld, cc=%ld, cd=%ld", s_emitter_status, x, s_ac, s_bc, s_cc, s_dc);
     Serial.println(lineout);
+}
+
+// Returns the current condition of the detectors, as a hex number.
+// Each detectors is assigned to one bit, and the bit is one if
+// the detector sees the emitter.  Useful for debugging hardware.
+int HitDetector4::get_detectors(void) {
+    int x = 0;
+    if (digitalRead(s_detector_pins[0])) x += 0x01;
+    if (digitalRead(s_detector_pins[1])) x += 0x02;
+    if (digitalRead(s_detector_pins[2])) x += 0x04;
+    if (digitalRead(s_detector_pins[3])) x += 0x08;
+    return x;
+}
+
+// Sets the emitter outputs. This is an override that is useful
+// for debugging hardware.  This setting will be reset when a 
+// selftest is run.
+void HitDetector4::set_emitters(int x) {
+    if (x & 0x01) digitalWrite(s_emitter_pins[0], HIGH);
+    else          digitalWrite(s_emitter_pins[0], LOW);
+    if (x & 0x02) digitalWrite(s_emitter_pins[1], HIGH);
+    else          digitalWrite(s_emitter_pins[1], LOW);
+    if (x & 0x04) digitalWrite(s_emitter_pins[2], HIGH);
+    else          digitalWrite(s_emitter_pins[2], LOW);    
+    if (x & 0x08) digitalWrite(s_emitter_pins[3], HIGH);
+    else          digitalWrite(s_emitter_pins[3], LOW);
+    s_emitter_status = x & 0x0f;
+}
+
+// Returns the status of the emitters as a hex number. Each bit
+// indicates the on/off status of one emitter.  
+int HitDetector4::get_emitters(void) {
+    return s_emitter_status;
 }
 
 // Conducts a self test by manipulating the on/off condition of the IR Emitter.
@@ -265,6 +301,7 @@ void HitDetector4::conduct_selftest(void) {
         case 2: // Turn off all emitters, set up the index
             //Serial.println("case 2.");
             for (int i=0; i < 4; i++) digitalWrite(s_emitter_pins[i], LOW);
+            s_emitter_status = 0x00;
             for (int i=0; i < 4; i++) s_emitter_indexes[i] = -1;
             _selftest_delay = 2;
             _selftest_state = 3;
@@ -364,6 +401,7 @@ void HitDetector4::conduct_selftest(void) {
             }
         case 99: // Declare error
             for(int i = 0; i < 4; i++) digitalWrite(s_emitter_pins[i], HIGH);
+            s_emitter_status = 0x0f;
             { 
                 char lineout[100];
                 sprintf(lineout, "Finished Self Test, declaring error!  code=%d", _selftest_fail_code);
@@ -375,6 +413,7 @@ void HitDetector4::conduct_selftest(void) {
             return;
         case 100: // Declare okay
             for(int i = 0; i < 4; i++) digitalWrite(s_emitter_pins[i], HIGH);
+            s_emitter_status = 0x0f;
             Serial.println("Finished Self Test, All okay!");
             s_inerror = false;
             _selftest_state = 0; 

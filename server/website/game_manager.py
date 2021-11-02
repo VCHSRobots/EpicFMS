@@ -15,8 +15,8 @@ game_config = {
     "unitassignments" : {"mover-1" : "red", "mover-2" : "blue",
                           "slider-1" : "red", "slider-2" : "red",
                           "slider-3" : "blue", "slider-4" : "blue",
-                          "slider-5" : "none", "slider-6" : "none", 
-                          "basket-1" : "none", "basket-2" : "none" } }
+                          "slider-5" : "red", "slider-6" : "blue", 
+                          "basket-1" : "red", "basket-2" : "blue" } }
 
 game_periods = {"countdown": 5, "auto" : 0, "teleop" : 140, "endgame" : 10}
 

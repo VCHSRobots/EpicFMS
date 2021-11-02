@@ -27,17 +27,17 @@ HITRST is a minor feature, this mod may not be found on many boards.
 | A2    | Sept 21   | V1    |  No  |   |    |Made by Chris, cap blew up  |          |
 | A3    | Sept 21   | V1    |      |   | Y  |Many mods, For Basket       | Basket   |
 | 1     | 10/21/21  | V3    |      | Y |    |Runs pcb_test okay.         | Mover    |
-| 2     | 10/21/21  | V3    |  No  |   |    |Runs pcb_test okay.         |          |
+| 2     | 10/21/21  | V3    |  No  |   |    |Runs pcb_test okay.         |          | 
 | 3     | 10/21/21  | V3    |      |   |    |Runs pcb_test okay.         | Slider   |
 | 4     | 10/21/21  | V3    |      | Y |    |Runs pcb_test okay.         | Mover    |
 | 5     | 10/21/21  | V3    |      |   |    |Bad Mod, now okay.          | Slider   |
 | 6     | 10/21/21  | V3    |      | Y |    |Runs pcb_test okay.         |          |
-| 7     | 10/21/21  | V3    |  No  |   |    |Fails test.                 | Slider   |
-| 8     | 10/21/21  | V3    |  No  |   |    |Fails test.                 |          |
-| 9     | 10/21/21  | V3    |  No  | Y |    |Fails test.                 |          |
-| 10    | 10/21/21  | V3    |  No  |   |    |Fails test.                 |          |
+| 7     | 10/21/21  | V3    |      |   |    |Works on Slider Ring.       | Slider   |
+| 8     | 10/21/21  | V3    |      |   |    |Works on Slider Ring.       | Slider   |
+| 9     | 10/21/21  | V3    |      | Y |    |Works on Slider Ring.       | Slider   |
+| 10    | 10/21/21  | V3    |      |   |    |Works on Slider Ring.       |          |
 | 11    | 10/21/21  | V3    |  No  | Y |    |Fails test. Gets really hot.|          |
-| 12    | 10/21/21  | V3    |  No  |   |    |Something wrong on Detector |          |
+| 12    | 10/21/21  | V3    |  No  |   |    |** See notes below          |          |
 | 13    | 10/21/21  | V3    |      |   |    |Fixed with Paul's Help      | Slider   |
 
 HS=HeatSink
@@ -46,13 +46,15 @@ HS=HeatSink
 
 |Board  |WiFi Name   |Mac               |IP Addr    |How Used |
 |-------|------------|------------------|-----------|---------|
-|PCB-A3 |Basket-1    |BC:FF:4D:2B:AD:82 |10.0.2.60  |Basket   |  
-|PCB-01 |Mover-1     |30:83:98:B6:34:A1 |10.0.2.71  |Mover    |  
-|PCB-03 |Slider-1    |8C:CE:4E:E3:42:36 |10.0.2.73  |Slider   |  
-|PCB-04 |Mover-2     |A8:48:FA:C0:81:A7 |10.0.2.74  |Mover    |  
-|PCB-05 |Slider-2    |30:83:98:B5:5D:FF |10.0.2.75  |Slider   |  
-|PCB-07 |Slider-3    |BC:FF:4D:2B:A7:02 |10.0.2.77  |Slider   |  
-|PCB-13 |Slider-4    |BC:FF:4D:2A:EB:3D |10.0.2.83  |Slider   |  
+|PCB-A3 |Basket-1    |BC:FF:4D:2B:AD:82 |10.0.2.60  | Basket  |  
+|PCB-01 |Mover-1     |30:83:98:B6:34:A1 |10.0.2.71  | Mover   |  
+|PCB-03 |Slider-1    |8C:CE:4E:E3:42:36 |10.0.2.73  | Slider  |  
+|PCB-04 |Mover-2     |A8:48:FA:C0:81:A7 |10.0.2.74  | Mover   |  
+|PCB-05 |Slider-2    |30:83:98:B5:5D:FF |10.0.2.75  | Slider  |  
+|PCB-07 |Slider-3    |BC:FF:4D:2B:A7:02 |10.0.2.77  | Slider  | 
+|PCB-08 |Slider-6    |BC:FF:4D:2B:4B:14 |10.0.0.78  | Slider  |
+|PCB-09 |Slider-5    |BC:FF:4D:2B:36:0B |10.0.2.79  | Slider  |  
+|PCB-13 |Slider-4    |BC:FF:4D:2A:EB:3D |10.0.2.83  | Slider  |  
 
 IP addresses are fixed to MAC addresses and assigned by the LinkSys router,
 via DHCP. The scheme is to tie address to Board SN, the V1 boards (A series) start 
@@ -77,6 +79,18 @@ Work on Thrusday, 10/28:
 PCB-5 was misswired, a bad mod. Fixed the mod, and PCB-5 now okay.
 Also, resodered PCB-13, works not.  And finshed PCB-12 with new ESP, and
 something seems to be wrong... Set aside for debugging later.
+
+Work on Monday, 11/1
+PCB-12 was seemed okay at first, but then it wouldn't read one
+of the ir beams on a ring.  Later, it will connect to a PC but
+it won't accept an upload.
+
+After more work with the test jig, I discovered that there is
+cross-talk among the beams.  I tested PCB-6, PCB-8, PCB-9 and
+PCB-10 on slider rings -- and they all work.  Before, PCB-8, PCB-9,
+and PCB-10 failed the test on the test jig.
+
+
 
 
 

@@ -17,8 +17,8 @@
 //  6. Communicates with the EpicFMS server to give status
 //     and take directions for a whole host of parameters.
 //
-// NOTE -- This sketch runs on a MODIFIED V1 of the PCB for the
-// Moving Target Unit.  Beware!!
+// NOTE -- This sketch runs on a MODIFIED version  of the PCB
+// boards.  Beware! See below for pin assignments.
 
 #include <Arduino.h>
 #include <EpicFmsLib.h>
@@ -27,17 +27,29 @@
 #define WIFISSID "epicfms"
 #define WIFIPK  "epic4fms"
 
-// Special Setup for the Modified Basket Target running
-// on a V1 of the PCB
+// // Special Setup for the Modified Basket Target running
+// // on a V1 of the PCB
+// #define PIN_NONE    -1  // Means no pin assigned.
+// #define PIN_NEO      4  // D2/G4 -- On NEO2 Header -- 
+// #define PIN_IRE     15  // 1  // D10/TX/G1 -- IR Emitter
+// #define PIN_GMODE    5  // D1/G5 -- On NEO1 Header --
+// #define PIN_PWM     13  // D7/G13 -- PWM via 74125 buffer
+// #define PIN_IRD     14  // D5/G14 -- IR Detector 
+// #define PIN_A       12  // D6/G12 -- Via OpAmp 
+// #define PIN_B       10  // SD3/G10 -- Direct input
+// #define NPIXELS 42
+
+// Setup for the Modified Basket Target running
+// on a modified V2/V3 version of the PCB 
 #define PIN_NONE    -1  // Means no pin assigned.
-#define PIN_NEO      4  // D2/G4 -- On NEO2 Header -- 
-#define PIN_IRE     15  // 1  // D10/TX/G1 -- IR Emitter
-#define PIN_GMODE    5  // D1/G5 -- On NEO1 Header --
-#define PIN_PWM     13  // D7/G13 -- PWM via 74125 buffer
-#define PIN_IRD     14  // D5/G14 -- IR Detector 
-#define PIN_A       12  // D6/G12 -- Via OpAmp 
-#define PIN_B       10  // SD3/G10 -- Direct input
-#define NPIXELS 42
+#define PIN_NEO      4  // D2/G4 -- On NEO2 Header (via 74125 buffer)
+#define PIN_PWM      5  // D1/G5 -- On NEO1 Header (via 74125 buffer)
+#define PIN_IRE     15  // D8/G15 -- IR Emitter
+#define PIN_IRD     12  // D6/G12 -- IR Detector 
+#define PIN_A        9  // SD2/G9  -- Direct input, Was mode switch before mod. 
+#define PIN_B       10  // SD3/G10 -- Direct input, Was HitRst button before mod.
+#define PIN_GMODE   14  // D5/G14  -- Input via OpAmp
+#define NPIXELS 43
 
 #define VOLTSPERLSB 0.013 // Volts per bit on analog sensor for V-Battery
 #define SW_RUN LOW      // Defines how the switch is used, High=Run 
