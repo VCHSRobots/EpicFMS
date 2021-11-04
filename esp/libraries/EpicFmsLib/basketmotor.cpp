@@ -285,4 +285,27 @@ void BasketMotor::set_params(int ntrys, int njerks, int pos_pwm_us, int neg_pwm_
 //     }
 // }
 
+// This code provides a dummy replacement for BasketMotor -- useful in debugging.
+// class BasketMotorDummy {
+//   public:
+//   BasketMotorDummy(int pwm, int a, int b) { }
+//    void begin(void) {}         // Begins the operation.
+//    void update(void) {}        // Updates the PID loop.  Call at least every 100ms.
+//    void setrpm(float rpm) {}   // Sets the desired rpm. (Doesn't work cause no PID for now)
+//    void setpwm(int pwm) {}     // Sets the pulsewidth for PWM to use for enabled mode.
+//    void enable(void) {}        // Enables the motor.
+//    void disable(void) {}       // Disabled the motor.
+//    void reset(void) {}         // Resets a stuck condition, presumely after a human clears the jam.
+//    float currentrpm(void) {}   // Returns the measured rpm at the last update.
+//    int  currentpwm(void) {}    // Returns the currently used pwm.
+//    int  runpwm(void){}         // Returns the pwm to use when running normally.
+//    long encoderpos(void){}     // Encoder Position
+//    bool isenabled(void) {}     // Returns true if the motor is enabled       
+//    bool injam(void) {}         // Returns true if in a jam condition.
+//    bool isstuck(void) {}       // Returns true if the motor is stuck.
+//    long jamcount(void) {}      // Returns the number of successful jam clears since last reset.
+//    void set_params(int ntrys, int njerks, int pos_pwm_us, int neg_pwm_us, int spike_ms) {}
+//    void debug_report(void) {}  // Reports debugging info to terminal.
+// };
+
 

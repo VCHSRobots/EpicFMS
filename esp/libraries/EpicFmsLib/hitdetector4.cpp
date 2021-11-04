@@ -422,3 +422,23 @@ void HitDetector4::conduct_selftest(void) {
             return;
     }
 }
+
+// This code is used to provide a dummy class of almost the same type as 
+// HitDetector.  It can be used to replace HitDetector for debugging purposes.
+// class HitDetectorDummy {
+//   public:
+//     HitDetectorDummy(int emitter_pin, int detector_pin) {}
+//     HitDetectorDummy() {}
+//     void setpins(int emitter_pin, int detector_pin) {} // Sets the pin after construction.
+//     void begin(void) {}          // Attaches the pins and starts sensing hits.
+//     void update(void) {}         // Call at least every 20 ms.
+//     long value(void) {return 0;}    // Returns the number of hits detected.
+//     int get_status(void) {return 0;}      // Returns the status of the detector.
+//     void start_selftest(void) {} // Starts a self test.  Do this to attempt to clear error.
+//     void reset_hits(void) {}     // Set the hit count to zero.
+//     void debug_report(void) {}   // Prints a debug report to the terminal.
+//     const char *get_status_str(void) {return "broke";} // Gets a short string to indicate status.
+//     void set_emitter(int x) {}   // Set condition of the emitter.  (reset on selftest).
+//     int get_emitter(void) {return 0;}     // Gets current condition of emitter as a hex number.
+//     int get_detector(void) {return 0;}    // Gets current condition of detector as a hex number.
+// };

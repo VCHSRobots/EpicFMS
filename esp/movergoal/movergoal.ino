@@ -50,7 +50,7 @@
 
 // Setup for V3 of the PCB:
 #define PIN_NONE    -1  // Means no pin assigned.
-#define PIN_HRST    16  // D0/G16 -- push button with pullup (not used)
+#define PIN_HRST    16  // D0/G16 -- push button with pullup (not used, also is onboard LED)
 #define PIN_NEO      5  // D1/G5 -- NEO output
 #define PIN_IRD2     4  // D2/G4 -- IR Detectore vas OpAmp (Takes over NEO2!)
 #define PIN_IRE4     0  // D3/G0 -- IR Emitter via buffer
@@ -126,8 +126,7 @@ void setup(void) {
   hitdetector.begin();
 
   // Setup both inputs to make sure they are not outputs.
-  Serial.println("Setting up switch inputs.");
-  pinMode(PIN_HRST, INPUT);
+  Serial.println("Setting up switch input.");
   pinMode(PIN_GMODE, INPUT);
 
   Serial.println("Setup Done -- Starting Main Loop.");

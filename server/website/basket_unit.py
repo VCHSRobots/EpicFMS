@@ -35,9 +35,7 @@ class BasketUnit():
         self.status_pending = False 
         self.comm_channel_clear = True
         self.time_of_channel_jam = 0
- 
-        self.command_pending = False 
-        self.command = ""
+        self.command_queue = []
         self.updatelock = threading.Lock()
         self.cmdlock = threading.Lock()  
         BasketUnit._basket_count += 1
@@ -90,15 +88,16 @@ class BasketUnit():
                 if nloop >= 5: nloop = 0
                 if self.comm_channel_clear and nloop == 0: self.get_data() 
                 if self.comm_channel_clear:
+                    cmd = None
                     self.cmdlock.acquire()
-                    command_pending = self.command_pending 
-                    cmd = self.command 
+                    if len(self.command_queue) > 0:
+                        cmd = self.command_queue.pop()
                     self.cmdlock.release()
-                    if command_pending: 
+                    if cmd is not None: 
                         okay = self.send_command(cmd)
-                        if okay: 
+                        if not okay: 
                             self.cmdlock.acquire()
-                            self.command_pending = False 
+                            self.command_queue.insert(0, cmd) # push it back, try again later
                             self.cmdlock.release()
             time.sleep(0.2)
 
@@ -142,7 +141,7 @@ class BasketUnit():
         try:
             temp_status = json.loads(rsp.text)
         except JSONDecodeError:
-            self.progerror = 1
+            self.progerror = 20
             return
         for k in requried_status_keys:
             if not k in temp_status.keys():
@@ -185,37 +184,33 @@ class BasketUnit():
         # Use this to clear the command queue.  Suitable when it is
         # suppected that the command queue is deadlocked.
         self.cmdlock.acquire() 
-        self.command_pending = False 
-        self.command = ""
+        self.command_queue = []
         self.cmdlock.release()
+
+    def add_command_to_queue(self, cmd):
+        # Adds a command to the command queue.  Will be executed 
+        # in sequence as the comm channel allows. Returns False
+        # if the queue is full and cannot accept a new command.
+        self.cmdlock.acquire()
+        n = len(self.command_queue)
+        if (n < 10): self.command_queue.append(cmd)
+        self.cmdlock.release()
+        if (n >= 10): 
+            log("Target Command Queue full!")
+            return False 
+        return True
 
     def turn_motor_on(self):
         # Attemps to turn the motor on.  Returns True if command is
         # successfully put in the command queue.  Use status to 
         # see that it acutally occured sometime later.
-        log("In turn_motor_on. pending=%s" % self.command_pending)
-        self.cmdlock.acquire() 
-        if self.command_pending:
-            self.cmdlock.release()
-            return False 
-        self.command_pending = True 
-        self.command = "motor=1" 
-        self.cmdlock.release()
-        return True
+        return self.add_command_to_queue("motor=1")
 
     def turn_motor_off(self):
         # Attemps to turn the motor off.  Returns True if command is
         # successfully put in the command queue.  Use status to 
         # see that it acutally occured sometime later.
-        log("In turn_motor_off. pending=%s" % self.command_pending)
-        self.cmdlock.acquire() 
-        if self.command_pending:
-            self.cmdlock.release()
-            return False 
-        self.command_pending = True 
-        self.command = "motor=0" 
-        self.cmdlock.release()
-        return True
+        return self.add_command_to_queue("motor=0")
 
     def set_game_mode(self, gmode):
         # Attemps set the game mode.  The game mode must be one
@@ -223,28 +218,29 @@ class BasketUnit():
         # True if command is successfully put in the command
         # queue.  Use status to see that it acutally occured
         # sometime later.
-        self.cmdlock.acquire() 
-        if self.command_pending:
-            self.cmdlock.release()
-            return False 
-        self.command_pending = True 
-        self.command = "gamemode=" + gmode 
-        self.cmdlock.release()
-        return True
+        cmd = "gamemode=" + gmode
+        return self.add_command_to_queue(cmd)
 
     def run_detector_test(self):
         # Attemps to run a self test on the detector.  Returns
         # True if command is successfully put in the command queue.
         # Use status to see results.  This command will clear a
         # detector error if the detector is currently okay.
-        self.cmdlock.acquire() 
-        if self.command_pending:
-            self.cmdlock.release()
-            return False 
-        self.command_pending = True 
-        self.command = "selftest=1"
-        self.cmdlock.release()
-        return True     
+        return self.add_command_to_queue("selftest=1")
+
+    def set_run_pwm(self, pwm):
+        # Attemps to set the run pwm on the unit.  Returns
+        # True if command is successfully put in the command queue.
+        return self.add_command_to_queue("pwm="+str(pwm))
+
+    def save_config(self):
+        # Attemps save the pwm configuration on the unit.  Returns
+        # True if command is successfully put in the command queue.
+        return self.add_command_to_queue("saveconfig=1")
+
+    def reset_hits_on_unit(self):
+        # Attemps to reset the hit count on the device.
+        return self.add_command_to_queue("resethits=1")
 
     def reset_hits(self):
         # Resets the hits logic at the beginning of a game.  Should
@@ -362,11 +358,21 @@ class BasketUnit():
 
     def is_game_ready(self):
         # Returns true if unit is on-line with no errors.
-        if not self.connected: return False 
-        if not self.validstatus: return False
-        if not self.battery_okay(): return False
-        if not self.is_detector_okay(): return False
-        if self.is_stuck: return False
+        if not self.connected: 
+            # log("basket not connected.")
+            return False 
+        if not self.validstatus: 
+            # log("basket not valid status.")
+            return False
+        if not self.battery_okay(): 
+            # log("basket battery low")
+            return False
+        if not self.is_detector_okay(): 
+            # log("basket detector error")
+            return False
+        if self.is_stuck(): 
+            # log("basket stuck")
+            return False
         return True
 
 if __name__ == "__main__":

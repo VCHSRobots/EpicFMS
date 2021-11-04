@@ -30,17 +30,26 @@ blue_mover_hits = 0
 red_mover_hits = 0
 blue_slider_hits = 0
 red_slider_hits = 0
-blue_score = blue_slider_hits + 10*blue_mover_hits 
-red_score = red_slider_hits + 10*red_mover_hits
+blue_basket_hits = 0
+red_basket_hits = 0
+blue_score = blue_slider_hits + 10*blue_mover_hits + 4*blue_basket_hits
+red_score = red_slider_hits + 10*red_mover_hits + 4*red_basket_hits
 ss_obj = None
+baskets_off = True
 
 
 def update_game():
-    global game_mode, time0
+    global game_mode, time0, baskets_off
     # Should be called often to keep the game running
-    if game_mode == "standby": return 
+    if game_mode == "standby": 
+        baskets_off = True
+        return 
     if game_mode == "countdown": 
         telp = time.monotonic() - time0 
+        if telp >= 3.0:
+            if baskets_off:
+                target_manager.turn_motors_on()
+                baskets_off = False
         if telp >= 5.0:
             game_mode = "teleop"
             target_manager.open_slider_units() 
@@ -62,6 +71,7 @@ def update_game():
             game_mode = "postresult"
             target_manager.close_slider_units()
             target_manager.broadcast_status(game_mode)
+            target_manager.turn_motors_off()
             return
 
 def start():
@@ -76,28 +86,36 @@ def start():
 def reset():
     log("Resetting the game.")
     global blue_mover_hits, red_mover_hits, blue_slider_hits, red_mover_hits
+    global blue_basket_hits, red_basket_hits
     global blue_score, red_score, game_mode, total_game_secs
     blue_mover_hits = 0
     red_mover_hits = 0
     blue_slider_hits = 0
     red_mover_hits = 0
+    blue_basket_hits = 0
+    red_basket_hits = 0
     blue_score = 0
     red_score = 0
     game_mode = "standby"
     ss_obj.clear()
     target_manager.broadcast_status(game_mode)
+    target_manager.turn_motors_off()
+    target_manager.close_slider_units()
     
 def abort():
     log("Aborgint the game.")
     global game_mode
     game_mode = "standby"
     target_manager.broadcast_status(game_mode)
+    target_manager.turn_motors_off()
+    target_manager.close_slider_units()
     return
 
 def count_hits():
     global blue_mover_hits, red_mover_hits, blue_slider_hits, red_slider_hits
+    global blue_basket_hits, red_basket_hits
     global blue_score, red_score
-    bmh, rmh, bsh, rsh = 0, 0, 0, 0
+    bmh, rmh, bsh, rsh, bbh, rbh = 0, 0, 0, 0, 0, 0
     ua = game_config["unitassignments"]
     for uname in ua.keys():
         unittype, snum = uname.split("-")
@@ -110,12 +128,18 @@ def count_hits():
             n = target_manager.get_hits(unittype+"s", num)
             if ua[uname] == "red": rsh += n
             if ua[uname] == "blue": bsh += n   
-    blue_score = bmh * 10 + bsh
-    red_score = rmh * 10 + rsh 
+        if unittype == "basket":
+            n = target_manager.get_hits(unittype+"s", num)
+            if ua[uname] == "red": rbh += n
+            if ua[uname] == "blue": bbh += n
+    blue_score = bmh * 10 + bbh*4 + bsh
+    red_score = rmh * 10 +  rbh*4 + rsh 
     blue_mover_hits = bmh 
     blue_slider_hits = bsh
     red_mover_hits = rmh 
     red_slider_hits = rsh 
+    blue_basket_hits = bbh
+    red_basket_hits = rbh
     return
   
 def get_game_config():
@@ -264,8 +288,8 @@ def get_raw_status(pwokay):
     status["slider4"] = get_processed_status("sliders", 4)
     status["slider5"] = get_processed_status("sliders", 5)
     status["slider6"] = get_processed_status("sliders", 6)
-    status["basket1"] = get_processed_status("movers", 1)
-    status["basket2"] = get_processed_status("movers", 2)
+    status["basket1"] = get_processed_status("baskets", 1)
+    status["basket2"] = get_processed_status("baskets", 2)
     status["gamestatusmsg"] = status_msg
     return status
 
@@ -293,7 +317,7 @@ def basket_okay(side):
     for u in units:
         if ua[u] == side:
             num = int(u[7]) - 1
-            if not target_manager.target_okay("basketss", num): return False
+            if not target_manager.target_okay("baskets", num): return False
     return True
 
 def get_grid(side, unit, period):
@@ -309,6 +333,11 @@ def get_grid(side, unit, period):
             return "%dx10" % red_mover_hits
         if side == "blue":
             return "%dx10" % blue_mover_hits
+    if unit == "basket":
+        if side == "red":
+            return "%dx4" % red_basket_hits
+        if side == "blue":
+            return "%dx4" % blue_basket_hits
     return "0x0"
 
 def get_grid_total(side, unit):
@@ -318,12 +347,18 @@ def get_grid_total(side, unit):
         if unit == "mover":
             n = 10 * red_mover_hits
             return "%d" % n
+        if unit == "basket":
+            n = 4 * red_basket_hits
+            return "%d" % n
         return "0"
     if side == "blue":
         if unit == "sliders":
             return "%d" % blue_slider_hits 
         if unit == "mover":
             n = 10 * blue_mover_hits
+            return "%d" % n
+        if unit == "basket":
+            n = 4 * blue_basket_hits
             return "%d" % n
         return "0"
     return "0"       

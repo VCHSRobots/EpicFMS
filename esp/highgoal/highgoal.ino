@@ -61,46 +61,6 @@
 #define LED_OFF HIGH
 #define LED_ON LOW
 
-// class BasketMotorDummy {
-//   public:
-//   BasketMotorDummy(int pwm, int a, int b) { }
-//    void begin(void) {}         // Begins the operation.
-//    void update(void) {}        // Updates the PID loop.  Call at least every 100ms.
-//    void setrpm(float rpm) {}   // Sets the desired rpm. (Doesn't work cause no PID for now)
-//    void setpwm(int pwm) {}     // Sets the pulsewidth for PWM to use for enabled mode.
-//    void enable(void) {}        // Enables the motor.
-//    void disable(void) {}       // Disabled the motor.
-//    void reset(void) {}         // Resets a stuck condition, presumely after a human clears the jam.
-//    float currentrpm(void) {}   // Returns the measured rpm at the last update.
-//    int  currentpwm(void) {}    // Returns the currently used pwm.
-//    int  runpwm(void){}         // Returns the pwm to use when running normally.
-//    long encoderpos(void){}     // Encoder Position
-//    bool isenabled(void) {}     // Returns true if the motor is enabled       
-//    bool injam(void) {}         // Returns true if in a jam condition.
-//    bool isstuck(void) {}       // Returns true if the motor is stuck.
-//    long jamcount(void) {}      // Returns the number of successful jam clears since last reset.
-//    void set_params(int ntrys, int njerks, int pos_pwm_us, int neg_pwm_us, int spike_ms) {}
-//    void debug_report(void) {}  // Reports debugging info to terminal.
-// };
-
-// class HitDetectorDummy {
-//   public:
-//     HitDetectorDummy(int emitter_pin, int detector_pin) {}
-//     HitDetectorDummy() {}
-//     void setpins(int emitter_pin, int detector_pin) {} // Sets the pin after construction.
-//     void begin(void) {}          // Attaches the pins and starts sensing hits.
-//     void update(void) {}         // Call at least every 20 ms.
-//     long value(void) {return 0;}    // Returns the number of hits detected.
-//     int get_status(void) {return 0;}      // Returns the status of the detector.
-//     void start_selftest(void) {} // Starts a self test.  Do this to attempt to clear error.
-//     void reset_hits(void) {}     // Set the hit count to zero.
-//     void debug_report(void) {}   // Prints a debug report to the terminal.
-//     const char *get_status_str(void) {return "broke";} // Gets a short string to indicate status.
-//     void set_emitter(int x) {}   // Set condition of the emitter.  (reset on selftest).
-//     int get_emitter(void) {return 0;}     // Gets current condition of emitter as a hex number.
-//     int get_detector(void) {return 0;}    // Gets current condition of detector as a hex number.
-// };
-
 NeoBasket neopixels(PIN_NEO, PIN_NONE, NPIXELS, NPIXELS);
 BasketMotor bmotor(PIN_PWM, PIN_A, PIN_B);
 HitDetector hitdetector(PIN_IRE, PIN_IRD);

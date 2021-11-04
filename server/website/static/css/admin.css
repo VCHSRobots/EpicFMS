@@ -80,10 +80,11 @@ border: none; }
 #sliderpwmbox {float: left; margin-left: 50px; border: 2px solid #886060; width: 150px; height: 150px; }
 #sliderpwmboxlabel {color: #dd999e; font-size: 12pt; margin-left: 10px; margin-top: 5px;}
 #slidersavechangebuttons {margin-left: 10px;}
+#slidergamemodebox {position: relative; top: -320px; left: 720px; width: 200px; height: 50px;}
 
-#basketcontrolarea {float: left; margin-top: 20px; margin-left: 20px; border: 1px solid #886060; height: 340px; width: 500px;}
+#basketcontrolarea {float: left; margin-top: 20px; margin-left: 20px; border: 1px solid #886060; height: 340px; width: 600px;}
 #basketcontrolbuttons {margin-left: 10px; margin-top: 20px; margin-bottom: 10px; width: 100%; height: 30px;}
-#basketstatusdiv {float: left; margin-left: 50px; margin-top: 20px; border: 1px solid #886060; width: 320px; height: 340px; }
+#basketstatusdiv {float: left; margin-left: 10px; margin-top: 20px; border: 1px solid #886060; width: 320px; height: 340px; }
 #basketstatuslabel {color:  #dd999e; font-size: 12pt; margin-bottom: -20px; margin-top: 5px; margin-left: 10px;}
 #basketstatusupdate {width: 50px; height: 20px; font-size: 9pt; position: relative; top: -8px; left: 250px;}
 #basketstatus {margin-left: 10px; width: 290px; height: 290px;}
@@ -92,6 +93,9 @@ border: none; }
 #baskethitboxvalue {background-color: blue; color: white; font-size: 18pt; width: 40px; margin-left: 10px; 
         text-align: center; margin-top: 10px;}
 #basketpwmbox {float: left; margin-left: 50px; border: 2px solid #886060; width: 150px; height: 150px; }
+#basketpwmboxlabel {color: #dd999e; font-size: 12pt; margin-left: 10px; margin-top: 5px;}
+#basketsavechangebuttons {margin-left: 10px;}
+#basketpwmbox {border: 2px solid #886060; width: 150px; height: 110px; position: relative; top: -200px; left: 600px;}
 #basketpwmboxlabel {color: #dd999e; font-size: 12pt; margin-left: 10px; margin-top: 5px;}
 #basketsavechangebuttons {margin-left: 10px;}
 
@@ -106,6 +110,7 @@ border: none; }
 #moverpwmbox {float: left; margin-left: 50px; border: 2px solid #886060; width: 150px; height: 150px; }
 #moverpwmboxlabel {color: #dd999e; font-size: 12pt; margin-left: 10px; margin-top: 5px;}
 #moversavechangebuttons {margin-left: 10px;}
+#movergamemodebox{position: relative; top: -340px; left: 600px; width: 200px; height: 50px;}
 
 #scoreboardtestdiv {position: relative; top: -20px; left: 700px;}
 #scoreboardtestlabel {font-size: 14pt; margin-top: 10px;}
@@ -124,14 +129,14 @@ border: none; }
 #unitselectionsubmit {position: relative; left: 130px; margin-bottom: 10px;}
 
 #gamecontrolarea {width: 800px; height: 50px; position: relative; top: 60px;}
-#unitstatusarea {width: 150px; height: 150px; margin-left: 10px; margin-top: 10px; border: 1px solid #886060;
-  position: relative; top: -30px; left: 700px;}
+#unitstatusarea {width: 150px; height: 340px; margin-left: 10px; margin-top: 10px; border: 1px solid #886060;
+  position: relative; top: -20px; left: 700px;}
 .unitstatusbox {display: block; height: 30px; width: 150px; margin-left: 10px}
 .unitstatuslabel {float: left; color: #886060; font-size: 15pt; margin-left: 10px; margin-top: 10px; width: 80px;}
 .unitstatusindicator {float: left; margin-left: 10px; margin-top: 10px; width: 20px; height: 20px; background-color: red;}
-#endgamearea {margin-left: 120px; margin-top: -80px; width: 160px; height: 60px; border: 1px solid #886060; }
-.wincblabel {margin-top: -22px; margin-bottom: 23px; float: left; width: 100px; font-size: 16pt;}
+#endgamearea {width: 150px; border: 1px solid #886060; position: relative; top: -250px; left: 100px; height: 70px;}
+.wincblabel {margin-left: 10px; margin-bottom: 0px; margin-top: 5px; float: left; width: 100px; font-size: 16pt;}
 #gamestatusmsgarea {margin-left: 30px; margin-top: 50px; width: 900px; height: 20px; border: 3px solid #886060;}
 #gamestatusmsg {background-color: lightgray; color: black; font-size: 14pt; }
-.winnercb {width: 20px; height: 20px; }
+.winnercb {margin-top: 5px;width: 20px; height: 20px; }
 

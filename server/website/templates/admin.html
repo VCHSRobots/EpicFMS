@@ -76,6 +76,36 @@
                 <div class="unitstatusindicator" id="slider2indicator"></div>
               </div>
               <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Slider-3</div>
+                <div class="unitstatusindicator" id="slider3indicator"></div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Slider-4</div>
+                <div class="unitstatusindicator" id="slider4indicator"></div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Slider-5</div>
+                <div class="unitstatusindicator" id="slider5indicator"></div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Slider-6</div>
+                <div class="unitstatusindicator" id="slider6indicator"></div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Basket-1</div>
+                <div class="unitstatusindicator" id="basket1indicator"></div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Basket-2</div>
+                <div class="unitstatusindicator" id="basket2indicator"></div>
+              </div>
+              <div style="clear: both;"></div>
             </div>
             <div id="endgamearea">
               <div class="wincbarea">
@@ -230,7 +260,9 @@
             <div id="basketcontrolarea">
               <div id="basketcontrolbuttons">
                 <button id="motoron" class="scbutton" onclick="set_basket_motor(1)">Motor On</button>
-                <button id="motoroff" class="scbutton" onclick="set_basket_motor(0)">Motor Off</button> 
+                <button id="motoroff" class="scbutton" onclick="set_basket_motor(0)">Motor Off</button>
+                <button id="motorselftest" class="scbutton" onclick="basket_selftest()">Selftest</button>
+                <button id="motorresethits" class="scbutton" onclick="basket_resethits()">Reset</button>
               </div>
                <div class="selcontrol">
                 <div class="seltitle">GameMode</div>
@@ -257,6 +289,20 @@
                 <div id="baskethitboxvalue">00</div>
               </div>
             </div>  
+            <div id="basketpwmbox">
+              <div id="basketpwmboxlabel">PWM Setting</div>
+              <div class="pwmbar">
+                <div class="pwmlabel">Run</div>
+                <div class="pwmtextboxdiv">
+                  <input type="text" class="pwmtextbox" id="basketrunpwm" onchange='make_dirty("basketrunpwm")'>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div id="basketsavechangebuttons">
+                <button class="gpbutton" id="basketchangepwmbutton" onclick='basket_set_pwm()'>Change</button>
+                <button class="gpbutton" id="basketsavebutton" onclick="basket_save_pwm()">Save</button>
+              </div>
+            </div>
             <div style="clear: both;"></div>
           </div>
           
@@ -325,6 +371,26 @@
                 <button class="gpbutton" id="slidersavebutton" onclick="slider_save_pwm()">Save</button>
               </div>
             </div>
+            <div id="slidergamemodebox" class="selcontrol">
+              <div class="seltitle">GameMode</div>
+              <select id="slidergamemode" name="gamemode" class="selvalue" onchange="set_slider_mode()">
+                  <option value="none">none</option>
+                  <option value="powerup">powerup</option>
+                  <option value="uniterror">uniterror</option>
+                  <option value="wifiwait">wifiwait</option>   
+                  <option value="practice">practice</option>
+                  <option value="standby">standby</option>
+                  <option value="countdown">countdown</option>
+                  <option value="auto">auto</option>
+                  <option value="teleop">teleop</option>
+                  <option value="matchfinal">matchfinal</option>
+                  <option value="postwait">postwait</option>
+                  <option value="postresult">postresult</option>
+                  <option value="fmserror">fmserror</option>
+                  <option value="fmslost">fmslost</option>
+                  <option value="blink">blink</option>
+              </select> 
+            </div>
           </div>
           
           <div id="movertab" class="tabcontent">
@@ -367,6 +433,26 @@
             <div id="moverhitbox">
               <div class="gplabel" id="moverhitboxlabel">Hits</div>
               <div id="moverhitboxvalue">00</div>
+            </div>
+            <div id="movergamemodebox" class="selcontrol">
+              <div class="seltitle">GameMode</div>
+              <select id="movergamemode" name="gamemode" class="selvalue" onchange="set_mover_mode()">
+                  <option value="none">none</option>
+                  <option value="powerup">powerup</option>
+                  <option value="uniterror">uniterror</option>
+                  <option value="wifiwait">wifiwait</option>   
+                  <option value="practice">practice</option>
+                  <option value="standby">standby</option>
+                  <option value="countdown">countdown</option>
+                  <option value="auto">auto</option>
+                  <option value="teleop">teleop</option>
+                  <option value="matchfinal">matchfinal</option>
+                  <option value="postwait">postwait</option>
+                  <option value="postresult">postresult</option>
+                  <option value="fmserror">fmserror</option>
+                  <option value="fmslost">fmslost</option>
+                  <option value="blink">blink</option>
+              </select> 
             </div>
           </div>
        </div>

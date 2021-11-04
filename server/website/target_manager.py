@@ -54,6 +54,16 @@ def close_slider_units():
         if t["type"] == "sliders" and t["enabled"]:
             t["unit"].close_door()
 
+def turn_motors_on():
+    for t in targets:
+        if t["type"] == "baskets" and t["enabled"]:
+            t["unit"].turn_motor_on()
+
+def turn_motors_off():
+    for t in targets:
+        if t["type"] == "baskets" and t["enabled"]:
+            t["unit"].turn_motor_off()
+
 def set_start_counts():
     for t in targets:
         t["unit"].reset_hits()
@@ -65,15 +75,16 @@ def broadcast_status(gamemode):
 def get_hits(unittype, unitnum):
     t = find_target(unittype, unitnum)
     if t is None: 
-        log("Invaid args sent to get_hits: %s-%d" % (unittype, unitnum))
+        log("Invalid args sent to get_hits: %s-%d" % (unittype, unitnum))
         return 0
     return t["unit"].get_hits()
 
 def target_okay(unittype, unitnum):
     t = find_target(unittype, unitnum)
     if t is not None:
+        if not t["enabled"]: return False
         return t["unit"].is_game_ready()
-    log("Invaid args sent to target_okay: %s-%d" % (unittype, unitnum))
+    log("Invalid args sent to target_okay: %s-%d" % (unittype, unitnum))
     return False
 
 def find_target(unittype, unitnum):
@@ -85,17 +96,37 @@ def process_basket_commands(request, t):
     unitid = (t["type"], t["slot"])
     if request.args.get("motor", -1) != -1:
         enable = int(request.args.get("motor", 0))
-        log("Enable = %d" % enable)
         if enable == 1: 
             t["unit"].turn_motor_on()
             log("Motor ON command sent to unit %s-%d" % unitid)
         else:
             t["unit"].turn_motor_off()
             log("Motor OFF command sent to unit %s-%d" % unitid)
-    basketmode = request.args.get("basketmode", "dummy")
-    if basketmode != "dummy":
-        t["unit"].set_game_mode(basketmode)
-        log("Gamemode set to %s for unit %s-%d" % (basketmode, unitid[0], unitid[1]))
+        return
+    gamemode = request.args.get("gamemode", "dummy")
+    if gamemode != "dummy":
+        t["unit"].set_game_mode(gamemode)
+        log("Gamemode set to %s for unit %s-%d" % (gamemode, unitid[0], unitid[1]))
+        return
+    if request.args.get("selftest", -1) != -1:
+        t["unit"].run_detector_test()
+        log("Selftest Performed for unit %s-%d" % unitid)
+        return 
+    if request.args.get("resethits", -1) != -1:
+        t["unit"].reset_hits()
+        t["unit"].reset_hits_on_unit()
+        log("Hits Reset for unit %s-%d" % unitid)
+        return
+    if request.args.get("runpwm", -1) != -1:
+        pwm =  int(request.args.get("runpwm", 0))
+        t["unit"].set_run_pwm(pwm)
+        log("Run pwm set to %d for unit %s-%d" % (pwm, unitid[0], unitid[1]))
+        return
+    if request.args.get("saveconfig", -1) != -1:
+        t["unit"].save_config()
+        log("Config saved for unit %s-%d" % unitid)
+        return
+    log("Invalid basket command.")
 
 def process_slider_commands(request, t):
     unitid = (t["type"], t["slot"])
@@ -150,7 +181,7 @@ def process_slider_commands(request, t):
 def process_mover_commands(request, t):
     unitid = (t["type"], t["slot"])
     if request.args.get("gamemode", -1) != -1:
-        gm = request.requests.args.get("gamemode")
+        gm = request.args.get("gamemode")
         t["unit"].set_game_mode(gm)
         log("Gamemode set to %s for unit %s-%d" % (gm, unitid[0], unitid[1]))
         return 
@@ -209,7 +240,9 @@ def process_admin_request(request):
     # a unit number.
     log("Handling general unit admin command: %s" % request.url)
     unittype, unitnum = extract_type_unit(request)
-    if unittype is None or unitnum is None: return
+    if unittype is None or unitnum is None: 
+        log("Error -- Unable to extract unittype and number.")
+        return
     t = find_target(unittype, unitnum)
     if t is None:
         log("Error -- unable to find target. type=%s, num=%d" % (unittype, unitnum))
@@ -235,8 +268,9 @@ def process_unitstatus_request(request):
     # log("Processing unit status request for type=%s num=%d." % (unittype, unitnum))
     status = t["unit"].get_rawstatus()
     if status is None: 
-        prgerr = t["unit"].progerror
-        log("Status not valid from unit. unittype=%s, unitnum=%d, progerror=%d" % (unittype, unitnum, prgerr))
+        if t["enabled"]:
+            prgerr = t["unit"].progerror
+            log("Status not valid from unit. unittype=%s, unitnum=%d, progerror=%d" % (unittype, unitnum, prgerr))
         return "{}"
     # log("type(status)", type(status))
     # log("status", status)

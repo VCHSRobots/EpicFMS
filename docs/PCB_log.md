@@ -82,7 +82,7 @@ work with the IR Beams.  Suppected burnout on GPIO pins.
 
 Work on Thrusday, 10/28:
 PCB-5 was misswired, a bad mod. Fixed the mod, and PCB-5 now okay.
-Also, resodered PCB-13, works not.  And finshed PCB-12 with new ESP, and
+Also, resodered PCB-13, works now.  And finshed PCB-12 with new ESP, and
 something seems to be wrong... Set aside for debugging later.
 
 Work on Monday, 11/1
@@ -93,7 +93,13 @@ it won't accept an upload.
 After more work with the test jig, I discovered that there is
 cross-talk among the beams.  I tested PCB-6, PCB-8, PCB-9 and
 PCB-10 on slider rings -- and they all work.  Before, PCB-8, PCB-9,
-and PCB-10 failed the test on the test jig.
+and PCB-10 failed the test on the test jig.  Now, I think, however, 
+they failed becuase of HITRST -- see below. 
+
+Work on Monday-Wednesday, 11/1-3
+Built two more PCBs, 14 & 15. Discovered that HITRST, on SD3/G10
+cannot be used reliable.  Casuses some sort of hardware watch dog
+reset. 
 
 
 

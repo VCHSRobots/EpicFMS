@@ -51,6 +51,12 @@ function fill_admin_status(data) {
     set_indicator_color("mover2indicator", data["mover2"]);
     set_indicator_color("slider1indicator", data["slider1"]);
     set_indicator_color("slider2indicator", data["slider2"]);
+    set_indicator_color("slider3indicator", data["slider3"]);
+    set_indicator_color("slider4indicator", data["slider4"]);
+    set_indicator_color("slider5indicator", data["slider5"]);
+    set_indicator_color("slider6indicator", data["slider6"]);
+    set_indicator_color("basket2indicator", data["basket1"]);
+    set_indicator_color("basket1indicator", data["basket2"]);
 }
 
 function change_tab(evt, tabname) {
@@ -555,6 +561,37 @@ function mover_resethits() {
         .catch(function (err) { console.log('error: ' + err); return; })
 }
 
+function basket_resethits() {
+    var num = get_current_basket_unit_index();
+    if (num < 0) return;
+    var url = "/admin?unittype=baskets&unitnum=" + num
+    url += "&resethits=1"
+    fetch(url)
+        .then(function(response) { return})
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
+function basket_set_pwm() {
+    var num = get_current_basket_unit_index();
+    if (num < 0) return;
+    var run_pwm = get_textbox_value("basketrunpwm");
+    var baseurl = "/admin?unittype=baskets&unitnum=" + num
+    var url = baseurl + "&runpwm=" + run_pwm
+    fetch(url)
+        .then(function(response) { return})
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
+function basket_save_pwm() {
+    var num = get_current_basket_unit_index();
+    if (num < 0) return;
+    var url = "/admin?unittype=baskets&unitnum=" + num
+    url += "&saveconfig=1"
+    fetch(url)
+        .then(function(response) { return})
+        .catch(function (err) { console.log('error: ' + err); return; })
+}
+
 function slider_set_pwm() {
     var num = get_current_slider_unit_index();
     if (num < 0) return;
@@ -606,8 +643,28 @@ function set_basket_mode() {
     var num = get_current_basket_unit_index();
     if (num < 0) return;
     var sel = document.getElementById("basketgamemode");
-    var url = "/admin?unittype=baskets&unitnum=" + num + "&basketmode=" + sel.value
+    var url = "/admin?unittype=baskets&unitnum=" + num + "&gamemode=" + sel.value
     fetch(url)
-        .then(function () { console.log("Basket mode request sent to server.")})
+        .then(function () { console.log("Basket game mode request sent to server.")})
+        .catch(function (err) { console.log("Unable to send basket mode request. Error: " + err)});
+}
+
+function set_slider_mode() {
+    var num = get_current_slider_unit_index();
+    if (num < 0) return;
+    var sel = document.getElementById("slidergamemode");
+    var url = "/admin?unittype=sliders&unitnum=" + num + "&gamemode=" + sel.value
+    fetch(url)
+        .then(function () { console.log("Slider game mode request sent to server.")})
+        .catch(function (err) { console.log("Unable to send basket mode request. Error: " + err)});
+}
+
+function set_mover_mode() {
+    var num = get_current_mover_unit_index();
+    if (num < 0) return;
+    var sel = document.getElementById("movergamemode");
+    var url = "/admin?unittype=movers&unitnum=" + num + "&gamemode=" + sel.value
+    fetch(url)
+        .then(function () { console.log("Mover game mode request sent to server.")})
         .catch(function (err) { console.log("Unable to send basket mode request. Error: " + err)});
 }
