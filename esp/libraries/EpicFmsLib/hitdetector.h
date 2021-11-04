@@ -19,12 +19,18 @@ class HitDetector {
     long value(void);          // Returns the number of hits detected.
     int get_status(void);      // Returns the status of the detector.
     void start_selftest(void); // Starts a self test.  Do this to attempt to clear error.
+    void reset_hits(void);     // Set the hit count to zero.
+    int get_fail_code(void);   // Returns a number indicating why selftest failed.
     void debug_report(void);   // Prints a debug report to the terminal.
     const char *get_status_str(void); // Gets a short string to indicate status.
+    void set_emitter(int x);   // Set condition of the emitter.  (reset on selftest).
+    int get_emitter(void);     // Gets current condition of emitter as a hex number.
+    int get_detector(void);    // Gets current condition of detector as a hex number.
   private:
     int _selftest_state;
     uint32_t _selftest_delay;
     uint32_t _selftest_delay_t0;
+    int _selftest_fail_code = 0;
     int _emitter_pin;
     int _detector_pin;
     bool _started = false;  

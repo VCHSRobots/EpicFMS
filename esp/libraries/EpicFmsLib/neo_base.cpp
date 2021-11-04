@@ -285,13 +285,11 @@ void NeoBase::stage_online(int game_mode, bool new_mode, uint32_t telp) {
                     last_side++;
                     return;
                 }
-                
                 if (last_side == 3){
                     stage_solidcolor(ENEO_BLUE);
                     last_side++;
                     return;
                 }
-                
                 if (last_side >= 4 & last_side <=6){
                     stage_solidcolor(ENEO_GREEN);
                     last_side++;
@@ -323,6 +321,24 @@ void NeoBase::stage_online(int game_mode, bool new_mode, uint32_t telp) {
              _delay_time = 25;
              last_side++;
              return;
+        case GMODE_BLINK: // Blink to indicate unit, red-green-blue on/off
+             last_side++;
+             if(last_side >= 2) last_side = 0;
+              _delay_time = 75;
+             if (last_side == 0) {
+                 for (int i = 0; i < _np; i++) {
+                     int ii = (i / 3) % 3;
+                     int c = ENEO_RED;
+                     if (ii == 1) c = ENEO_BLUE;
+                     if (ii == 2) c = ENEO_GREEN;
+                     set_pixel_color(i, c);
+                 }
+                 return;
+             } else {
+                 stage_solidcolor(ENEO_BLACK);
+                 return;
+             }
+
         default: // All other modes for now... pink/yellow blink
             last_side++;
             if (last_side == 1) {

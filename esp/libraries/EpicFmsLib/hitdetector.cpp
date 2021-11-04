@@ -25,43 +25,43 @@
 // If the beam does not clear after 1 second, for at least 25ms, then
 // an error condition is declared -- and must be cleared externally.
 
-
 #include <Arduino.h>
 #include "hitdetector.h"
 
 #define BEAM_BROKEN HIGH
 #define BEAM_UNBROKEN LOW
 
-int g_detector_pin;
-bool g_hit_declared = false;
-volatile bool g_inerror = false;
-volatile uint32_t g_last_hit_time = millis();
-volatile bool g_ignore_hits = false;
-volatile long g_hitcount = 0;
-volatile uint32_t g_last_pin_change_time = millis();
-volatile int g_pinlevel = BEAM_UNBROKEN;
-volatile long g_isrcnt = 0;
+static bool s_object_declared = false;
+static int s_detector_pin;
+static int s_emitter_status = 0;  
+static volatile bool s_inerror = false;
+static volatile uint32_t s_last_hit_time = millis();
+static volatile bool s_ignore_hits = false;
+static volatile long s_hitcount = 0;
+static volatile uint32_t s_last_pin_change_time = millis();
+static volatile int s_pinlevel = BEAM_UNBROKEN;
+static volatile long s_isrcnt = 0;
 
-volatile long ac = 0;
-volatile long bc = 0;
-volatile long cc = 0;
-volatile long dc = 0;
+static volatile long s_ac = 0;
+static volatile long s_bc = 0;
+static volatile long s_cc = 0;
+static volatile long s_dc = 0;
 
 // Process Change on IR Beam Pin
 IRAM_ATTR void isr_irbeam() {
-  g_isrcnt++;
+  s_isrcnt++;
   uint32_t tnow = millis();
-  uint32_t elp = g_last_pin_change_time - tnow;
-  g_last_pin_change_time = tnow;
-  g_pinlevel = digitalRead(uint8_t(g_detector_pin));
-  if (g_ignore_hits || g_inerror) {dc++; return;}
-  if (g_pinlevel == BEAM_BROKEN) {
+  uint32_t elp = s_last_pin_change_time - tnow;
+  s_last_pin_change_time = tnow;
+  s_pinlevel = digitalRead(uint8_t(s_detector_pin));
+  if (s_ignore_hits || s_inerror) {s_dc++; return;}
+  if (s_pinlevel == BEAM_BROKEN) {
       // This is a possible hit.
-      ac++;  
-      if (elp < 50ul) { bc++; return;}  // Doesn't count, we need at least 50ms of UNBROKEN beam before hit.
-      if (tnow - g_last_hit_time < 100) {cc++; return;} // No more than 10 balls/second
-      g_hitcount++;
-      g_last_hit_time = tnow;
+      s_ac++;  
+      if (elp < 50ul) { s_bc++; return;}  // Doesn't count, we need at least 50ms of UNBROKEN beam before hit.
+      if (tnow - s_last_hit_time < 100) {s_cc++; return;} // No more than 10 balls/second
+      s_hitcount++;
+      s_last_hit_time = tnow;
   }
 }
 
@@ -70,11 +70,11 @@ HitDetector::HitDetector(void) {
 }
 
 HitDetector::HitDetector(int emitter_pin, int detector_pin) {
-    if (g_hit_declared) {
+    if (s_object_declared) {
         Serial.println("Unable to create two instances of HitDetector!!!");
         return;
     }
-    g_hit_declared = true;
+    s_object_declared = true;
     _started = false;
     setpins(emitter_pin, detector_pin);
 }
@@ -87,29 +87,31 @@ void HitDetector::setpins(int emitter_pin, int detector_pin) {
     }
     _emitter_pin = emitter_pin;
     _detector_pin = detector_pin;
-    g_detector_pin = detector_pin;
+    s_detector_pin = detector_pin;
 }
 
 // Starts the hit detector.
 void HitDetector::begin(void) {
+    if(_started) return;
     if (_emitter_pin < 0 || _detector_pin < 0) {
         Serial.println("HitDetector not initailized before begin!!!");
         return;
     }
-    if(_started) return;
+    s_ignore_hits = true;
     //Serial.println("Setting up IR Hit Detector.");
     delay(10);
     pinMode(uint8_t(_detector_pin), INPUT);
     pinMode(uint8_t(_emitter_pin), OUTPUT);
     digitalWrite(uint8_t(_emitter_pin), HIGH);  // Turn on IR Beam.
-    g_last_pin_change_time = millis() - 20; // 20ms in the past
-    g_last_hit_time = millis() - 100; // 100ms in the past
-    g_ignore_hits = true;
+    s_emitter_status = 1;
+    s_last_pin_change_time = millis() - 20; // 20ms in the past
+    s_last_hit_time = millis() - 100; // 100ms in the past
     attachInterrupt(uint8_t(_detector_pin), isr_irbeam, CHANGE);
     delay(2);
-    g_ignore_hits = false;
+    s_ignore_hits = false;
     _started = true;
-    _selftest_state = 0;
+    _selftest_state = HDSTATUS_INSELFTEST;
+    delay(2);
     start_selftest();
 }
 
@@ -128,33 +130,34 @@ void HitDetector::update(void) {
     }
 
     // If we are in an error condition, then nothing left to do.
-    if (g_inerror) return;
+    if (s_inerror) return;
 
     // Check to see if we are having problems.
     noInterrupts();
-    pinlevel = g_pinlevel;
-    pinchangetime = g_last_pin_change_time;
+    pinlevel = s_pinlevel;
+    pinchangetime = s_last_pin_change_time;
     interrupts();
 
     if(pinlevel == BEAM_BROKEN) {
         if (millis() - pinchangetime > 1500) {
             Serial.println("Error due 1.5 seconds of broken beam.");
             // Something is wrong -- beam broken too long.  Declare error.
-            g_inerror = true;
+            s_inerror = true;
+            _selftest_fail_code = 10;
         }
     }
 }
 
 // Returns the hit count.
 long HitDetector::value(void) {
-    return g_hitcount;
+    return s_hitcount;
 }
 
 // Returns the status of the detector. See the HDSTATUS_xxx defines.
 int HitDetector::get_status(void) {
-    // if (!_started) return HDSTATUS_OFF;
-    // if (_selftest_state != 0) return HDSTATUS_INSELFTEST;
-    // if (g_inerror) return HDSTATUS_ERROR;
+    if (!_started) return HDSTATUS_OFF;
+    if (_selftest_state != 0) return HDSTATUS_INSELFTEST;
+    if (s_inerror) return HDSTATUS_ERROR;
     return HDSTATUS_OKAY;    
 }
 
@@ -167,6 +170,12 @@ const char *HitDetector::get_status_str(void) {
         case HDSTATUS_ERROR: return "error";
         default: return "??";
     }
+}
+
+// Returns fail err code, if any. See code below to 
+// interperate what it means.
+int HitDetector::get_fail_code(void) {
+    return _selftest_fail_code;
 }
 
 // Starts a self test.  The self test will be conducted via update().
@@ -183,6 +192,11 @@ void HitDetector::start_selftest(void) {
     _selftest_delay = 0;
 }
 
+// Resets the hit count to zero.
+void HitDetector::reset_hits(void) {
+    s_hitcount = 0;
+}
+
 // Send a status report for debugging to the terminal.
 void HitDetector::debug_report(void) {
     char lineout[100];
@@ -194,10 +208,34 @@ void HitDetector::debug_report(void) {
         case HDSTATUS_ERROR: state = "Error"; break;
         default: state="Unknown"; break;
     }
-    sprintf(lineout, "Hit Count=%ld, IR Det Status = %s, inerr=%d, isrcnt=%ld", g_hitcount, state, g_inerror, g_isrcnt);
+    sprintf(lineout, "Hit Count=%ld, IR Det Status = %s, inerr=%d, isrcnt=%ld", s_hitcount, state, s_inerror, s_isrcnt);
     Serial.println(lineout);
-    sprintf(lineout, "isr cnts: ac=%ld, bc=%ld, cc=%ld, cd=%ld", ac, bc, cc, dc);
+    int x = get_detector();
+    sprintf(lineout, "Emitter=%d, Detectors=%d, isr cnts: ac=%ld, bc=%ld, cc=%ld, cd=%ld",
+        s_emitter_status, x, s_ac, s_bc, s_cc, s_dc);
     Serial.println(lineout);
+}
+
+// Returns the current condition of the detector.
+// Useful for debugging hardware.
+int HitDetector::get_detector(void) {
+    int x = 0;
+    if (digitalRead(_detector_pin) == HIGH) x = 1;
+    return x;
+}
+
+// Sets the emitter output. This is an override that is useful
+// for debugging hardware.  This setting will be reset when a 
+// selftest is run.
+void HitDetector::set_emitter(int x) {
+    if (x) { digitalWrite(_emitter_pin, HIGH); s_emitter_status = 1;}
+    else   { digitalWrite(_emitter_pin, LOW); s_emitter_status = 0; }
+}
+
+// Returns the status of the emitter as a hex number. The LSB
+// indicates the status of the emitter.
+int HitDetector::get_emitter(void) {
+    return s_emitter_status;
 }
 
 // Conducts a self test by manipulating the on/off condition of the IR Emitter.
@@ -213,60 +251,69 @@ void HitDetector::conduct_selftest(void) {
     _selftest_delay = 0;  // Assume zero, can be overwriten
     switch(_selftest_state) {
         case 1: // Start up here.
-            Serial.println("case 1.");
-            g_ignore_hits = true;  // Ignore counts in the isr, as to not count fake hits.
+            //Serial.println("case 1.");
+            s_ignore_hits = true;  // Ignore counts in the isr, as to not count fake hits.
             _selftest_delay = 10;
             _selftest_state = 2;
             return;
         case 2:
-            Serial.println("case 2.");
+            //Serial.println("case 2.");
             digitalWrite(uint8_t(_emitter_pin), LOW);
+            s_emitter_status = 0;
             _selftest_delay = 2;
             _selftest_state = 3;
             return;
         case 3: 
-            Serial.println("case 3.");
-            if (digitalRead(uint8_t(g_detector_pin)) != BEAM_BROKEN) {
+            //Serial.println("case 3.");
+            if (digitalRead(uint8_t(s_detector_pin)) != BEAM_BROKEN) {
                 _selftest_delay = 0;
                 _selftest_state = 199;
+                _selftest_fail_code = 1;
                 return;
             }
             digitalWrite(uint8_t(_emitter_pin), HIGH);
+            s_emitter_status = 1;
             _selftest_delay = 2;
             _selftest_state = 4;
             return;
         case 4: 
-            Serial.println("case 4.");
-            if (digitalRead(uint8_t(g_detector_pin)) != BEAM_UNBROKEN) {
+            //Serial.println("case 4.");
+            if (digitalRead(uint8_t(s_detector_pin)) != BEAM_UNBROKEN) {
                 _selftest_state = 199;
+                _selftest_fail_code = 2;
                 return;
             }
             _selftest_delay = 25;
             _selftest_state = 5;
             return;
         case 5: 
-            Serial.println("case 5.");
-            if (digitalRead(uint8_t(g_detector_pin)) != BEAM_UNBROKEN) {
+            //Serial.println("case 5.");
+            if (digitalRead(uint8_t(s_detector_pin)) != BEAM_UNBROKEN) {
                 _selftest_state = 199;
+                _selftest_fail_code = 3;
                 return;
             }
             // All is okay
-            g_inerror = false;
+            s_inerror = false;
             digitalWrite(uint8_t(_emitter_pin), HIGH);
+            s_emitter_status = 1;
             _selftest_delay = 50;
             _selftest_state = 200;
+            _selftest_fail_code = 0;
             return;
         case 199: // Come here to declare error
-            Serial.println("case 199.");
-            g_inerror = true; 
+            //Serial.println("case 199.");
+            s_inerror = true; 
             digitalWrite(uint8_t(_emitter_pin), HIGH);
+            s_emitter_status = 1;
             _selftest_delay = 50;
             _selftest_state = 200;
             return;
         case 200:
-            Serial.println("case 200.");
+            //Serial.println("case 200.");
             _selftest_state = 0;
-            g_ignore_hits = false;
+            s_ignore_hits = false;
+            _selftest_fail_code = 0;
             return;
     }
 }

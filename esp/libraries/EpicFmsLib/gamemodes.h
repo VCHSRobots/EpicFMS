@@ -17,6 +17,7 @@
 #define GMODE_POSTRESULT    11  // FMS Connected: The match is concluded and results declared
 #define GMODE_FMSERROR      12  // FMS Connected: There is an FMS error preventing match start
 #define GMODE_FMSLOST       13  // FMS Disconnected: Error -- Lost connection during match
+#define GMODE_BLINK         14  // Blink for debugging and configuration purposes.
 
 const char *gmode_to_str(int i);
 int str_to_gmode(const char* str);

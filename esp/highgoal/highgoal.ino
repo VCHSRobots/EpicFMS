@@ -42,12 +42,12 @@
 // Setup for the Modified Basket Target running
 // on a modified V2/V3 version of the PCB 
 #define PIN_NONE    -1  // Means no pin assigned.
-#define PIN_NEO      4  // D2/G4 -- On NEO2 Header (via 74125 buffer)
 #define PIN_PWM      5  // D1/G5 -- On NEO1 Header (via 74125 buffer)
+#define PIN_NEO      4  // D2/G4 -- On NEO2 Header (via 74125 buffer)
 #define PIN_IRE     15  // D8/G15 -- IR Emitter
 #define PIN_IRD     12  // D6/G12 -- IR Detector 
-#define PIN_A        9  // SD2/G9  -- Direct input, Was mode switch before mod. 
-#define PIN_B       10  // SD3/G10 -- Direct input, Was HitRst button before mod.
+#define PIN_A       13  // D7/G13  -- Modified Direct input, via mod 
+#define PIN_B       10  // SD3/G10 -- Direct input, Was HitRst button before mod
 #define PIN_GMODE   14  // D5/G14  -- Input via OpAmp
 #define NPIXELS 43
 
@@ -56,10 +56,50 @@
 #define SW_OFFLINE HIGH // Defines how the switch is used, Low=offline  
 #define SW_UNDEFINED -1 // Use when the condition of the switch is not known
 
-// NeoConductor neopixels = NeoConductor(PIN_NEO, PIN_NONE, NPIXELS, NPIXELS);
-// BasketMotor bmotor = BasketMotor(PIN_PWM, PIN_A, PIN_B);
-// HitDetector hitdetector = HitDetector(PIN_IRE, PIN_IRD);
-// EpicFmsWiFi fmswifi = EpicFmsWiFi(WIFISSID, WIFIPK, "Basket Target");
+// Definations for On-board LED.  
+#define PIN_ONBOARDLED 16
+#define LED_OFF HIGH
+#define LED_ON LOW
+
+// class BasketMotorDummy {
+//   public:
+//   BasketMotorDummy(int pwm, int a, int b) { }
+//    void begin(void) {}         // Begins the operation.
+//    void update(void) {}        // Updates the PID loop.  Call at least every 100ms.
+//    void setrpm(float rpm) {}   // Sets the desired rpm. (Doesn't work cause no PID for now)
+//    void setpwm(int pwm) {}     // Sets the pulsewidth for PWM to use for enabled mode.
+//    void enable(void) {}        // Enables the motor.
+//    void disable(void) {}       // Disabled the motor.
+//    void reset(void) {}         // Resets a stuck condition, presumely after a human clears the jam.
+//    float currentrpm(void) {}   // Returns the measured rpm at the last update.
+//    int  currentpwm(void) {}    // Returns the currently used pwm.
+//    int  runpwm(void){}         // Returns the pwm to use when running normally.
+//    long encoderpos(void){}     // Encoder Position
+//    bool isenabled(void) {}     // Returns true if the motor is enabled       
+//    bool injam(void) {}         // Returns true if in a jam condition.
+//    bool isstuck(void) {}       // Returns true if the motor is stuck.
+//    long jamcount(void) {}      // Returns the number of successful jam clears since last reset.
+//    void set_params(int ntrys, int njerks, int pos_pwm_us, int neg_pwm_us, int spike_ms) {}
+//    void debug_report(void) {}  // Reports debugging info to terminal.
+// };
+
+// class HitDetectorDummy {
+//   public:
+//     HitDetectorDummy(int emitter_pin, int detector_pin) {}
+//     HitDetectorDummy() {}
+//     void setpins(int emitter_pin, int detector_pin) {} // Sets the pin after construction.
+//     void begin(void) {}          // Attaches the pins and starts sensing hits.
+//     void update(void) {}         // Call at least every 20 ms.
+//     long value(void) {return 0;}    // Returns the number of hits detected.
+//     int get_status(void) {return 0;}      // Returns the status of the detector.
+//     void start_selftest(void) {} // Starts a self test.  Do this to attempt to clear error.
+//     void reset_hits(void) {}     // Set the hit count to zero.
+//     void debug_report(void) {}   // Prints a debug report to the terminal.
+//     const char *get_status_str(void) {return "broke";} // Gets a short string to indicate status.
+//     void set_emitter(int x) {}   // Set condition of the emitter.  (reset on selftest).
+//     int get_emitter(void) {return 0;}     // Gets current condition of emitter as a hex number.
+//     int get_detector(void) {return 0;}    // Gets current condition of detector as a hex number.
+// };
 
 NeoBasket neopixels(PIN_NEO, PIN_NONE, NPIXELS, NPIXELS);
 BasketMotor bmotor(PIN_PWM, PIN_A, PIN_B);
@@ -72,6 +112,8 @@ int mode = SW_OFFLINE; // Set by switch, updated on main loop.
 int lastmode = SW_UNDEFINED;
 float vbattery = 0.0;  // Voltage reading on battery -- updated once per 0.5 sec//
 unsigned long last_battery_udpate_time = millis();
+uint32_t last_led_update_time = millis();
+int led_cycle = 0;
 long report_count = 0;
 long cmd_count = 0;
 long mainloop_count = 0;
@@ -110,6 +152,10 @@ void setup(void) {
   Serial.println("Setting up motor.");
   bmotor.begin();
   bmotor.disable();
+
+  Serial.println("Setting up on-board LED.");
+  pinMode(PIN_ONBOARDLED, OUTPUT);
+  digitalWrite(PIN_ONBOARDLED, LED_OFF);
 
   Serial.println("Setup Done -- Starting Main Loop.");
 }
@@ -168,6 +214,33 @@ void update_game_mode() {
     game_mode = fms_game_mode;
 }
 
+// Update the on-board led according to state
+void led_update(void) {
+    uint32_t tnow = millis();
+    if(tnow - last_led_update_time < 50) return;
+    last_led_update_time = tnow;
+    if (hitdetector.get_status() == HDSTATUS_ERROR) {
+        if (led_cycle > 0) {
+            digitalWrite(PIN_ONBOARDLED, LED_ON);
+            led_cycle = 0;
+        } else {
+            digitalWrite(PIN_ONBOARDLED, LED_OFF);
+            led_cycle = 1;
+        }
+        return;
+    }
+    if (!fmswifi.is_connected()) {
+        if (led_cycle < 20) digitalWrite(PIN_ONBOARDLED, LED_ON);
+        else digitalWrite(PIN_ONBOARDLED, LED_OFF);
+        led_cycle++;
+        if(led_cycle > 40) led_cycle = 0; 
+        return;
+    }
+    // All seems okay.
+    digitalWrite(PIN_ONBOARDLED, LED_ON);
+    return;
+}
+
 // Reports status to terminal
 void send_report(void) {
   if(millis() - last_report_time < 1000) return;
@@ -183,6 +256,10 @@ void send_report(void) {
   fmswifi.debug_report();
   bmotor.debug_report();
   hitdetector.debug_report();
+  int a = digitalRead(PIN_A);
+  int b = digitalRead(PIN_B);
+  sprintf(lineout, "Encoder A,B= %d,%d", a, b);
+  Serial.println(lineout);
 }
 
 void loop() {
@@ -190,15 +267,16 @@ void loop() {
   static int lastmode = SW_UNDEFINED;
   mode = digitalRead(PIN_GMODE);
   if (mode != lastmode) { 
-    lastmode = mode;
-    if (mode == SW_OFFLINE) {
-        hitdetector.start_selftest(); // Start with clearing errors.
-        if (vbattery > 8.0) bmotor.enable();  // Run the motor in offline.
-    } else {
-      bmotor.disable(); // For now.  Later, the server will take care of this.
-    }
+   lastmode = mode;
+   if (mode == SW_OFFLINE) {
+       hitdetector.start_selftest(); // Start with clearing errors.
+       if (vbattery > 8.0) bmotor.enable();  // Run the motor in offline.
+   } else {
+     bmotor.disable(); // For now.  Later, the server will take care of this.
+   }
   }  
   battery_update();
+  led_update();
   bmotor.update();
   hitdetector.update();
   update_game_mode();
@@ -281,6 +359,15 @@ void process_cmd(const char *name, const char *value) {
     if (iv != 1 || mode != SW_RUN) return;
     hitdetector.start_selftest();
   }
+    if(strcmp(name, "resethits") == 0) {
+    if (iv != 1) return;
+    Serial.println("Reseting Hit Count.");
+    hitdetector.reset_hits();
+    return;
+  }
+  if(strcmp(name, "set_emitters") == 0) {
+    hitdetector.set_emitter(iv);
+  }
 }
 
 // Process status requests from the server here.
@@ -333,7 +420,10 @@ void on_status(char *json) {
   sprintf(lineout, "\"hitdetector_status\" : \"%s\", \n", hitdetector.get_status_str());
   strncat(json, lineout, MAX_STATUS_CHARS);
 
-  sprintf(lineout, "\"batvolts\" : %8.2f \n", vbattery);
+  sprintf(lineout, "\"batvolts\" : %8.2f, \n", vbattery);
+  strncat(json, lineout, MAX_STATUS_CHARS);
+
+  sprintf(lineout, "\"irbeam\" : \"%d:%d\"\n", hitdetector.get_emitter(), hitdetector.get_detector());
   strncat(json, lineout, MAX_STATUS_CHARS);
 
   strncat(json, "}\n", MAX_STATUS_CHARS);

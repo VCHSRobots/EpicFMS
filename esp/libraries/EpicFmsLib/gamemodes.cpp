@@ -23,6 +23,7 @@ const char* gmode_to_str(int i) {
         case GMODE_POSTRESULT: return "PostResult";
         case GMODE_FMSERROR: return "FmsError";
         case GMODE_FMSLOST: return "FmsLost";  
+        case GMODE_BLINK: return "Blink";
     }
     return "";     
 }
@@ -48,5 +49,6 @@ int str_to_gmode(const char *str) {
     if (strcmp(a, "postresult") == 0) return GMODE_POSTRESULT;
     if (strcmp(a, "fmserror") == 0) return GMODE_FMSERROR;
     if (strcmp(a, "fmslost") == 0) return GMODE_FMSLOST;    
-    return GMODE_NONE;
+    if (strcmp(a, "blink") == 0) return GMODE_BLINK;
+    return GMODE_NONE; 
 }

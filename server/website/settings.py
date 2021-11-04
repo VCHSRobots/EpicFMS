@@ -9,8 +9,8 @@ from fmslogger import log
 # This is the loaded version for use while running
 fms_config = {
     "baskets" : [
-        { "name" : "Basket-1", "ip" : "10.0.2.60", "enabled" : True, "team" : "red"},
-        { "name" : "Basket-2", "ip" : "", "enabled" : False, "team" : "blue"}
+        { "name" : "Basket-1", "ip" : "10.0.2.84", "enabled" : True, "team" : "red"},
+        { "name" : "Basket-2", "ip" : "10.0.2.85", "enabled" : True, "team" : "blue"}
     ],
     "sliders" : [
         { "name" : "Slider-1", "ip" : "10.0.2.73", "enabled" : True, "team" : "red"},
@@ -29,8 +29,8 @@ fms_config = {
 # If a conf file is not found, this will be loaded for running.
 fms_defualt_config = {
     "baskets" : [
-        { "name" : "Basket-1", "ip" : "10.0.2.60", "enabled" : True, "team" : "red"},
-        { "name" : "Basket-2", "ip" : "", "enabled" : False, "team" : "blue"}
+        { "name" : "Basket-1", "ip" : "10.0.2.84", "enabled" : True, "team" : "red"},
+        { "name" : "Basket-2", "ip" : "10.0.2.85", "enabled" : True, "team" : "blue"}
     ],
     "sliders" : [
         { "name" : "Slider-1", "ip" : "10.0.2.73", "enabled" : True, "team" : "red"},

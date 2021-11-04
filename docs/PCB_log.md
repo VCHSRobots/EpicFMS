@@ -25,7 +25,7 @@ HITRST is a minor feature, this mod may not be found on many boards.
 |-------|-----------|-------|------|---|----| -------------------------- |----------|
 | A1    | Sept 21   | V1    |      |   |    |Original, made by Mr.B      |          |
 | A2    | Sept 21   | V1    |  No  |   |    |Made by Chris, cap blew up  |          |
-| A3    | Sept 21   | V1    |      |   | Y  |Many mods, For Basket       | Basket   |
+| A3    | Sept 21   | V1    |      |   | Y  |Many mods, For Basket       | Retired  |
 | 1     | 10/21/21  | V3    |      | Y |    |Runs pcb_test okay.         | Mover    |
 | 2     | 10/21/21  | V3    |  No  |   |    |Runs pcb_test okay.         |          | 
 | 3     | 10/21/21  | V3    |      |   |    |Runs pcb_test okay.         | Slider   |
@@ -39,14 +39,16 @@ HITRST is a minor feature, this mod may not be found on many boards.
 | 11    | 10/21/21  | V3    |  No  | Y |    |Fails test. Gets really hot.|          |
 | 12    | 10/21/21  | V3    |  No  |   |    |** See notes below          |          |
 | 13    | 10/21/21  | V3    |      |   |    |Fixed with Paul's Help      | Slider   |
+| 14    | 10/21/21  | V3/B  |      |   | B  |Moded for Basket            | Basket   |
+| 15    | 10/21/21  | V3/B  |      |   | B  |Fixed for Basket            | Basket   |
 
 HS=HeatSink
 
 ### Address Assignements
 
-|Board  |WiFi Name   |Mac               |IP Addr    |How Used |
+|Board  |Name        |Mac               |IP Addr    |How Used |
 |-------|------------|------------------|-----------|---------|
-|PCB-A3 |Basket-1    |BC:FF:4D:2B:AD:82 |10.0.2.60  | Basket  |  
+|PCB-A3 |            |BC:FF:4D:2B:AD:82 |10.0.2.60  |         |  
 |PCB-01 |Mover-1     |30:83:98:B6:34:A1 |10.0.2.71  | Mover   |  
 |PCB-03 |Slider-1    |8C:CE:4E:E3:42:36 |10.0.2.73  | Slider  |  
 |PCB-04 |Mover-2     |A8:48:FA:C0:81:A7 |10.0.2.74  | Mover   |  
@@ -55,6 +57,9 @@ HS=HeatSink
 |PCB-08 |Slider-6    |BC:FF:4D:2B:4B:14 |10.0.0.78  | Slider  |
 |PCB-09 |Slider-5    |BC:FF:4D:2B:36:0B |10.0.2.79  | Slider  |  
 |PCB-13 |Slider-4    |BC:FF:4D:2A:EB:3D |10.0.2.83  | Slider  |  
+|PCB-14 |Basket-1    |BC:FF:4D:2B:AA:ED |10.0.2.84  | Basket  |  
+|PCB-15 |Basket-2    |BC:FF:4D:2A:D6:E8 |10.0.2.85  | Basket  |  
+
 
 IP addresses are fixed to MAC addresses and assigned by the LinkSys router,
 via DHCP. The scheme is to tie address to Board SN, the V1 boards (A series) start 

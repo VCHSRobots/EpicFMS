@@ -18,6 +18,7 @@ GMODE_POSTWAIT       = 10  # FMS Connected: The match is concluded, but results 
 GMODE_POSTRESULT     = 11  # FMS Connected: The match is concluded and results declared
 GMODE_FMSERROR       = 12  # FMS Connected: There is an FMS error preventing match start
 GMODE_FMSLOST        = 13  # FMS Disconnected: Error -- Lost connection during match
+GMODE_BLINK          = 14  # Blink for debug and config purposes
 
 def gmode_to_str(i):
     # Convert a GMODE constant to a string
@@ -35,6 +36,7 @@ def gmode_to_str(i):
     if i == GMODE_POSTRESULT: return "PostResult"
     if i == GMODE_FMSERROR: return "FmsError"
     if i == GMODE_FMSLOST: return "FmsLost"  
+    if i == GMODE_BLINK: return "Blink"
     return ""   
 
 def str_to_gmode(str):
@@ -53,5 +55,6 @@ def str_to_gmode(str):
     if s == "postwait": return GMODE_POSTWAIT
     if s == "postresult": return GMODE_POSTRESULT
     if s == "fmserror": return GMODE_FMSERROR
-    if s == "fmslost": return GMODE_FMSLOST    
+    if s == "fmslost": return GMODE_FMSLOST
+    if s == "blink": return GMODE_BLINK    
     return GMODE_NONE
