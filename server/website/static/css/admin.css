@@ -112,7 +112,7 @@ border: none; }
 #moversavechangebuttons {margin-left: 10px;}
 #movergamemodebox{position: relative; top: -340px; left: 600px; width: 200px; height: 50px;}
 
-#scoreboardtestdiv {position: relative; top: -20px; left: 700px;}
+#scoreboardtestdiv {position: relative; top: -20px; left: 750px;}
 #scoreboardtestlabel {font-size: 14pt; margin-top: 10px;}
 #teamdiv {margin-top: 20px; margin-left: 10px; width: 360px; height: 80px; border: 2px solid #886060}
 #teamnamebluelabel {color: blue;}
@@ -122,21 +122,35 @@ border: none; }
 #teamnameupdatediv {position: relative; top: -70px; left: 280px;}
 #teamnameswapdiv {position: relative; top: -70px; left: 280px;}
 
-#unitsetuparea {width: 200px; height: 350px; border: 2px solid #886060; position: relative; top: -130px; left: 430px;}
-.unitsetupline {height: 30px; width: 200px;}
-.unitsetuplabel {float: left; margin-left: 10px; margin-top: 10px; width: 80px; font-size: 12pt;} 
-.unitselection {width: 60px; height: 20px;}
-#unitselectionsubmit {position: relative; left: 130px; margin-bottom: 10px;}
+#unitsetuparea {width: 225px; height: 350px; border: 2px solid #886060; position: relative; top: -130px; left: 430px;}
+.unitsetupline {height: 30px; width: 270px;}
+.unitsetuplabel {float: left; margin-left: 10px; margin-top: 0px; width: 80px; font-size: 12pt;} 
+.unitselection {float: left; width: 60px; height: 20px;}
+#unitselectionsubmit {position: relative; left: 90px; margin-bottom: 10px;}
 
 #gamecontrolarea {width: 800px; height: 50px; position: relative; top: 60px;}
-#unitstatusarea {width: 150px; height: 340px; margin-left: 10px; margin-top: 10px; border: 1px solid #886060;
+#unitstatusarea {width: 250px; height: 340px; margin-left: 10px; margin-top: 10px; border: 1px solid #886060;
   position: relative; top: -20px; left: 700px;}
-.unitstatusbox {display: block; height: 30px; width: 150px; margin-left: 10px}
-.unitstatuslabel {float: left; color: #886060; font-size: 15pt; margin-left: 10px; margin-top: 10px; width: 80px;}
+.unitstatusbox {display: block; height: 30px; width: 100px; margin-left: 10px}
+.unitstatuslabel {float: left; color: #f6bb48; font-size: 15pt; margin-left: 10px; margin-top: 10px; width: 80px;}
 .unitstatusindicator {float: left; margin-left: 10px; margin-top: 10px; width: 20px; height: 20px; background-color: red;}
-#endgamearea {width: 150px; border: 1px solid #886060; position: relative; top: -250px; left: 100px; height: 70px;}
-.wincblabel {margin-left: 10px; margin-bottom: 0px; margin-top: 5px; float: left; width: 100px; font-size: 16pt;}
-#gamestatusmsgarea {margin-left: 30px; margin-top: 50px; width: 900px; height: 20px; border: 3px solid #886060;}
-#gamestatusmsg {background-color: lightgray; color: black; font-size: 14pt; }
-.winnercb {margin-top: 5px;width: 20px; height: 20px; }
+.unitsidetextbox {float: left; margin-left: 10px; margin-top: 15px; width: 50px; font-size: 12pt;}
+.unitsideblink {float: left; margin-left: 10px; width: 50px; font-size: 9pt;}
+.unitblinkbtn {width: 45px; height: 18px; margin-top: 12px;}
 
+#endgamearea {width: 650px; position: relative; top: -300px; left: 50px; height: 180px;}
+.sidescorearea {width: 600px; height: 70px; border: 1px solid #886060; margin-top: 25px; margin-left: 5px;}
+#bluesidecontrolarea {background-color: #9c9cda; }
+#redsidecontrolarea {background-color: #e48181;}
+.sidescorelabel {float: left; font-size: 16pt; color: yellow; margin-top: 10px; margin-left: 20px;}
+.sidescorecontrols {float: left; width: 575px; margin-left: 20px; }
+.sidetextbox {float: left; margin-left: 10px; }
+.sidetextboxlabel {float: left; color: black ; font-size: 18px; }
+.raketextbox {float: left; width: 40px; margin-left: 5px; margin-right: 10px; }
+.adjtextbox {float: left; width: 40px; margin-left: 5px; margin-right: 10px; }
+.sidecblabel{float: left; color: black; font-size: 18px;  margin-left: 20px; }
+.sidecb {float: left; width: 20px; height: 20px; margin-top: -2px;}
+#submitgamescorebtndiv{margin-left: 90px; margin-top: 25px;}
+#gamescoresubmitbtn {Font-size: 14pt; width: 85px; height: 25px;}
+#gamestatusmsgarea {float: left; margin-left: 30px; margin-top: -230px; width: 900px; height: 20px; border: 3px solid #886060;}
+#gamestatusmsg {background-color: lightgray; color: black; font-size: 14pt; text-align: left;}

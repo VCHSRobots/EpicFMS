@@ -22,13 +22,13 @@
         </div>
         <div id="admintitle">GAME ADMINISTRATION</div>
       </div>
-      <div id="loginarea">
+      <div id="loginarea" style="visibility: hidden;">
         <div id="passwordlabel">Password:</div>
         <div id="passwordinputdiv"><input id="passwordbox" type="password"></div>
         <div id="passwordbuttondiv"><button id="passwordbutton" onclick="sendpassword()">Submit</button></div>
       </div>
       
-      <div id="mainarea" style="visibility: hidden;">
+      <div id="mainarea" style="visibility: visible;">
         <div id="scorearea">
           <div id="gamemodediv">Dummy</div>
           <div id="clockdiv">00</div> 
@@ -59,62 +59,149 @@
               <div class="uintstatusbox">
                 <div class="unitstatuslabel">Mover-1</div>
                 <div class="unitstatusindicator" id="mover1indicator"></div>
+                <div class="unitsidetextbox" id="mover1sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('mover1')">Blink</button>
+                </div>
               </div>
               <div style="clear: both;"></div>
               <div class="uintstatusbox">
                 <div class="unitstatuslabel">Mover-2</div>
                 <div class="unitstatusindicator" id="mover2indicator"></div>
+                <div class="unitsidetextbox" id="mover2sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('mover2')">Blink</button>
+                </div>
               </div>
               <div style="clear: both;"></div>
               <div class="uintstatusbox">
                 <div class="unitstatuslabel">Slider-1</div>
                 <div class="unitstatusindicator" id="slider1indicator"></div>
+                <div class="unitsidetextbox" id="slider1sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('slider1')">Blink</button>
+                </div>
               </div>
               <div style="clear: both;"></div>
               <div class="uintstatusbox">
                 <div class="unitstatuslabel">Slider-2</div>
                 <div class="unitstatusindicator" id="slider2indicator"></div>
+                <div class="unitsidetextbox" id="slider2sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('slider2')">Blink</button>
+                </div>
               </div>
               <div style="clear: both;"></div>
               <div class="uintstatusbox">
                 <div class="unitstatuslabel">Slider-3</div>
                 <div class="unitstatusindicator" id="slider3indicator"></div>
+                <div class="unitsidetextbox" id="slider3sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('slider3')">Blink</button>
+                </div>
               </div>
               <div style="clear: both;"></div>
               <div class="uintstatusbox">
                 <div class="unitstatuslabel">Slider-4</div>
                 <div class="unitstatusindicator" id="slider4indicator"></div>
+                <div class="unitsidetextbox" id="slider4sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('slider4')">Blink</button>
+                </div>
               </div>
               <div style="clear: both;"></div>
               <div class="uintstatusbox">
                 <div class="unitstatuslabel">Slider-5</div>
                 <div class="unitstatusindicator" id="slider5indicator"></div>
+                <div class="unitsidetextbox" id="slider5sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('slider5')">Blink</button>
+                </div>
               </div>
               <div style="clear: both;"></div>
               <div class="uintstatusbox">
                 <div class="unitstatuslabel">Slider-6</div>
                 <div class="unitstatusindicator" id="slider6indicator"></div>
+                <div class="unitsidetextbox" id="slider6sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('slider6')">Blink</button>
+                </div>
               </div>
               <div style="clear: both;"></div>
               <div class="uintstatusbox">
                 <div class="unitstatuslabel">Basket-1</div>
                 <div class="unitstatusindicator" id="basket1indicator"></div>
+                <div class="unitsidetextbox" id="basket1sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('basket1')">Blink</button>
+                </div>
               </div>
               <div style="clear: both;"></div>
               <div class="uintstatusbox">
                 <div class="unitstatuslabel">Basket-2</div>
                 <div class="unitstatusindicator" id="basket2indicator"></div>
+                <div class="unitsidetextbox" id="basket2sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('basket2')">Blink</button>
+                </div>
               </div>
               <div style="clear: both;"></div>
             </div>
             <div id="endgamearea">
-              <div class="wincbarea">
-                <div class="wincblabel">Blue Win:</div>
-                <input type="checkbox" id="bluewincb" class="winnercb" onchange='update_winner()'>
+              <div id="bluesidecontrolarea" class="sidescorearea">
+                <div class="sidescorelabel">BLUE</div>
+                <div class="sidescorecontrols">
+                  <div class="sidetextbox">
+                    <div class="sidetextboxlabel">Rake:</div>
+                    <input type="text" class="raketextbox" id="blueraketextbox" onchange='make_dirty("blueraketextbox")'> 
+                  </div>
+                  <div class="sidetextbox">
+                    <div class="sidetextboxlabel">Adj:</div>
+                    <input type="text" class="adjtextbox" id="blueadjtextbox" onchange='make_dirty("blueadjtextbox")'> 
+                  </div>
+                  <div class="sidecheckbox">
+                      <div class="sidecblabel">AutoPass:</div>
+                      <input type="checkbox" id="blueautopasscb" class="sidecb" onchange='update_score()'>
+                  </div>
+                  <div class="sidecheckbox">
+                      <div class="sidecblabel">AutoFail:</div>
+                      <input type="checkbox" id="blueautofailcb" class="sidecb" onchange='update_score()'>
+                  </div>
+                  <div class="sidecheckbox">
+                    <div class="sidecblabel">Win:</div>
+                    <input type="checkbox" id="bluewincb" class="sidecb" onchange='update_score()'>
+                  </div>
+                </div>
               </div>
-              <div class="wincbarea">
-                <div class="wincblabel">Red Win:</div>
-                <input type="checkbox" id="redwincb" class="winnercb" onchange='update_winner()'>
+              <div style="clear: both;"></div>
+              <div id="redsidecontrolarea" class="sidescorearea">
+                <div class="sidescorelabel">RED</div>
+                <div class="sidescorecontrols">
+                  <div class="sidetextbox">
+                    <div class="sidetextboxlabel">Rake:</div>
+                    <input type="text" class="raketextbox" id="redraketextbox" onchange='make_dirty("redraketextbox")'> 
+                  </div>
+                  <div class="sidetextbox">
+                    <div class="sidetextboxlabel">Adj:</div>
+                    <input type="text" class="adjtextbox" id="redadjtextbox" onchange='make_dirty("redadjtextbox")'> 
+                  </div>
+                  <div class="sidecheckbox">
+                      <div class="sidecblabel">AutoPass:</div>
+                      <input type="checkbox" id="redautopasscb" class="sidecb" onchange='update_score()'>
+                  </div>
+                  <div class="sidecheckbox">
+                      <div class="sidecblabel">AutoFail:</div>
+                      <input type="checkbox" id="redautofailcb" class="sidecb" onchange='update_score()'>
+                  </div>
+                  <div class="sidecheckbox">
+                    <div class="sidecblabel">Win:</div>
+                    <input type="checkbox" id="redwincb" class="sidecb" onchange='update_score()'>
+                  </div>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div id="submitgamescorebtndiv">
+                <button class="scbutton" id="gamescoresubmitbtn" onclick="submitgamescore()">Submit</button>
               </div>
             </div>
             <div style="clear: both;"></div>
@@ -150,11 +237,15 @@
             </div>
             <div id="unitsetuparea">
               <button class="updatebutton" id="unitselectionsubmit" onclick="update_unit_sides()">Submit</button>
+              <div style="clear: both;"></div>
               <div class="unitsetupline">
                 <div class="unitsetuplabel" id="unitslot1">Mover-1</div>
                 <div class="unitsetupsel">
                   <select id="unitselslot1" class="unitselection" onchange="unit_side_changed()">
                     <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('mover1')">Blink</button>
                 </div>
               </div>
               <div class="unitsetupline">
@@ -163,12 +254,18 @@
                   <select id="unitselslot2" class="unitselection" onchange="unit_side_changed()">
                     <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
                 </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('mover2')">Blink</button>
+                </div>
               </div>
               <div class="unitsetupline">
                 <div class="unitsetuplabel" id="unitslot1">Slider-1</div>
                 <div class="unitsetupsel">
                   <select id="unitselslot3" class="unitselection" onchange="unit_side_changed()">
                     <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('slider1')">Blink</button>
                 </div>
               </div>
               <div class="unitsetupline">
@@ -177,12 +274,18 @@
                   <select id="unitselslot4" class="unitselection" onchange="unit_side_changed()">
                     <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
                 </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('slider2')">Blink</button>
+                </div>
               </div>
               <div class="unitsetupline">
                 <div class="unitsetuplabel" id="unitslot1">Slider-3</div>
                 <div class="unitsetupsel">
                   <select id="unitselslot5" class="unitselection" onchange="unit_side_changed()">
                     <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('slider3')">Blink</button>
                 </div>
               </div>
               <div class="unitsetupline">
@@ -191,12 +294,18 @@
                   <select id="unitselslot6" class="unitselection" onchange="unit_side_changed()">
                     <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
                 </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('slider4')">Blink</button>
+                </div>
               </div>
               <div class="unitsetupline">
                 <div class="unitsetuplabel" id="unitslot1">Slider-5</div>
                 <div class="unitsetupsel">
                   <select id="unitselslot7" class="unitselection" onchange="unit_side_changed()">
                     <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('slider5')">Blink</button>
                 </div>
               </div>
               <div class="unitsetupline">
@@ -205,6 +314,9 @@
                   <select id="unitselslot8" class="unitselection" onchange="unit_side_changed()">
                     <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
                 </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('slider6')">Blink</button>
+                </div>
               </div>
               <div class="unitsetupline">
                 <div class="unitsetuplabel" id="unitslot1">Basket-1</div>
@@ -212,12 +324,18 @@
                   <select id="unitselslot9" class="unitselection" onchange="unit_side_changed()">
                     <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
                 </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('basket1')">Blink</button>
+                </div>
               </div>
               <div class="unitsetupline">
                 <div class="unitsetuplabel" id="unitslot1">Basket-2</div>
                 <div class="unitsetupsel">
                   <select id="unitselslot10" class="unitselection" onchange="unit_side_changed()">
                     <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('basket2')">Blink</button>
                 </div>
               </div>
             </div>
