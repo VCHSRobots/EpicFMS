@@ -27,7 +27,7 @@ class TeamScore():
                 "EGame"  : { "Basket" : "0x0", "Moving" : "0x0", "Sliders" : "0x0" },
                 "Totals" : { "Basket" :   "0", "Moving" :   "0", "Sliders" :   "0" }
             },
-            "ShowLastLine" : False,
+            "ShowLastLine" : True,
             "Raking" : "0",
             "Adjustment" : "0"
         }
@@ -84,12 +84,27 @@ class ScoreSender():
         self.score["Blue"]["GameElement"]["Sliders"] = game_manager.slider_okay("blue")
         self.score["Blue"]["GameElement"]["Moving"] = game_manager.mover_okay("blue")
 
+        
+        self.score["Red"]["Grid"]["Auto"]["Basket"] = game_manager.get_grid("red", "basket", "auto")
+        self.score["Red"]["Grid"]["Auto"]["Sliders"] = game_manager.get_grid("red", "sliders", "auto")
+        self.score["Red"]["Grid"]["Auto"]["Moving"] = game_manager.get_grid("red", "mover", "auto")
+        self.score["Blue"]["Grid"]["Auto"]["Basket"] = game_manager.get_grid("blue", "basket", "auto")
+        self.score["Blue"]["Grid"]["Auto"]["Sliders"] = game_manager.get_grid("blue", "sliders", "auto")
+        self.score["Blue"]["Grid"]["Auto"]["Moving"] = game_manager.get_grid("blue", "mover", "auto")
+
         self.score["Red"]["Grid"]["TeleOp"]["Basket"] = game_manager.get_grid("red", "basket", "teleop")
         self.score["Red"]["Grid"]["TeleOp"]["Sliders"] = game_manager.get_grid("red", "sliders", "teleop")
         self.score["Red"]["Grid"]["TeleOp"]["Moving"] = game_manager.get_grid("red", "mover", "teleop")
         self.score["Blue"]["Grid"]["TeleOp"]["Basket"] = game_manager.get_grid("blue", "basket", "teleop")
         self.score["Blue"]["Grid"]["TeleOp"]["Sliders"] = game_manager.get_grid("blue", "sliders", "teleop")
         self.score["Blue"]["Grid"]["TeleOp"]["Moving"] = game_manager.get_grid("blue", "mover", "teleop")
+
+        self.score["Red"]["Grid"]["EGame"]["Basket"] = game_manager.get_grid("red", "basket", "endgame")
+        self.score["Red"]["Grid"]["EGame"]["Sliders"] = game_manager.get_grid("red", "sliders", "endgame")
+        self.score["Red"]["Grid"]["EGame"]["Moving"] = game_manager.get_grid("red", "mover", "endgame")
+        self.score["Blue"]["Grid"]["EGame"]["Basket"] = game_manager.get_grid("blue", "basket", "endgame")
+        self.score["Blue"]["Grid"]["EGame"]["Sliders"] = game_manager.get_grid("blue", "sliders", "endgame")
+        self.score["Blue"]["Grid"]["EGame"]["Moving"] = game_manager.get_grid("blue", "mover", "endgame")
 
         self.score["Red"]["Grid"]["Totals"]["Basket"] = game_manager.get_grid_total("red", "basket")
         self.score["Red"]["Grid"]["Totals"]["Sliders"] = game_manager.get_grid_total("red", "sliders")
@@ -98,6 +113,17 @@ class ScoreSender():
         self.score["Blue"]["Grid"]["Totals"]["Sliders"] = game_manager.get_grid_total("blue", "sliders")
         self.score["Blue"]["Grid"]["Totals"]["Moving"] = game_manager.get_grid_total("blue", "mover")
 
+        okay, fail, showauto, autopoints = game_manager.get_auto_score("red")
+        self.score["Red"]["AutoScore"]["Checkmark"] = okay
+        self.score["Red"]["AutoScore"]["XMark"] = fail
+        self.score["Red"]["AutoScore"]["ShowScore"] = showauto
+        self.score["Red"]["AutoScore"]["Score"] = autopoints
+
+        okay, fail, showauto, autopoints = game_manager.get_auto_score("blue")
+        self.score["Blue"]["AutoScore"]["Checkmark"] = okay
+        self.score["Blue"]["AutoScore"]["XMark"] = fail
+        self.score["Blue"]["AutoScore"]["ShowScore"] = showauto
+        self.score["Blue"]["AutoScore"]["Score"] = autopoints
   
     def update(self):
         # Update will be called about 10 Hz. 

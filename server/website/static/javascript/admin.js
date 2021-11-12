@@ -360,6 +360,38 @@ function send_game_button(btn) {
         .catch(function (err) { console.log("Unable to change config. Error: " + err)});
 }
 
+function update_score() {
+  update_winner();
+  update_auto_red();
+  update_auto_blue();
+}
+
+function update_auto_red() {
+  var okay = document.getElementById("redautopasscb").checked;
+  var fail = document.getElementById("redautofailcb").checked;
+  var outcome = "clear";
+  if (okay) outcome = "pass";
+  if (fail) outcome = "fail";
+  if (okay && fail) outcome = "clear";
+  var url = "admin?gamecommand=1&auto=1&side=red&outcome=" + outcome;
+  fetch(url)
+    .then(function () { console.log("Game command sent to server.");})
+    .catch(function (err) { console.log("Unable to change config. Error: " + err)});
+}
+
+function update_auto_blue() {
+  var okay = document.getElementById("blueautopasscb").checked;
+  var fail = document.getElementById("blueautofailcb").checked;
+  var outcome = "clear";
+  if (okay) outcome = "pass";
+  if (fail) outcome = "fail";
+  if (okay && fail) outcome = "clear";
+  var url = "admin?gamecommand=1&auto=1&side=blue&outcome=" + outcome;
+  fetch(url)
+    .then(function () { console.log("Game command sent to server.");})
+    .catch(function (err) { console.log("Unable to change config. Error: " + err)});
+}
+
 function update_winner() {
     var wb = document.getElementById("bluewincb").checked;
     var wr = document.getElementById("redwincb").checked;

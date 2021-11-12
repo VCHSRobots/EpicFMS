@@ -20,6 +20,22 @@ game_config = {
 
 game_periods = {"countdown": 5, "auto" : 0, "teleop" : 140, "endgame" : 10}
 
+# score table setup: auto_run, auto targets, tele targets, endgame targets, rake, adj
+
+class ScoreTbl:
+  _init_(self):
+    self.auto_run = 0
+    self.auto = [0, 0, 0]
+    self.tele = [0, 0, 0]
+    self.endgame = [0, 0, 0]
+    self.rake = 0 
+    self.adj = 0 
+    
+
+red_tlb = [0, [0, 0, 0], [0,0,0], [0,0,0], 0, 0]
+blue_tbl = [0, [0, 0, 0], [0, 0, 0]]
+
+
 time0 = 0   # Time at start of countdone, or again at start of game
 total_game_secs = 0
 game_mode = "standby"
@@ -36,6 +52,8 @@ blue_score = blue_slider_hits + 10*blue_mover_hits + 4*blue_basket_hits
 red_score = red_slider_hits + 10*red_mover_hits + 4*red_basket_hits
 ss_obj = None
 baskets_off = True
+blue_auto = "clear"  # can be clear, pass, fail
+red_auto = "clear"
 
 
 def update_game():
@@ -88,6 +106,7 @@ def reset():
     global blue_mover_hits, red_mover_hits, blue_slider_hits, red_mover_hits
     global blue_basket_hits, red_basket_hits
     global blue_score, red_score, game_mode, total_game_secs
+    global blue_auto, red_auto
     blue_mover_hits = 0
     red_mover_hits = 0
     blue_slider_hits = 0
@@ -96,6 +115,8 @@ def reset():
     red_basket_hits = 0
     blue_score = 0
     red_score = 0
+    blue_auto = "clear"
+    red_auto = "clear"
     game_mode = "standby"
     ss_obj.clear()
     target_manager.broadcast_status(game_mode)
@@ -132,8 +153,12 @@ def count_hits():
             n = target_manager.get_hits(unittype+"s", num)
             if ua[uname] == "red": rbh += n
             if ua[uname] == "blue": bbh += n
-    blue_score = bmh * 10 + bbh*4 + bsh
-    red_score = rmh * 10 +  rbh*4 + rsh 
+    red_auto_score = 0
+    blue_auto_score = 0 
+    if red_auto == "pass": red_auto_score = 40
+    if blue_auto == "pass": blue_auto_score = 40
+    blue_score = blue_auto_score + bmh * 10 + bbh*4 + bsh
+    red_score = red_auto_score + rmh * 10 +  rbh*4 + rsh 
     blue_mover_hits = bmh 
     blue_slider_hits = bsh
     red_mover_hits = rmh 
@@ -201,7 +226,7 @@ def reassign_unit(k, v):
             game_config["unitassignements"][k] = v.lower()
 
 def process_game_command(request):
-    global red_win, blue_win
+    global red_win, blue_win, red_auto, blue_auto
     log("Processing Game Command")
     winner = request.args.get("winner", "dummy")
     if winner != "dummy":
@@ -235,9 +260,32 @@ def process_game_command(request):
             return
         log("Unknown button (%s) sent. Not processed." % btn)
         return
+    auto = request.args.get("auto", "dummy")
+    if auto != "dummy":
+      side = request.args.get("side", "dummy")
+      if side != "red" and side != "blue":
+        log("Bad side parameter (%s) for auto game command." % side)
+        return
+      cond = request.args.get("outcome", "dummy")
+      if cond == "pass":
+        if side == "red": red_auto = "pass"
+        if side == "blue": blue_auto = "pass"
+        log("Auto Score set: %s is set to %s." % (side, cond))
+        return
+      if cond == "fail":
+        if side == "red": red_auto = "fail"
+        if side == "blue": blue_auto = "fail"
+        log("Auto Score set: %s is set to %s." % (side, cond))
+        return
+      if cond == "clear":
+        if side == "red": red_auto = "clear"
+        if side == "blue": blue_auto = "clear"
+        log("Auto Score set: %s is set to %s." % (side, cond))
+        return       
+      log("Bad outcome parameter (%s) for auto game command." % cond)
+      return
     log("Unknown game command: %s" % request.url)
     
-
 def process_gameconfig_update(config):
     #Expects a json map encoded in base64
     log("Setting Game Config.  Recevied Base64.")
@@ -363,5 +411,21 @@ def get_grid_total(side, unit):
         return "0"
     return "0"       
 
+def get_auto_score(side):
+  # returns okay, fail, show, score
+  if game_mode == "standby": return False, False, False, 0
+  if side == "red":
+    if red_auto == "clear": return False, False, True, 0
+    if red_auto == "pass": return True, False, True, 40
+    if red_auto == "fail": return False, True, True, 0 
+    log("Program error in get_auto_score() -- 1.")
+    return False, False, False, 0 
+  if side == "blue":
+    if blue_auto == "clear": return False, False, True, 0
+    if blue_auto == "pass": return True, False, True, 40
+    if blue_auto == "fail": return False, True, True, 0 
+    log("Program error in get_auto_score() -- 2.")
+    return False, False, False, 0 
+  log("Program error in get_auto_score() -- 3.")
 
 
