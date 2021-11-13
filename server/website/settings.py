@@ -13,12 +13,12 @@ fms_config = {
         { "name" : "Basket-2", "ip" : "10.0.2.85", "enabled" : True, "team" : "blue"}
     ],
     "sliders" : [
-        { "name" : "Slider-1", "ip" : "10.0.2.73", "enabled" : True, "team" : "red"},
-        { "name" : "Slider-2", "ip" : "10.0.2.75", "enabled" : True, "team" : "blue"},
-        { "name" : "Slider-3", "ip" : "10.0.2.77", "enabled" : True, "team" : "red"},
+        { "name" : "Slider-1", "ip" : "10.0.2.79", "enabled" : True, "team" : "red"},
+        { "name" : "Slider-2", "ip" : "10.0.2.78", "enabled" : True, "team" : "blue"},
+        { "name" : "Slider-3", "ip" : "10.0.2.75", "enabled" : True, "team" : "red"},
         { "name" : "Slider-4", "ip" : "10.0.2.83", "enabled" : True, "team" : "blue"},
-        { "name" : "Slider-5", "ip" : "10.0.2.79", "enabled" : True, "team" : "red"},
-        { "name" : "Slider-6", "ip" : "10.0.2.78", "enabled" : True, "team" : "blue"}
+        { "name" : "Slider-5", "ip" : "10.0.2.73", "enabled" : True, "team" : "red"},
+        { "name" : "Slider-6", "ip" : "10.0.2.77", "enabled" : True, "team" : "blue"}
     ],
     "movers"  : [
         { "name" : "Mover-1", "ip" : "10.0.2.71", "enabled" : True, "team" : "red"},
@@ -33,12 +33,12 @@ fms_defualt_config = {
         { "name" : "Basket-2", "ip" : "10.0.2.85", "enabled" : True, "team" : "blue"}
     ],
     "sliders" : [
-        { "name" : "Slider-1", "ip" : "10.0.2.73", "enabled" : True, "team" : "red"},
-        { "name" : "Slider-2", "ip" : "10.0.2.75", "enabled" : True, "team" : "blue"},
-        { "name" : "Slider-3", "ip" : "10.0.2.77", "enabled" : True, "team" : "red"},
+        { "name" : "Slider-1", "ip" : "10.0.2.79", "enabled" : True, "team" : "red"},
+        { "name" : "Slider-2", "ip" : "10.0.2.78", "enabled" : True, "team" : "blue"},
+        { "name" : "Slider-3", "ip" : "10.0.2.75", "enabled" : True, "team" : "red"},
         { "name" : "Slider-4", "ip" : "10.0.2.83", "enabled" : True, "team" : "blue"},
-        { "name" : "Slider-5", "ip" : "10.0.2.79", "enabled" : True, "team" : "red"},
-        { "name" : "Slider-6", "ip" : "10.0.2.78", "enabled" : True, "team" : "blue"}
+        { "name" : "Slider-5", "ip" : "10.0.2.73", "enabled" : True, "team" : "red"},
+        { "name" : "Slider-6", "ip" : "10.0.2.77", "enabled" : True, "team" : "blue"}
     ],
     "movers"  : [
         { "name" : "Mover-1", "ip" : "10.0.2.71", "enabled" : True, "team" : "red"},

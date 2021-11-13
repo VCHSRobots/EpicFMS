@@ -105,10 +105,10 @@ class ScoreSender():
         self.score["Blue"]["Grid"]["EGame"]["Moving"] = game_manager.get_grid("blue", "mover", "endgame")
 
         self.score["Red"]["Grid"]["Totals"]["Basket"] = game_manager.get_grid_total("red", "basket")
-        self.score["Red"]["Grid"]["Totals"]["Sliders"] = game_manager.get_grid_total("red", "sliders")
+        self.score["Red"]["Grid"]["Totals"]["Sliders"] = game_manager.get_grid_total("red", "slider")
         self.score["Red"]["Grid"]["Totals"]["Moving"] = game_manager.get_grid_total("red", "mover")
         self.score["Blue"]["Grid"]["Totals"]["Basket"] = game_manager.get_grid_total("blue", "basket")
-        self.score["Blue"]["Grid"]["Totals"]["Sliders"] = game_manager.get_grid_total("blue", "sliders")
+        self.score["Blue"]["Grid"]["Totals"]["Sliders"] = game_manager.get_grid_total("blue", "slider")
         self.score["Blue"]["Grid"]["Totals"]["Moving"] = game_manager.get_grid_total("blue", "mover")
 
         okay, fail, showauto, autopoints = game_manager.get_auto_score("red")

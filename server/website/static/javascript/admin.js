@@ -135,8 +135,8 @@ function fill_game_config_elements() {
     set_textbox("redteamname", game_config["teamnames"]["red"], true);
     set_checkbox("testscoreboard", game_config["runscoreboardtest"], true);
 
-    var units = ["mover-1", "mover-2", "sider-1", "slider-2", "sider-3", "slider-4",
-                 "sider-5", "slider-6", "basket-1", "basket-2"]; 
+    var units = ["mover-1", "mover-2", "sider-1", "slider-2", "slider-3", "slider-4",
+                 "slider-5", "slider-6", "basket-1", "basket-2"]; 
 
     if (game_config.hasOwnProperty("unitassignments")) {
         for(const unitname in game_config.unitassignments) {

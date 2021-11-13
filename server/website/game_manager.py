@@ -11,7 +11,7 @@ import utils
 import time
 
 game_config = {
-    "teamnames" : {"blue": "Scrikien", "red": "Cncters"},
+    "teamnames" : {"blue": "SHIRA-KEN", "red": "CNCnts"},
     "runscoreboardtest" : False,
     "unitassignments" : {"mover-1" : "red", "mover-2" : "blue",
                           "slider-1" : "red", "slider-2" : "red",
