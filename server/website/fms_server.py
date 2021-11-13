@@ -56,6 +56,12 @@ def setup():
     if not pw_manager.is_loggedin(request.remote_addr):
       return render_template('admin.html', **dummy_params)
 
+    # Handle Blinks
+    blink = request.args.get("blink", "dummy")
+    if blink != "dummy":
+      target_manager.process_blink(blink)
+      return render_template('admin.html', **dummy_params)
+
     # Handle game commands
     gamecmd = request.args.get("gamecommand", "dummy")
     if gamecmd != "dummy":

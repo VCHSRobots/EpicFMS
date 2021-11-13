@@ -83,27 +83,25 @@ class ScoreSender():
         self.score["Blue"]["GameElement"]["Basket"] = game_manager.basket_okay("blue")
         self.score["Blue"]["GameElement"]["Sliders"] = game_manager.slider_okay("blue")
         self.score["Blue"]["GameElement"]["Moving"] = game_manager.mover_okay("blue")
-
         
         self.score["Red"]["Grid"]["Auto"]["Basket"] = game_manager.get_grid("red", "basket", "auto")
-        self.score["Red"]["Grid"]["Auto"]["Sliders"] = game_manager.get_grid("red", "sliders", "auto")
+        self.score["Red"]["Grid"]["Auto"]["Sliders"] = game_manager.get_grid("red", "slider", "auto")
         self.score["Red"]["Grid"]["Auto"]["Moving"] = game_manager.get_grid("red", "mover", "auto")
-        self.score["Blue"]["Grid"]["Auto"]["Basket"] = game_manager.get_grid("blue", "basket", "auto")
-        self.score["Blue"]["Grid"]["Auto"]["Sliders"] = game_manager.get_grid("blue", "sliders", "auto")
-        self.score["Blue"]["Grid"]["Auto"]["Moving"] = game_manager.get_grid("blue", "mover", "auto")
-
         self.score["Red"]["Grid"]["TeleOp"]["Basket"] = game_manager.get_grid("red", "basket", "teleop")
-        self.score["Red"]["Grid"]["TeleOp"]["Sliders"] = game_manager.get_grid("red", "sliders", "teleop")
+        self.score["Red"]["Grid"]["TeleOp"]["Sliders"] = game_manager.get_grid("red", "slider", "teleop")
         self.score["Red"]["Grid"]["TeleOp"]["Moving"] = game_manager.get_grid("red", "mover", "teleop")
-        self.score["Blue"]["Grid"]["TeleOp"]["Basket"] = game_manager.get_grid("blue", "basket", "teleop")
-        self.score["Blue"]["Grid"]["TeleOp"]["Sliders"] = game_manager.get_grid("blue", "sliders", "teleop")
-        self.score["Blue"]["Grid"]["TeleOp"]["Moving"] = game_manager.get_grid("blue", "mover", "teleop")
-
         self.score["Red"]["Grid"]["EGame"]["Basket"] = game_manager.get_grid("red", "basket", "endgame")
-        self.score["Red"]["Grid"]["EGame"]["Sliders"] = game_manager.get_grid("red", "sliders", "endgame")
+        self.score["Red"]["Grid"]["EGame"]["Sliders"] = game_manager.get_grid("red", "slider", "endgame")
         self.score["Red"]["Grid"]["EGame"]["Moving"] = game_manager.get_grid("red", "mover", "endgame")
+
+        self.score["Blue"]["Grid"]["Auto"]["Basket"] = game_manager.get_grid("blue", "basket", "auto")
+        self.score["Blue"]["Grid"]["Auto"]["Sliders"] = game_manager.get_grid("blue", "slider", "auto")
+        self.score["Blue"]["Grid"]["Auto"]["Moving"] = game_manager.get_grid("blue", "mover", "auto")
+        self.score["Blue"]["Grid"]["TeleOp"]["Basket"] = game_manager.get_grid("blue", "basket", "teleop")
+        self.score["Blue"]["Grid"]["TeleOp"]["Sliders"] = game_manager.get_grid("blue", "slider", "teleop")
+        self.score["Blue"]["Grid"]["TeleOp"]["Moving"] = game_manager.get_grid("blue", "mover", "teleop")
         self.score["Blue"]["Grid"]["EGame"]["Basket"] = game_manager.get_grid("blue", "basket", "endgame")
-        self.score["Blue"]["Grid"]["EGame"]["Sliders"] = game_manager.get_grid("blue", "sliders", "endgame")
+        self.score["Blue"]["Grid"]["EGame"]["Sliders"] = game_manager.get_grid("blue", "slider", "endgame")
         self.score["Blue"]["Grid"]["EGame"]["Moving"] = game_manager.get_grid("blue", "mover", "endgame")
 
         self.score["Red"]["Grid"]["Totals"]["Basket"] = game_manager.get_grid_total("red", "basket")
@@ -124,7 +122,26 @@ class ScoreSender():
         self.score["Blue"]["AutoScore"]["XMark"] = fail
         self.score["Blue"]["AutoScore"]["ShowScore"] = showauto
         self.score["Blue"]["AutoScore"]["Score"] = autopoints
-  
+
+        cm_basket, cm_mover, cm_slider1, cm_slider2, cm_slider3 = game_manager.get_target_checkmarks("red")
+        self.score["Red"]["CheckMarks"]["Basket"] = cm_basket
+        self.score["Red"]["CheckMarks"]["Moving"] = cm_mover       
+        self.score["Red"]["CheckMarks"]["Slider1"] = cm_slider1
+        self.score["Red"]["CheckMarks"]["Slider2"] = cm_slider2
+        self.score["Red"]["CheckMarks"]["Slider3"] = cm_slider3
+
+        cm_basket, cm_mover, cm_slider1, cm_slider2, cm_slider3 = game_manager.get_target_checkmarks("blue")
+        self.score["Blue"]["CheckMarks"]["Basket"] = cm_basket
+        self.score["Blue"]["CheckMarks"]["Moving"] = cm_mover       
+        self.score["Blue"]["CheckMarks"]["Slider1"] = cm_slider1
+        self.score["Blue"]["CheckMarks"]["Slider2"] = cm_slider2
+        self.score["Blue"]["CheckMarks"]["Slider3"] = cm_slider3
+
+        self.score["Red"]["Raking"] = game_manager.get_raking("red")
+        self.score["Red"]["Adjustment"] = game_manager.get_adjustment("red")
+        self.score["Blue"]["Raking"] = game_manager.get_raking("blue")
+        self.score["Blue"]["Adjustment"] = game_manager.get_adjustment("blue")
+
     def update(self):
         # Update will be called about 10 Hz. 
         self.doing_test = game_manager.get_runscoreboardtest()

@@ -1,6 +1,8 @@
 // utils.js -- standard utilites
 // dlb, Oct 2021
 
+var dirtylist={}
+
 function vis_off(id) {
     var e = document.getElementById(id)
     e.style.visibility = "hidden";
@@ -71,11 +73,13 @@ function setSelectionBox(selid, txt) {
 function make_dirty(elemid) {
     var elem = document.getElementById(elemid);
     elem.style.backgroundColor = '#dd999e';
+    dirtylist[elemid] = true;
 }
 
 function make_clean(elemid) {
     var elem = document.getElementById(elemid);
     elem.style.backgroundColor = '#ffffff';
+    dirtylist[elemid] = false;
 }
 
 function set_textbox(id, txt, makeclean) {
@@ -86,6 +90,16 @@ function set_textbox(id, txt, makeclean) {
     }
     elem.value = txt;
     if(makeclean) make_clean(id);
+}
+
+function set_dirty_textbox(id, txt) {
+    var elem = document.getElementById(id)
+    if (elem == null) {
+        console.log("Programming error. Bad id for text box (", id, ")");
+        return;
+    }
+    if (dirtylist[id]) return; // Do not set if dirty.
+    elem.value = txt;
 }
 
 function set_interhtml(id, txt) {
@@ -116,12 +130,19 @@ function get_selectionbox_value(id) {
 }
 
 function get_textbox_value(id) {
-    elem = document.getElementById(id);
+    var elem = document.getElementById(id);
     if (elem == null) {
         console.log("Programming Error. Text Box not found: (", id, ")");
         return "";
     }
     return elem.value;
+}
+
+function textbox_get_intstr(id) {
+    var val = get_textbox_value(id);
+    var iv = parseInt(val);
+    if(isNaN(iv)) iv = 0;
+    return iv.toString();
 }
 
 

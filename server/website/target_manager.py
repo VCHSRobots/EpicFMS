@@ -5,6 +5,7 @@ import basket_unit
 import slider_unit
 import mover_unit
 import settings
+import string
 import json
 from fmslogger import log
 
@@ -280,3 +281,22 @@ def process_unitstatus_request(request):
         log("Error with converting to json. err={0}".format(err))
         return "{}"
     return sj
+
+def process_blink(unit):
+    n = len(unit)
+    num = unit[n-1:n]
+    if not num in string.digits: 
+        log("Error on blink command. No digit found.")
+        return 
+    num = int(num) - 1
+    if num < 0:
+        log("Error on blink commmand.  digit too low.")
+        return
+    unittype = unit[0:n-1] + 's'
+    t = find_target(unittype, num)
+    if t is None:
+        log("Error on blink command. Unable to find %s." % unit)
+        return
+    t["unit"].blink()
+    log("Blink command executied. Cmd=%s" % unit)
+

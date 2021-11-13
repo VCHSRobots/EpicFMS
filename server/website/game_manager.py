@@ -3,6 +3,7 @@
 
 import target_manager
 import score_sender
+import score_table
 import json
 import base64
 from fmslogger import log
@@ -18,43 +19,16 @@ game_config = {
                           "slider-5" : "red", "slider-6" : "blue", 
                           "basket-1" : "red", "basket-2" : "blue" } }
 
-game_periods = {"countdown": 5, "auto" : 0, "teleop" : 140, "endgame" : 10}
-
-# score table setup: auto_run, auto targets, tele targets, endgame targets, rake, adj
-
-class ScoreTbl:
-  _init_(self):
-    self.auto_run = 0
-    self.auto = [0, 0, 0]
-    self.tele = [0, 0, 0]
-    self.endgame = [0, 0, 0]
-    self.rake = 0 
-    self.adj = 0 
-    
-
-red_tlb = [0, [0, 0, 0], [0,0,0], [0,0,0], 0, 0]
-blue_tbl = [0, [0, 0, 0], [0, 0, 0]]
-
-
+game_periods = {"countdown": 5, "auto" : 30, "teleop" : 140, "endgame" : 10, "post" : 5}
+game_mode = "standby"
 time0 = 0   # Time at start of countdone, or again at start of game
 total_game_secs = 0
-game_mode = "standby"
+red_score = score_table.ScoreTable()
+blue_score = score_table.ScoreTable()
 blue_win = False 
 red_win = False
-status_msg = "Even Later."
-blue_mover_hits = 0
-red_mover_hits = 0
-blue_slider_hits = 0
-red_slider_hits = 0
-blue_basket_hits = 0
-red_basket_hits = 0
-blue_score = blue_slider_hits + 10*blue_mover_hits + 4*blue_basket_hits
-red_score = red_slider_hits + 10*red_mover_hits + 4*red_basket_hits
-ss_obj = None
+status_msg = ""
 baskets_off = True
-blue_auto = "clear"  # can be clear, pass, fail
-red_auto = "clear"
-
 
 def update_game():
     global game_mode, time0, baskets_off
@@ -69,11 +43,20 @@ def update_game():
                 target_manager.turn_motors_on()
                 baskets_off = False
         if telp >= 5.0:
-            game_mode = "teleop"
+            game_mode = "auto"
             target_manager.open_slider_units() 
             target_manager.set_start_counts()
             target_manager.broadcast_status(game_mode)
             time0 = time.monotonic()
+            log("Starting Auto")
+        return
+    if game_mode == "auto":
+        count_hits()
+        telp = time.monotonic() - time0
+        if telp >= total_game_secs - game_periods["teleop"] - game_periods["endgame"]:
+            game_mode = "teleop"
+            target_manager.broadcast_status(game_mode)
+            log("Starting Teleop")
         return
     if game_mode == "teleop":
         count_hits()
@@ -81,19 +64,31 @@ def update_game():
         if telp > total_game_secs - game_periods["endgame"]:
             game_mode = "matchfinal"
             target_manager.broadcast_status(game_mode)
-            return
+            log("Starting MatchFinal")
+        return
     if game_mode == "matchfinal":
         count_hits()
         telp = time.monotonic() - time0
         if telp > total_game_secs:
-            game_mode = "postresult"
+            game_mode = "postwait"
             target_manager.close_slider_units()
             target_manager.broadcast_status(game_mode)
+            time0 = time.monotonic()
+            log("Starting Post Wait")
+        return
+    if game_mode == "postwait":
+        count_hits() 
+        telp = time.monotonic() - time0 
+        if telp > game_periods["post"]:
             target_manager.turn_motors_off()
-            return
+            baskets_off = True
+            game_mode = "postresult"
+            target_manager.broadcast_status(game_mode)
+            log("Starting Post Result")
+        return
 
 def start():
-    log("STARTING THE GAME.")
+    log("STARTING the game.")
     global total_game_secs, game_mode, time0
     total_game_secs = game_periods["auto"] + game_periods["teleop"] + game_periods["endgame"]
     game_mode = "countdown"
@@ -102,29 +97,17 @@ def start():
     target_manager.broadcast_status(game_mode)
 
 def reset():
-    log("Resetting the game.")
-    global blue_mover_hits, red_mover_hits, blue_slider_hits, red_mover_hits
-    global blue_basket_hits, red_basket_hits
-    global blue_score, red_score, game_mode, total_game_secs
-    global blue_auto, red_auto
-    blue_mover_hits = 0
-    red_mover_hits = 0
-    blue_slider_hits = 0
-    red_mover_hits = 0
-    blue_basket_hits = 0
-    red_basket_hits = 0
-    blue_score = 0
-    red_score = 0
-    blue_auto = "clear"
-    red_auto = "clear"
+    log("RESETTING the game.")
+    global game_mode
+    blue_score.clear()
+    red_score.clear()
     game_mode = "standby"
-    ss_obj.clear()
     target_manager.broadcast_status(game_mode)
     target_manager.turn_motors_off()
     target_manager.close_slider_units()
     
 def abort():
-    log("Aborgint the game.")
+    log("ABORTING the game.")
     global game_mode
     game_mode = "standby"
     target_manager.broadcast_status(game_mode)
@@ -133,46 +116,50 @@ def abort():
     return
 
 def count_hits():
-    global blue_mover_hits, red_mover_hits, blue_slider_hits, red_slider_hits
-    global blue_basket_hits, red_basket_hits
-    global blue_score, red_score
-    bmh, rmh, bsh, rsh, bbh, rbh = 0, 0, 0, 0, 0, 0
-    ua = game_config["unitassignments"]
-    for uname in ua.keys():
-        unittype, snum = uname.split("-")
-        num = int(snum) - 1 
-        if unittype == "mover":
-            n = target_manager.get_hits(unittype+"s", num)
-            if ua[uname] == "red": rmh += n
-            if ua[uname] == "blue": bmh += n 
-        if unittype == "slider":
-            n = target_manager.get_hits(unittype+"s", num)
-            if ua[uname] == "red": rsh += n
-            if ua[uname] == "blue": bsh += n   
-        if unittype == "basket":
-            n = target_manager.get_hits(unittype+"s", num)
-            if ua[uname] == "red": rbh += n
-            if ua[uname] == "blue": bbh += n
-    red_auto_score = 0
-    blue_auto_score = 0 
-    if red_auto == "pass": red_auto_score = 40
-    if blue_auto == "pass": blue_auto_score = 40
-    blue_score = blue_auto_score + bmh * 10 + bbh*4 + bsh
-    red_score = red_auto_score + rmh * 10 +  rbh*4 + rsh 
-    blue_mover_hits = bmh 
-    blue_slider_hits = bsh
-    red_mover_hits = rmh 
-    red_slider_hits = rsh 
-    blue_basket_hits = bbh
-    red_basket_hits = rbh
-    return
+    for side in ("red", "blue"):
+        ua = game_config["unitassignments"]
+        basket, mover = 0, 0
+        slider = [0, 0, 0]
+        islider = 0
+        for uname in ua.keys():
+            unittype, snum = uname.split("-")
+            num = int(snum) - 1 
+            if unittype == "mover":
+                n = target_manager.get_hits(unittype+"s", num)
+                if ua[uname] == side: mover += n
+            if unittype == "slider":
+                n = target_manager.get_hits(unittype+"s", num)
+                if ua[uname] == side:
+                    if islider < 3: slider[islider] = n 
+                    islider += 1 
+            if unittype == "basket":
+                n = target_manager.get_hits(unittype+"s", num)
+                if ua[uname] == side: basket += n
+        if side == "red":
+            if game_mode == "auto":
+                red_score.set_auto(basket, slider[0], slider[1], slider[2], mover)
+            if game_mode == "teleop":
+                red_score.set_teleop(basket, slider[0], slider[1], slider[2], mover)
+            if game_mode == "endgame":
+                red_score.set_endgame(basket, slider[0], slider[1], slider[2], mover)
+            if game_mode == "post":
+                red_score.set_postgame(basket)
+        if side == "blue":
+            if game_mode == "auto":
+                blue_score.set_auto(basket, slider[0], slider[1], slider[2], mover)
+            if game_mode == "teleop":
+                blue_score.set_teleop(basket, slider[0], slider[1], slider[2], mover)
+            if game_mode == "endgame":
+                blue_score.set_endgame(basket, slider[0], slider[1], slider[2], mover)
+            if game_mode == "post":
+                blue_score.set_postgame(basket)
   
 def get_game_config():
     return game_config
 
 def get_score():
     # Returns blue-red score
-    return (blue_score, red_score)
+    return (blue_score.get_score(), red_score.get_score())
 
 def get_time():
     global game_mode
@@ -191,7 +178,6 @@ def get_time():
         return "%d:%02d" % (mins_to_go, secs)
     return "0:00"
 
-
 def get_time_label():
     if game_mode == "countdown": return "Count Down"
     if game_mode == "matchfinal": return "End Game"
@@ -208,6 +194,7 @@ def get_gamemode():
         return "Countdown"
     if game_mode == "teleop" or game_mode == "auto" or game_mode == "matchfinal":
         return "GAME ON"
+    if game_mode == "postwait" : return "Final Count"
     if game_mode == "postresult": return "Post Match"
     return "---"
 
@@ -226,7 +213,7 @@ def reassign_unit(k, v):
             game_config["unitassignements"][k] = v.lower()
 
 def process_game_command(request):
-    global red_win, blue_win, red_auto, blue_auto
+    global red_win, blue_win
     log("Processing Game Command")
     winner = request.args.get("winner", "dummy")
     if winner != "dummy":
@@ -268,22 +255,38 @@ def process_game_command(request):
         return
       cond = request.args.get("outcome", "dummy")
       if cond == "pass":
-        if side == "red": red_auto = "pass"
-        if side == "blue": blue_auto = "pass"
+        if side == "red": red_score.set_autorun(True)
+        if side == "blue": blue_score.set_autorun(True)
         log("Auto Score set: %s is set to %s." % (side, cond))
         return
       if cond == "fail":
-        if side == "red": red_auto = "fail"
-        if side == "blue": blue_auto = "fail"
+        if side == "red": red_score.set_autorun(False)
+        if side == "blue": blue_score.set_autorun(False)
         log("Auto Score set: %s is set to %s." % (side, cond))
         return
       if cond == "clear":
-        if side == "red": red_auto = "clear"
-        if side == "blue": blue_auto = "clear"
+        if side == "red": red_score.reset_autorun()
+        if side == "blue": blue_score.reset_autorun()
         log("Auto Score set: %s is set to %s." % (side, cond))
         return       
       log("Bad outcome parameter (%s) for auto game command." % cond)
       return
+    vals = request.args.get("refvalues", "dummy")
+    if vals != "dummy":
+        vlist = vals.split("x")
+        if len(vlist) != 4:
+            log("Bad refvalues. Not four numbers separated by x.")
+            return
+        blueadj = utils.make_int(vlist[0])
+        bluerake = utils.make_int(vlist[1])
+        redadj = utils.make_int(vlist[2])
+        redrake = utils.make_int(vlist[3])
+        blue_score.set_adj(blueadj)
+        blue_score.set_rake(bluerake)
+        red_score.set_adj(redadj)
+        red_score.set_rake(redrake)
+        log("Referree values set (%s)." % vals)
+        return
     log("Unknown game command: %s" % request.url)
     
 def process_gameconfig_update(config):
@@ -324,8 +327,7 @@ def get_processed_status(t, i):
     return "bad"
 
 def get_raw_status(pwokay): 
-    global blue_score, red_score
-    status = {"LoggedIn" : pwokay, "redhits" : red_score, "bluehits" : blue_score}
+    status = {"LoggedIn" : pwokay, "redhits" : red_score.get_score(), "bluehits" : blue_score.get_score()}
     status["gamemode"] = get_gamemode()
     status["clock"] = get_time()
     status["mover1"] = get_processed_status("movers", 1)
@@ -338,6 +340,10 @@ def get_raw_status(pwokay):
     status["slider6"] = get_processed_status("sliders", 6)
     status["basket1"] = get_processed_status("baskets", 1)
     status["basket2"] = get_processed_status("baskets", 2)
+    status["blue_adj"] = blue_score.get_adj()
+    status["blue_rake"] = blue_score.get_rake()
+    status["red_adj"] = red_score.get_adj()
+    status["red_rake"] = red_score.get_rake()
     status["gamestatusmsg"] = status_msg
     return status
 
@@ -369,63 +375,51 @@ def basket_okay(side):
     return True
 
 def get_grid(side, unit, period):
-    if period != "teleop": return "0x0"
-    if unit == "sliders": 
-        if side == "red":
-            return "%dx1" % red_slider_hits
-        if side == "blue":
-            return "%dx1" % blue_slider_hits
-        return "?x?"
-    if unit == "mover":
-        if side == "red":
-            return "%dx10" % red_mover_hits
-        if side == "blue":
-            return "%dx10" % blue_mover_hits
-    if unit == "basket":
-        if side == "red":
-            return "%dx4" % red_basket_hits
-        if side == "blue":
-            return "%dx4" % blue_basket_hits
+    if side == "blue":
+        return blue_score.get_grid_item(unit, period)
+    if side == "red":
+        return red_score.get_grid_item(unit, period)
     return "0x0"
 
 def get_grid_total(side, unit):
-    if side == "red":
-        if unit == "sliders":
-            return "%d" % red_slider_hits 
-        if unit == "mover":
-            n = 10 * red_mover_hits
-            return "%d" % n
-        if unit == "basket":
-            n = 4 * red_basket_hits
-            return "%d" % n
-        return "0"
     if side == "blue":
-        if unit == "sliders":
-            return "%d" % blue_slider_hits 
-        if unit == "mover":
-            n = 10 * blue_mover_hits
-            return "%d" % n
-        if unit == "basket":
-            n = 4 * blue_basket_hits
-            return "%d" % n
-        return "0"
-    return "0"       
+        return blue_score.get_grid_total(unit)
+    if side == "red":
+        return red_score.get_grid_total(unit)
+    return "0"
 
 def get_auto_score(side):
   # returns okay, fail, show, score
   if game_mode == "standby": return False, False, False, 0
   if side == "red":
-    if red_auto == "clear": return False, False, True, 0
-    if red_auto == "pass": return True, False, True, 40
-    if red_auto == "fail": return False, True, True, 0 
-    log("Program error in get_auto_score() -- 1.")
-    return False, False, False, 0 
+    show, pass_cb, fail_cb, score = red_score.get_auto_score()
+    return pass_cb, fail_cb, show, score  
   if side == "blue":
-    if blue_auto == "clear": return False, False, True, 0
-    if blue_auto == "pass": return True, False, True, 40
-    if blue_auto == "fail": return False, True, True, 0 
-    log("Program error in get_auto_score() -- 2.")
-    return False, False, False, 0 
-  log("Program error in get_auto_score() -- 3.")
+    show, pass_cb, fail_cb, score = blue_score.get_auto_score()
+    return pass_cb, fail_cb, show, score  
+  return False, False, False, 0
+
+def get_target_checkmarks(side):
+    if side == "red":
+        b = red_score.get_basket_checkmark()
+        m = red_score.get_mover_checkmark()
+        s1, s2, s3 = red_score.get_slider_checkmarks()
+        return b, m, s1, s2, s3
+    if side == "blue":
+        b = blue_score.get_basket_checkmark()
+        m = blue_score.get_mover_checkmark()
+        s1, s2, s3 = blue_score.get_slider_checkmarks()
+        return b, m, s1, s2, s3
+    return False, False, False, False, False   
+
+def get_raking(side):
+    if side == "red": return red_score.get_rake() 
+    if side == "blue": return blue_score.get_rake() 
+    return 0
+
+def get_adjustment(side):
+    if side == "red": return red_score.get_adj()
+    if side == "blue": return blue_score.get_adj() 
+    return 0  
 
 

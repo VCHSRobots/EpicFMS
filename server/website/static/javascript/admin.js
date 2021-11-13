@@ -57,6 +57,10 @@ function fill_admin_status(data) {
     set_indicator_color("slider6indicator", data["slider6"]);
     set_indicator_color("basket2indicator", data["basket1"]);
     set_indicator_color("basket1indicator", data["basket2"]);
+    set_dirty_textbox("blueraketextbox", data["blue_rake"]);
+    set_dirty_textbox("blueadjtextbox", data["blue_adj"]);
+    set_dirty_textbox("redraketextbox", data["red_rake"]);
+    set_dirty_textbox("redadjtextbox", data["red_adj"]);
 }
 
 function change_tab(evt, tabname) {
@@ -406,6 +410,21 @@ function update_winner() {
         .catch(function (err) { console.log("Unable to change config. Error: " + err)});
 }
 
+function submitrefvalues() {
+    var blue_rake = textbox_get_intstr("blueraketextbox");
+    var blue_adj = textbox_get_intstr("blueadjtextbox");
+    var red_rake = textbox_get_intstr("redraketextbox");
+    var red_adj = textbox_get_intstr("redadjtextbox");
+    set_textbox("blueraketextbox", blue_rake, true);
+    set_textbox("blueadjtextbox", blue_adj, true);
+    set_textbox("redraketextbox", red_rake, true);
+    set_textbox("redadjtextbox", red_adj, true);
+    var url = "admin?gamecommand=1&refvalues="+blue_adj+"x"+blue_rake+"x"+red_adj+"x"+red_rake
+    fetch(url)
+        .then(function () { console.log("Game command sent to server.");})
+        .catch(function (err) { console.log("Unable to change config. Error: " + err)});
+}
+
 function update_unit_sides() {
     var units = ["mover-1", "mover-2", "sider-1", "slider-2", "sider-3", "slider-4",
                  "sider-5", "slider-6", "basket-1", "basket-2"]; 
@@ -699,4 +718,11 @@ function set_mover_mode() {
     fetch(url)
         .then(function () { console.log("Mover game mode request sent to server.")})
         .catch(function (err) { console.log("Unable to send basket mode request. Error: " + err)});
+}
+
+function blink(unit) {
+    var url="/admin?blink=" + unit 
+    fetch(url)
+        .then(function () { console.log("blink request sent to server.")})
+        .catch(function (err) { console.log("Unable to blink request. Error: " + err)});  
 }

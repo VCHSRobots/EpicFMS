@@ -34,6 +34,9 @@ class BasketUnit():
         self.telp_to_update = 0
         self.status_pending = False 
         self.comm_channel_clear = True
+        self.blinking = False 
+        self.blink_start_time = 0
+        self.last_gamemode = 0
         self.time_of_channel_jam = 0
         self.command_queue = []
         self.updatelock = threading.Lock()
@@ -86,6 +89,10 @@ class BasketUnit():
                         self.comm_channel_clear = True
                 nloop += 1 
                 if nloop >= 5: nloop = 0
+                if self.blinking:
+                    if time.monotonic() - self.blink_start_time > 2.0:
+                        self.blinking = False
+                        self.set_game_mode(self.last_gamemode)
                 if self.comm_channel_clear and nloop == 0: self.get_data() 
                 if self.comm_channel_clear:
                     cmd = None
@@ -218,8 +225,16 @@ class BasketUnit():
         # True if command is successfully put in the command
         # queue.  Use status to see that it acutally occured
         # sometime later.
+        self.last_gamemode = gmode
         cmd = "gamemode=" + gmode
         return self.add_command_to_queue(cmd)
+    
+    def blink(self):
+        # Causes unit to blink for about two seconds if the 
+        # comm channel is open and not backed up.
+        self.blinking = True 
+        self.blink_start_time = time.monotonic() 
+        return self.add_command_to_queue("gamemode=blink")
 
     def run_detector_test(self):
         # Attemps to run a self test on the detector.  Returns

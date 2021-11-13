@@ -153,11 +153,11 @@
                 <div class="sidescorecontrols">
                   <div class="sidetextbox">
                     <div class="sidetextboxlabel">Rake:</div>
-                    <input type="text" class="raketextbox" id="blueraketextbox" onchange='make_dirty("blueraketextbox")'> 
+                    <input type="text" class="raketextbox" id="blueraketextbox" onkeypress='make_dirty("blueraketextbox")'> 
                   </div>
                   <div class="sidetextbox">
                     <div class="sidetextboxlabel">Adj:</div>
-                    <input type="text" class="adjtextbox" id="blueadjtextbox" onchange='make_dirty("blueadjtextbox")'> 
+                    <input type="text" class="adjtextbox" id="blueadjtextbox" onkeypress='make_dirty("blueadjtextbox")'> 
                   </div>
                   <div class="sidecheckbox">
                       <div class="sidecblabel">AutoPass:</div>
@@ -179,11 +179,11 @@
                 <div class="sidescorecontrols">
                   <div class="sidetextbox">
                     <div class="sidetextboxlabel">Rake:</div>
-                    <input type="text" class="raketextbox" id="redraketextbox" onchange='make_dirty("redraketextbox")'> 
+                    <input type="text" class="raketextbox" id="redraketextbox" onkeypress='make_dirty("redraketextbox")'> 
                   </div>
                   <div class="sidetextbox">
                     <div class="sidetextboxlabel">Adj:</div>
-                    <input type="text" class="adjtextbox" id="redadjtextbox" onchange='make_dirty("redadjtextbox")'> 
+                    <input type="text" class="adjtextbox" id="redadjtextbox" onkeypress='make_dirty("redadjtextbox")'> 
                   </div>
                   <div class="sidecheckbox">
                       <div class="sidecblabel">AutoPass:</div>
@@ -201,7 +201,7 @@
               </div>
               <div style="clear: both;"></div>
               <div id="submitgamescorebtndiv">
-                <button class="scbutton" id="gamescoresubmitbtn" onclick="submitgamescore()">Submit</button>
+                <button class="scbutton" id="gamescoresubmitbtn" onclick="submitrefvalues()">Submit</button>
               </div>
             </div>
             <div style="clear: both;"></div>

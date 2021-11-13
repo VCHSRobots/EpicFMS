@@ -29,3 +29,12 @@ def make_bool(arg):
         if arg == 0.0: return False
         return True
     return False
+
+def make_int(arg):
+    # Returns an integer, or if error, zero.
+    try: 
+        z = int(arg)
+        return z
+    except BaseException:
+        return 0
+
