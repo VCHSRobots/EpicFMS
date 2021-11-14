@@ -128,15 +128,21 @@ function fill_game_config_elements() {
         console.log("game config data is null");
         set_textbox("blueteamname", "", true);
         set_textbox("redteamname", "", true);
+        set_textbox("gamenametextbox", "", true);
         set_checkbox("testscoreboard", false, true);
         return;
     }
     set_textbox("blueteamname", game_config["teamnames"]["blue"], true);
     set_textbox("redteamname", game_config["teamnames"]["red"], true);
+    set_textbox("gamenametextbox", game_config["gamename"], true);
     set_checkbox("testscoreboard", game_config["runscoreboardtest"], true);
 
-    var units = ["mover-1", "mover-2", "sider-1", "slider-2", "slider-3", "slider-4",
+    var units = ["mover-1", "mover-2", "slider-1", "slider-2", "slider-3", "slider-4",
                  "slider-5", "slider-6", "basket-1", "basket-2"]; 
+    var ind_ids = ["mover1sidetextbox", "mover2sidetextbox", 
+                   "slider1sidetextbox", "slider2sidetextbox", "slider3sidetextbox",
+                   "slider4sidetextbox", "slider5sidetextbox", "slider6sidetextbox",
+                   "basket1sidetextbox","basket2sidetextbox"];
 
     if (game_config.hasOwnProperty("unitassignments")) {
         for(const unitname in game_config.unitassignments) {
@@ -145,7 +151,8 @@ function fill_game_config_elements() {
                 if (units[i] == unitname) {
                     var id = "unitselslot" + (i+1);
                     var v = game_config.unitassignments[unitname]
-                    setSelectionBox(id, v)
+                    setSelectionBox(id, v);
+                    setHtmlText(ind_ids[i], v);
                 }
             }
         }
@@ -329,6 +336,17 @@ function update_teamnames() {
         .catch(function (err) { console.log("Unable to change config. Error: " + err)});
 }
 
+function update_gamename() {
+    var map = {};
+    map["gamename"] = get_textbox_value("gamenametextbox")
+    var ss = btoa(JSON.stringify(map));
+    var url = "admin?gameconfig="+ss
+    fetch(url)
+        .then(function () { console.log("Game config change sent to server.");})
+        .then(function() {game_config_dirty = true;})
+        .catch(function (err) { console.log("Unable to change config. Error: " + err)}); 
+}
+
 function swap_teamnames() {
     var map = {};
     var names = {"red" : get_textbox_value("blueteamname"), "blue": get_textbox_value("redteamname")} 
@@ -426,8 +444,8 @@ function submitrefvalues() {
 }
 
 function update_unit_sides() {
-    var units = ["mover-1", "mover-2", "sider-1", "slider-2", "sider-3", "slider-4",
-                 "sider-5", "slider-6", "basket-1", "basket-2"]; 
+    var units = ["mover-1", "mover-2", "slider-1", "slider-2", "slider-3", "slider-4",
+                 "slider-5", "slider-6", "basket-1", "basket-2"]; 
     var i;
     unitmap = {};
     for(i = 0; i < units.length; i++) {

@@ -27,6 +27,7 @@ class TeamScore():
                 "EGame"  : { "Basket" : "0x0", "Moving" : "0x0", "Sliders" : "0x0" },
                 "Totals" : { "Basket" :   "0", "Moving" :   "0", "Sliders" :   "0" }
             },
+            "ShowTimes2" : False,
             "ShowLastLine" : True,
             "Raking" : "0",
             "Adjustment" : "0"
@@ -39,8 +40,9 @@ class ScoreSender():
         self.text = ''
         blue_score = TeamScore().get_score()
         red_score = TeamScore().get_score()
+        gamename = game_manager.get_game_name()
         self.score = {  # These also work with javascript via json.
-            "Title" : "FOAM SHOOTOUT",
+            "Title" : gamename,
             "GameMode" : "Standby",  # Stuff like: 'Error, Standby, Countdown, GameOn, PostGame" 
             "TimerLabel" : "", # Stuff like: Off, Auto, TeleOp, EndGame
             "Timer" : "0:00", # Value to display on the timer -- may not be an integer!
@@ -56,7 +58,7 @@ class ScoreSender():
         self.doing_test = enable 
 
     def clear(self):
-      self.score["Title"] = "FOAM SHOOTOUT"
+      self.score["Title"] = game_manager.get_game_name()
       self.score["GameMode"] = "Standby"
       self.score["TimerLabel"] = ""
       self.score["Timer"] = "0"
@@ -66,6 +68,7 @@ class ScoreSender():
       self.score["Blue"]["TeamName"] = "Red"
 
     def load_current_score(self):
+        self.score["Title"] = game_manager.get_game_name()
         self.score["GameMode"] = game_manager.get_gamemode()
         self.score["Timer"] = game_manager.get_time() 
         self.score["TimerLabel"] = game_manager.get_time_label()
@@ -137,6 +140,9 @@ class ScoreSender():
         self.score["Blue"]["CheckMarks"]["Slider2"] = cm_slider2
         self.score["Blue"]["CheckMarks"]["Slider3"] = cm_slider3
 
+        self.score["Blue"]["ShowTimes2"] = game_manager.get_times2("blue")
+        self.score["Red"]["ShowTimes2"] = game_manager.get_times2("red")
+
         self.score["Red"]["Raking"] = game_manager.get_raking("red")
         self.score["Red"]["Adjustment"] = game_manager.get_adjustment("red")
         self.score["Blue"]["Raking"] = game_manager.get_raking("blue")
@@ -188,6 +194,7 @@ class ScoreSender():
         bigcycle = (int(self.update_count / 10)) % 10
         #bigcycle should count to 9 and reset, one count per second.
         if bigcycle == 0:
+            self.score["Title"] == "Ugly Ducks"
             self.score["GameMode"] == "Standby"
             self.score["TimerLabel"] = " "
             self.score["Timer"] = "--"

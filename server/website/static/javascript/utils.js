@@ -138,6 +138,14 @@ function get_textbox_value(id) {
     return elem.value;
 }
 
+function setHtmlText(id, v) {
+    var elem = document.getElementById(id);
+    if (elem == null) {
+        console.log("Programming error. Bad id for html text (", id, ")");
+    }  
+    elem.innerHTML = v;  
+}
+
 function textbox_get_intstr(id) {
     var val = get_textbox_value(id);
     var iv = parseInt(val);

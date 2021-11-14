@@ -162,6 +162,14 @@ function fill_score_board(data) {
     load_grid_data_element("redtotalmoving",     data["Red"]["Grid"]["Totals"]["Moving"]);
     load_grid_data_element("redtotalsliders",    data["Red"]["Grid"]["Totals"]["Sliders"]);
 
+    // Times 2 indicators
+    var time2id = document.getElementById("bluetime2");
+    if (data["Blue"]["ShowTimes2"]) vis_on(time2id);
+    else                            vis_off(time2id);
+    time2id = document.getElementById("redtime2");
+    if (data["Red"]["ShowTimes2"])  vis_on(time2id);
+    else                            vis_off(time2id);
+
     // Last Line
     var eline = document.getElementById("bluelastscoreline");
     if (data["Blue"]["ShowLastLine"]) vis_on(eline);
@@ -173,6 +181,8 @@ function fill_score_board(data) {
     else                             vis_off(eline);
     document.getElementById("redrakevalue").innerHTML = data["Red"]["Raking"]
     document.getElementById("redadjvalue").innerHTML =  data["Red"]["Adjustment"]
+
+    
 
     // Put up the win-tie-lose banners
     blue_banner = document.getElementById("bluewinframe");

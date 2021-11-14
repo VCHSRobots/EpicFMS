@@ -81,3 +81,8 @@ img.errframe3 { width: 100px; height: 180px;}
 .rakevalue {float: left; color: black; margin-left: 10px; font-weight: bold;}
 .adjlabel {float: left; color: green; margin-left: 40px;}
 .adjvalue {float: left; color: black; margin-left: 10px; font-weight: bold;}
+
+#redtime2 {visibility: hidden;}
+#bluetime2 {visibility: hidden;}
+.time2div {position: relative; top: -450px; left: 5px;}
+.time2img {width: 70px; }

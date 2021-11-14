@@ -11,11 +11,12 @@ import utils
 import time
 
 game_config = {
+    "gamename" : "FALL FOAM BALL BASH",
     "teamnames" : {"blue": "SHIRA-KEN", "red": "CNCnts"},
     "runscoreboardtest" : False,
     "unitassignments" : {"mover-1" : "red", "mover-2" : "blue",
-                          "slider-1" : "red", "slider-2" : "red",
-                          "slider-3" : "blue", "slider-4" : "blue",
+                          "slider-1" : "red", "slider-2" : "blue",
+                          "slider-3" : "red", "slider-4" : "blue",
                           "slider-5" : "red", "slider-6" : "blue", 
                           "basket-1" : "red", "basket-2" : "blue" } }
 
@@ -305,6 +306,8 @@ def process_gameconfig_update(config):
     for k in new_config.keys():
         v = new_config[k]
         log("%s = %s" % (k, v))
+    if "gamename" in new_config.keys():
+        game_config["gamename"] = new_config["gamename"]
     if "teamnames" in new_config.keys():
         tn = new_config["teamnames"]
         if "blue" in tn.keys(): game_config["teamnames"]["blue"] = tn["blue"]
@@ -422,4 +425,11 @@ def get_adjustment(side):
     if side == "blue": return blue_score.get_adj() 
     return 0  
 
+def get_times2(side):
+    if side == "red": return red_score.show_times2()
+    if side == "blue": return blue_score.show_times2()
+    return 0   
+
+def get_game_name():
+    return game_config["gamename"]
 

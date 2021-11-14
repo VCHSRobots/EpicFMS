@@ -14,6 +14,7 @@ slider_mult = 1      # Number of points per slider shot
 auto_run = 40        # Number of points for completing the auto run path
 two_slider_mult = 2    # Weight for scoring on two slider units
 three_slider_mult = 3  # Weight for scoring on three slider units
+game_mult = 2          # Score multipler if all targets hit
 
 class ScoreTable():
   def __init__(self):
@@ -100,7 +101,13 @@ class ScoreTable():
     if nsliders >= 3: return  three_slider_mult
     if nsliders >= 2: return two_slider_mult 
     return 1
- 
+
+  def get_game_mult(self):
+    # Returns the game multiplier. 
+    if self.get_slider_mult() == three_slider_mult:
+      if self.get_basket_checkmark() and self.get_mover_checkmark(): return game_mult
+    return 1
+
   def get_grid_item(self, unit, period):
     # Returns a string in the form of "0x0" to indicate the hits for
     # the target and the period of the game.  The first digit indicates
@@ -181,6 +188,11 @@ class ScoreTable():
     # Retruns true if checkmark should be places next to mover target
     return (self.auto[4] + self.teleop[4] + self.endgame[4]) > 0
 
+  def show_times2(self):
+    # Returns True if the Game Times2 is in effect
+    if self.get_game_mult() == game_mult: return True 
+    return False
+
   def get_score(self):
     # Returns the total score
     a = 0
@@ -188,4 +200,5 @@ class ScoreTable():
     b = self.get_grid_total("basket") 
     s = self.get_grid_total("slider")
     m = self.get_grid_total("mover")
-    return a + b + s + m + self.adj + self.rake
+    gm = self.get_game_mult() 
+    return gm*(a + b + s + m + self.rake) + self.adj

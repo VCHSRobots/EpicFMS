@@ -339,7 +339,16 @@
                 </div>
               </div>
             </div>
-
+            <div id="gamenamearea">
+              <div class="gamenamediv">
+                <div class="gamenamelabel">Game Title:</div>
+                <input type="text" id="gamenametextbox" onchange='make_dirty("gamenametextbox")'>
+              </div>
+              <div style="clear: both;"></div>
+              <div id="gamenameupdatediv">
+                <button class="updatebutton" id="gamenamesubmit" onclick="update_gamename()">Submit</button>
+              </div>
+            </div>
           </div>
 
           <div id="baskettab" class="tabcontent">
