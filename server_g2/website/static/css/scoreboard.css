@@ -1,0 +1,115 @@
+/* scoreboard.css -- css that is specific to the scoreboard. */
+
+#gamemode {display: block; width: 770px; text-align: center; font-size: 36pt; position: relative; top: 20px;}
+#clockframe {float: left; width: 180px; font-size: 30pt; color: orange;}
+#timerlabel {font-size: 24pt; text-align: center; position: relative; left: -40px; top: 40px; width: 180px; height: 60px;} 
+#timervalue {font-size: 30pt; text-align: center; position: relative; left: -40px; top: 30px; width: 180px; height: 60px; 
+   color: white; font-size: 40pt; border: 4px; border-style: solid; border-color: gray;}
+
+#teamsframe {display: block; width: 1150px; height: 580px; margin: 0 auto;}
+
+#scoreframe {display: block; width: 1150px; height: 150px; margin: 0 auto;}
+#scoreplace {margin-left: 320px; width: 400px; text-align: right; font-size: 80pt; color: white; 
+    position: relative; top: -30px; }
+
+#sliderframe {display: block; float: left; }
+#slidertoplabelframe {display: block; font-size: 30pt; color: orange; position: relative; top: -20px; left: 180px; margin-bottom: 10px;}
+.sliderside {display: block; float: left; margin-left: 70px; }
+.sliderscore {display: block; width: 200px; font-size: 30pt; color: yellow; height: 70px; text-align: right;}
+.slidername {float: left; color: orange;}
+.slidervalue {float: left; color: white; margin-left: 10px; text-align: right; width: 60px;}
+.sliderstatus {float: left; color: yellow; margin-left: 20px; text-align: right;}
+
+#totalhitsframe {display: block; width: 400px; height: 50px; margin-left: 70px; margin-top: 110px; font-size: 40pt;}
+#totalhitslabel {display: block; float: left; color: orange;}
+#totalhitsvalue {display: block; float: left; color: white; margin-left: 30px; text-align: right;}
+
+#linkframe {display: block; float: left; margin-left: 150px; font-size: 30pt;}
+#linktoplabelframe {display: block; font-size: 30pt; color: orange; position: relative; top: -20px; left: 140px; }
+#linkheaderframe {display: block; margin-left: 30px; color: orange; }
+.linkheaderlabel {display: block; float: left; margin-left: 40px; width: 40px; }
+.linkrowlabel {display: block; float: left; margin-left: 1px; color: orange; margin-right: 10px;}
+.linkvalue {display: block; float: left; margin-left: 10px; color: white; width: 50px; margin-right: 20px; text-align: right;}
+
+#totallinksframe {display: block; width: 450px; height: 50px; margin-top: 50px; font-size: 40pt;}
+#totallinkslabel {display: block; float: left; color: orange;}
+#totallinksvalue {display: block; float: left; color: white; margin-left: 20px; text-align: right;}
+
+#bluewinframe {float: left; width: 501px; height: 551px; border: 10px; 
+    margin-left: 50px; border-color: white; border-style: dotted;}
+#teamspacer {float: left; width: 30px; height: 50px;}    
+#redwinframe {float: left; width: 501px; height: 551px; border: 10px; border-color: white; border-style: dotted;}
+
+#blueframe {float: left; width: 500px; height: 550px; border: 5px; border-color: orange; 
+    background-color: #c0c0ff; }
+#redframe {float: left; width: 500px; height: 550px; border: 5px; border-color: orange; 
+    background-color: #ffc0c0; }
+
+#blueteamname {display: block; width: 100%; text-align: center; font-size: 40pt; color: blue}
+#redteamname {display: block; width: 100%; text-align: center; font-size: 40pt; color: red}
+
+#bluescorearea {display: block; width: 100%; }
+#redscorearea {display: block; width: 100%; }
+
+.totalscore {float: left; margin-left: 100px; width: 300px; height: 120px; text-align: center; font-size: 80pt; color: black}
+.autopath {float: left; width: 9px;}
+/* scoreboard.css -- css that is specific to the scoreboard */
+
+.basketdiv {float: left; margin-left: 90px; width: 130px; height: 100px;}
+.movingdiv {float: left; width: 130px; height: 100px;}
+.slidingdiv {float: left; width: 150px; height: 100px;}
+img.basketimg {width: 70px; }
+img.movingimg {width: 50px; }
+img.slidingimg {width: 100px;}
+
+img.checkmarkimg {width: 30px;}
+img.arrowpath {width: 90px;}
+img.redx {width: 30px;}
+img.errframe1 { width: 60px; height: 180px;}
+img.errframe2 { width: 60px; height: 180px;}
+img.errframe3 { width: 100px; height: 180px;}
+#bluearrorpathdiv {float: left; position: relative; left: 50px; top: -10px;}
+#blueautofail {float: left; display: block; position: relative; left: 0px; top: 20px; visibility: visible;}
+#blueautocm {float: left; display: block; position: relative; left: 10px; top: 10px; width: 50px; height: 50px;}
+#bluebasketcm {float: left; position: relative; left: 140px; top: -80px; width: 50px; height: 50px;}
+#bluemovingcm {float: left; position: relative; left: 220px; top: -80px; width: 50px; height: 50px;}
+#bluesliding1cm {float: left; position: relative; left: 350px; top: -80px; width: 50px; height: 50px;}
+#bluesliding2cm {float: left; position: relative; left: 300px; top: -30px; width: 50px; height: 50px;}
+#bluesliding3cm {float: left; position: relative; left: 250px; top: 25px; width: 50px; height: 50px;}
+#bluebasketerr {float: left; position: relative; left: 90px; top: -150px; width: 100px; height: 200px;}
+#bluemovingerr {float: left; position: relative; left: 110px; top: -150px; width: 100px; height: 200px;}
+#blueslidingerr {float: left; position: relative; left: 150px; top: -150px; width: 100px; height: 200px;}
+
+#redarrorpathdiv {float: left; position: relative; left: 50px; top: -10px;}
+#redautofail {float: left; display: block; position: relative; left: 0px; top: 20px; visibility: visible;}
+#redautocm {float: left; display: block; position: relative; left: 10px; top: 10px; width: 50px; height: 50px;}
+#redbasketcm {float: left; position: relative; left: 140px; top: -80px; width: 50px; height: 50px;}
+#redmovingcm {float: left; position: relative; left: 220px; top: -80px; width: 50px; height: 50px;}
+#redsliding1cm {float: left; position: relative; left: 350px; top: -80px; width: 50px; height: 50px;}
+#redsliding2cm {float: left; position: relative; left: 300px; top: -30px; width: 50px; height: 50px;}
+#redsliding3cm {float: left; position: relative; left: 250px; top: 25px; width: 50px; height: 50px;}
+#redbasketerr {float: left; position: relative; left: 90px; top: -150px; width: 100px; height: 200px;}
+#redmovingerr {float: left; position: relative; left: 110px; top: -150px; width: 100px; height: 200px;}
+#redslidingerr {float: left; position: relative; left: 150px; top: -150px; width: 100px; height: 200px;}
+
+.autorunscore {float: left; color: black; font-size: 18pt; font-weight: bold; float: left;
+    position: relative; left: 20px; top: 15px;}
+
+.breakdownarea {width: 450px; height: 150px; border: 3px; border-color: black; border-style: none;
+   position: relative; top: -150px; left: 20px; font-size: 16pt;}
+.scoreline {display: block; }
+.scorelinelabel {float: left; width: 100px; height: 30px; color: green; }
+.scorelinenumber {float: left; width: 100px; height: 30px; color: black;}
+.scorelineslider {margin-left: 50px;}
+.scoretotal {text-align: left; position: relative; left: 18px; font-weight: bold; font-size: 18pt;}
+
+.lastscoreline {width: 450px; height: 30px; margin-top: 10px; font-size: 18pt;}
+.rakelabel {float: left; color: green; margin-left: 70px;}
+.rakevalue {float: left; color: black; margin-left: 10px; font-weight: bold;}
+.adjlabel {float: left; color: green; margin-left: 40px;}
+.adjvalue {float: left; color: black; margin-left: 10px; font-weight: bold;}
+
+#redtime2 {visibility: hidden;}
+#bluetime2 {visibility: hidden;}
+.time2div {position: relative; top: -450px; left: 5px;}
+.time2img {width: 70px; }

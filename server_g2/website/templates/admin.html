@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <title>EpicFms Admin</title>
+      <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+      <link rel="stylesheet" type="text/css" href="../static/css/admin.css">
+      <script src="../static/javascript/utils.js"></script>
+      <script src="../static/javascript/admin.js"></script>
+  <style>
+        #screen_area {width: 1024 px;}
+        .content_area {width: 900 px;} 
+  </style>
+</head>
+
+<body onload="init_loading()">
+    <div id="mainframe">
+      <div id="bannersplit">
+        <div id="epiclogo"><img src="../static/img/epiclogo.png" width="200" height="200"></div>
+        <div id="titlesplit">
+            <div id="maintitle">EPIC FMS</div>
+        </div>
+        <div id="admintitle">GAME ADMINISTRATION</div>
+      </div>
+      <div id="loginarea" style="visibility: visible;">
+        <div id="passwordlabel">Password:</div>
+        <div id="passwordinputdiv"><input id="passwordbox" type="password"></div>
+        <div id="passwordbuttondiv"><button id="passwordbutton" onclick="sendpassword()">Submit</button></div>
+      </div>
+      
+      <div id="mainarea" style="visibility: hidden;">
+        <div id="scorearea">
+          <div id="gamemodediv">Dummy</div>
+          <div id="clockdiv">00</div> 
+          <div class="scorediv">
+            <div id="mainscorediv" class="scoreside"><div class="scorelabel">Score</div>
+              <div class="scorevalue" id="mainscore">0000</div></div>
+          </div>
+        </div>
+
+        <div id="maincontrolframe">
+            <button class="scbutton" id="gameresetbtn" onclick="send_game_button('reset')">Reset</button>
+            <button class="scbutton" id="gamestartbtn" onclick="send_game_button('start')">Start</button>
+            <button class="scbutton" id="gameabortbtn" onclick="send_game_button('abort')">Abort</button>
+        </div>
+
+        <div id="sliderschedulebox" class="selcontrol">
+            <div class="sliderscheduleboxlabel">Schedule:</div>
+            <select id="sliderschedule" name="schedule" class="selvalue">
+                <option value="1">ONE</option>
+                <option value="2">TWO</option>
+                <option value="3">THREE</option>
+                <option value="4">FOUR</option>   
+            </select> 
+          </div>
+
+        <div id="slidercontrolframe">
+            <div style="clear: both;"></div>
+            <div id="sliderheaderlabel">
+                <div id="sliderheader_name"   class="sliderheaderelement">Name</div>
+                <div id="sliderheader_ip"     class="sliderheaderelement">IP Adr</div>
+                <div id="sliderheader_status" class="sliderheaderelement">Status</div>
+                <div id="sliderheader_hits"   class="sliderheaderelement">Hits</div>
+                <div id="sliderheader_open"   class="sliderheaderelement">Open</div>
+                <div id="sliderheader_close"  class="sliderheaderelement">Close</div>
+                <div id="sliderheader_center" class="sliderheaderelement">Center</div>
+                <div id="sliderheader_reset"  class="sliderheaderelement">Reset</div>
+                <div id="sliderheader_test"   class="sliderheaderelement">Test</div>
+                <div id="sliderheader_report" class="sliderheaderelement">Report</div>
+            </div>
+            <div style="clear: both;"></div> 
+            <div id="sliderrow1" class="sliderrow">
+                <div id="slidernamevalue1" class="slidernamevalue">slider-1</div>
+                <div id="slideripvalue1" class="slideripvalue">10.0.2.78</div>
+                <div id="sliderstatusvalue1" class="sliderstatusvalue">OPEN</div>
+                <div id="sliderhitsvalue1" class="sliderhitsvalue">22</div>
+                <div class="sliderbuttondiv"> <button id="slideropenbtn1"   class="sliderbutton" onclick="slider_open(1)">Open</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderclosebtn1"  class="sliderbutton" onclick="slider_close(1)">Close</button></div>
+                <div class="sliderbuttondiv"> <button id="slidercenterbtn1" class="sliderbutton" onclick="slider_center(1)">Center</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderresetbtn1"  class="sliderbutton" onclick="slider_reset(1)">Reset</button></div>
+                <div class="sliderbuttondiv"> <button id="slidertestbtn1"   class="sliderbutton" onclick="slider_test(1)">Test</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderreportbtn1" class="sliderbutton" onclick="slider_report(1)">Report</button></div>
+            </div>
+            <div style="clear: both;"></div> 
+            <div id="sliderro2" class="sliderrow">
+                <div id="slidernamevalue2" class="slidernamevalue">slider-2</div>
+                <div id="slideripvalue2" class="slideripvalue">10.0.2.78</div>
+                <div id="sliderstatusvalue2" class="sliderstatusvalue">CLOSED</div>
+                <div id="sliderhitsvalue2" class="sliderhitsvalue">22</div>
+                <div class="sliderbuttondiv"> <button id="slideropenbtn2"   class="sliderbutton" onclick="slider_open(2)">Open</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderclosebtn2"  class="sliderbutton" onclick="slider_close(2)">Close</button></div>
+                <div class="sliderbuttondiv"> <button id="slidercenterbtn2" class="sliderbutton" onclick="slider_center(2)">Center</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderresetbtn2"  class="sliderbutton" onclick="slider_reset(2)">Reset</button></div>
+                <div class="sliderbuttondiv"> <button id="slidertestbtn2"   class="sliderbutton" onclick="slider_test(2)">Test</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderreportbtn2" class="sliderbutton" onclick="slider_report(2)">Report</button></div>
+            </div>
+            <div style="clear: both;"></div> 
+            <div id="sliderrow3" class="sliderrow">
+                <div id="slidernamevalue3" class="slidernamevalue">slider-3</div>
+                <div id="slideripvalue3" class="slideripvalue">10.0.2.78</div>
+                <div id="sliderstatusvalue3" class="sliderstatusvalue">OFFLINE</div>
+                <div id="sliderhitsvalue3" class="sliderhitsvalue">22</div>
+                <div class="sliderbuttondiv"> <button id="slideropenbtn3"   class="sliderbutton" onclick="slider_open(3)">Open</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderclosebtn3"  class="sliderbutton" onclick="slider_close(3)">Close</button></div>
+                <div class="sliderbuttondiv"> <button id="slidercenterbtn3" class="sliderbutton" onclick="slider_center(3)">Center</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderresetbtn3"  class="sliderbutton" onclick="slider_reset(3)">Reset</button></div>
+                <div class="sliderbuttondiv"> <button id="slidertestbtn3"   class="sliderbutton" onclick="slider_test(3)">Test</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderreportbtn3" class="sliderbutton" onclick="slider_report(3)">Report</button></div>
+            </div>
+            <div style="clear: both;"></div> 
+            <div id="sliderrow4" class="sliderrow">
+                <div id="slidernamevalue4" class="slidernamevalue">slider-4</div>
+                <div id="slideripvalue4" class="slideripvalue">10.0.2.78</div>
+                <div id="sliderstatusvalue4" class="sliderstatusvalue">CENTER</div>
+                <div id="sliderhitsvalue4" class="sliderhitsvalue">22</div>
+                <div class="sliderbuttondiv"> <button id="slideropenbtn4"   class="sliderbutton" onclick="slider_open(4)">Open</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderclosebtn4"  class="sliderbutton" onclick="slider_close(4)">Close</button></div>
+                <div class="sliderbuttondiv"> <button id="slidercenterbtn4" class="sliderbutton" onclick="slider_center(4)">Center</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderresetbtn4"  class="sliderbutton" onclick="slider_reset(4)">Reset</button></div>
+                <div class="sliderbuttondiv"> <button id="slidertestbtn4"   class="sliderbutton" onclick="slider_test(4)">Test</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderreportbtn4" class="sliderbutton" onclick="slider_report(4)">Report</button></div>
+            </div>
+            <div style="clear: both;"></div> 
+            <div id="sliderrow5" class="sliderrow">
+                <div id="slidernamevalue5" class="slidernamevalue">slider-5</div>
+                <div id="slideripvalue5" class="slideripvalue">10.0.2.78</div>
+                <div id="sliderstatusvalue5" class="sliderstatusvalue">OPEN</div>
+                <div id="sliderhitsvalue5" class="sliderhitsvalue">22</div>
+                <div class="sliderbuttondiv"> <button id="slideropenbtn5"   class="sliderbutton" onclick="slider_open(5)">Open</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderclosebtn5"  class="sliderbutton" onclick="slider_close(5)">Close</button></div>
+                <div class="sliderbuttondiv"> <button id="slidercenterbtn5" class="sliderbutton" onclick="slider_center(5)">Center</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderresetbtn5"  class="sliderbutton" onclick="slider_reset(5)">Reset</button></div>
+                <div class="sliderbuttondiv"> <button id="slidertestbtn5"   class="sliderbutton" onclick="slider_test(5)">Test</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderreportbtn5" class="sliderbutton" onclick="slider_report(5)">Report</button></div>
+            </div>
+            <div style="clear: both;"></div> 
+            <div id="sliderrow6" class="sliderrow">
+                <div id="slidernamevalue6" class="slidernamevalue">slider-6</div>
+                <div id="slideripvalue6" class="slideripvalue">10.0.2.78</div>
+                <div id="sliderstatusvalue6" class="sliderstatusvalue">OPEN</div>
+                <div id="sliderhitsvalue6" class="sliderhitsvalue">22</div>
+                <div class="sliderbuttondiv"> <button id="slideropenbtn6"   class="sliderbutton" onclick="slider_open(6)">Open</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderclosebtn6"  class="sliderbutton" onclick="slider_close(6)">Close</button></div>
+                <div class="sliderbuttondiv"> <button id="slidercenterbtn6" class="sliderbutton" onclick="slider_center(6)">Center</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderresetbtn6"  class="sliderbutton" onclick="slider_reset(6)">Reset</button></div>
+                <div class="sliderbuttondiv"> <button id="slidertestbtn6"   class="sliderbutton" onclick="slider_test(6)">Test</button></div>
+                <div class="sliderbuttondiv"> <button id="sliderreportbtn6" class="sliderbutton" onclick="slider_report(6)">Report</button></div>
+            </div>
+            <div style="clear: both;"></div> 
+            <div id="sliderstatusdiv">
+                <div class=gplabel id="sliderstatuslabel">Slider Report</div>
+                <textarea class="gptextarea" id="sliderstatus"></textarea>
+              </div>
+            <div style="clear: both;"></div>
+            <div id="gamestatusmsgarea">
+               <div id="gamestatusmsg">(no message from the server...)</div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

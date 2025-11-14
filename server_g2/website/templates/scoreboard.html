@@ -1,0 +1,150 @@
+{#  scoreboard.html -- Renders Scoreboard page for EPIC Fms
+    dlb, Sept 2021
+    Updated for EPIC SIDEQUEST, Nov 2025
+#}
+
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>EpicFms</title>
+        <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+        <link rel="stylesheet" type="text/css" href="../static/css/scoreboard.css">
+        <script src="../static/javascript/scoreboard.js"></script>
+        <style>
+            #screen_area {width: 1024 px;}
+            .content_area {width: 900 px;} 
+        </style>
+    </head>
+    <body onload="init_loading()">
+        <div id="mainframe">
+            <div id="bannersplit">
+                <div id="epiclogo"><img src="../static/img/epiclogo.png" width="200" height="200"></div>
+                <div id="titlesplit">
+                    <div id="maintitle">EPIC SIDEQUEST</div>
+                    <div id="gamemode">dummy</div>
+                </div>
+                <div id="clockframe">
+                    <div id="timerlabel">dummy</div>
+                    <div id="timervalue">Time XX</div>
+                </div>  
+            </div>
+            <div style="clear: both;"></div> 
+            <div id="scoreframe">
+                <div id="scoreplace">5000</div>
+            </div>
+            <div style="clear: both;"></div> 
+            <div id="sliderframe">
+                <div id="slidertoplabelframe">Targets</div>
+                <div id="sliderside1", class="sliderside">
+                    <div id="sliderframe1" class="sliderscore">
+                        <div id="slidername1" class="slidername">1:</div>
+                        <div id="slidervalue1", class="slidervalue">00</div>
+                        <div id="sliderstatus1", class="sliderstatus">O</div> 
+                    </div>
+                    <div style="clear: both;"></div> 
+                    <div id="sliderframe2" class="sliderscore">
+                        <div id="slidername2" class="slidername">2:</div>
+                        <div id="slidervalue2", class="slidervalue">00</div>
+                        <div id="sliderstatus2", class="sliderstatus">O</div> 
+                    </div>
+                    <div style="clear: both;"></div> 
+                    <div id="sliderframe3" class="sliderscore">
+                        <div id="slidername3" class="slidername">3:</div>
+                        <div id="slidervalue3", class="slidervalue">00</div>
+                        <div id="sliderstatus3", class="sliderstatus">X</div> 
+                    </div>
+                </div>
+                <div id="sliderside2", class="sliderside">
+                    <div id="sliderframe4" class="sliderscore">
+                        <div id="slidername4" class="slidername">4:</div>
+                        <div id="slidervalue4", class="slidervalue">00</div>
+                        <div id="sliderstatus4", class="sliderstatus">O</div> 
+                    </div>
+                    <div style="clear: both;"></div> 
+                    <div id="sliderframe5" class="sliderscore">
+                        <div id="slidername5" class="slidername">5:</div>
+                        <div id="slidervalue5", class="slidervalue">00</div>
+                        <div id="sliderstatus5", class="sliderstatus"></div> 
+                    </div>
+                    <div style="clear: both;"></div> 
+                    <div id="sliderframe6" class="sliderscore">
+                        <div id="slidername6" class="slidername">6:</div>
+                        <div id="slidervalue6", class="slidervalue">00</div>
+                        <div id="sliderstatus6", class="sliderstatus"></div> 
+                    </div>
+                </div>
+                <div style="clear: both;"></div>
+                <div id="totalhitsframe">
+                    <div id="totalhitslabel">Total Hits:</div>
+                    <div id="totalhitsvalue">0000</div>
+                </div>
+            </div>
+            <div id="linkframe">
+                <div id="linktoplabelframe">Links</div>
+                <div id="linktableframe">
+                    <div id="linkheaderframe">
+                        <div id="linkheaderlabel1", class="linkheaderlabel">2</div>
+                        <div id="linkheaderlabel2", class="linkheaderlabel">3</div>
+                        <div id="linkheaderlabel3", class="linkheaderlabel">4</div>
+                        <div id="linkheaderlabel4", class="linkheaderlabel">5</div>
+                        <div id="linkheaderlabel5", class="linkheaderlabel">6</div>
+                    </div>
+                    <div style="clear: both;"></div>
+                    <div id="linkrowframe1", class="linkrow">
+                        <div id="linkrowlable1", class="linkrowlabel">1</div>
+                        <div id="linkvalue0", class="linkvalue">00</div>
+                        <div id="linkvalue1", class="linkvalue">00</div>
+                        <div id="linkvalue2", class="linkvalue">00</div>
+                        <div id="linkvalue3", class="linkvalue">00</div>
+                        <div id="linkvalue4", class="linkvalue">00</div>
+                    </div>
+                    <div style="clear: both;"></div>
+                    <div id="linkrowframe2", class="linkrow">
+                        <div id="linkrowlable2", class="linkrowlabel">2</div>
+                        <div class="linkvalue">---</div>
+                        <div id="linkvalue5", class="linkvalue">00</div>
+                        <div id="linkvalue6", class="linkvalue">00</div>
+                        <div id="linkvalue7", class="linkvalue">00</div>
+                        <div id="linkvalue8", class="linkvalue">00</div>
+                    </div>
+                    <div style="clear: both;"></div>
+                    <div id="linkrowframe3", class="linkrow">
+                        <div id="linkrowlable3", class="linkrowlabel">3</div>
+                        <div class="linkvalue">---</div>
+                        <div class="linkvalue">---</div>
+                        <div id="linkvalue9", class="linkvalue">00</div>
+                        <div id="linkvalue10", class="linkvalue">00</div>
+                        <div id="linkvalue11", class="linkvalue">00</div>
+                    </div>
+                    <div style="clear: both;"></div>
+                    <div id="linkrowframe4", class="linkrow">
+                        <div id="linkrowlable4", class="linkrowlabel">4</div>
+                        <div class="linkvalue">---</div>
+                        <div class="linkvalue">---</div>
+                        <div class="linkvalue">---</div>
+                        <div id="linkvalue12", class="linkvalue">00</div>
+                        <div id="linkvalue13", class="linkvalue">00</div>
+                    </div>
+                    <div style="clear: both;"></div>
+                    <div id="linkrowframe5", class="linkrow">
+                        <div id="linkrowlable5", class="linkrowlabel">5</div>
+                        <div class="linkvalue">---</div>
+                        <div class="linkvalue">---</div>
+                        <div class="linkvalue">---</div>
+                        <div class="linkvalue">---</div>
+                        <div id="linkvalue14", class="linkvalue">00</div>
+                    </div>
+                    <div style="clear: both;"></div>
+                </div>
+                <div style="clear: both;"></div>
+                <div id="totallinksframe">
+                    <div id="totallinkslabel">Total Links:</div>
+                    <div id="totallinksvalue">0000</div>
+                </div>
+                <div style="clear: both;"></div>
+            </div>
+        </div>
+    </body>
+    </html>
+

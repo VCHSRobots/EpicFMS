@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <title>EpicFms Admin</title>
+      <link rel="stylesheet" type="text/css" href="../static/css/style.css">
+      <link rel="stylesheet" type="text/css" href="../static/css/admin.css">
+      <script src="../static/javascript/utils.js"></script>
+      <script src="../static/javascript/admin.js"></script>
+  <style>
+        #screen_area {width: 1024 px;}
+        .content_area {width: 900 px;} 
+  </style>
+</head>
+
+<body onload="init_loading()">
+    <div id="mainframe">
+      <div id="bannersplit">
+        <div id="epiclogo"><img src="../static/img/epiclogo.png" width="200" height="200"></div>
+        <div id="titlesplit">
+            <div id="maintitle">EPIC FMS</div>
+        </div>
+        <div id="admintitle">GAME ADMINISTRATION</div>
+      </div>
+      <div id="loginarea" style="visibility: visible;">
+        <div id="passwordlabel">Password:</div>
+        <div id="passwordinputdiv"><input id="passwordbox" type="password"></div>
+        <div id="passwordbuttondiv"><button id="passwordbutton" onclick="sendpassword()">Submit</button></div>
+      </div>
+      
+      <div id="mainarea" style="visibility: hidden;">
+        <div id="scorearea">
+          <div id="gamemodediv">Dummy</div>
+          <div id="clockdiv">00</div> 
+          <div class="scorediv">
+            <div id="mainscorediv" class="scoreside"><div class="scorelabel">Score</div>
+              <div class="scorevalue" id="mainscore">0</div></div>
+          </div>
+        </div>
+        <div id="tabarea">
+          <div id="tabbar" class="tab">
+            <button class="tabbutton active" onclick="change_tab(event, 'gametab')">Game</button>
+            <button class="tabbutton" onclick="change_tab(event, 'setuptab')">Setup</button>
+            <button class="tabbutton" onclick="change_tab(event, 'baskettab')">Baskets</button>
+            <button class="tabbutton" onclick="change_tab(event, 'slidertab')">Sliders</button>
+            <button class="tabbutton" onclick="change_tab(event, 'movertab')">Movers</button>
+          </div>
+          
+          <div id="gametab" class="tabcontent">
+            <div class="tabtitle">Game</div>
+            <div id="gamecontrolarea">
+              <button class="scbutton" id="gameresetbtn" onclick="send_game_button('reset')">Reset</button>
+              <button class="scbutton" id="gamestartbtn" onclick="send_game_button('start')">Start</button>
+              <button class="scbutton" id="gameabortbtn" onclick="send_game_button('abort')">Abort</button>
+            </div>
+            <div id="unitstatusarea">
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Mover-1</div>
+                <div class="unitstatusindicator" id="mover1indicator"></div>
+                <div class="unitsidetextbox" id="mover1sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('mover1')">Blink</button>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Mover-2</div>
+                <div class="unitstatusindicator" id="mover2indicator"></div>
+                <div class="unitsidetextbox" id="mover2sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('mover2')">Blink</button>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Slider-1</div>
+                <div class="unitstatusindicator" id="slider1indicator"></div>
+                <div class="unitsidetextbox" id="slider1sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('slider1')">Blink</button>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Slider-2</div>
+                <div class="unitstatusindicator" id="slider2indicator"></div>
+                <div class="unitsidetextbox" id="slider2sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('slider2')">Blink</button>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Slider-3</div>
+                <div class="unitstatusindicator" id="slider3indicator"></div>
+                <div class="unitsidetextbox" id="slider3sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('slider3')">Blink</button>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Slider-4</div>
+                <div class="unitstatusindicator" id="slider4indicator"></div>
+                <div class="unitsidetextbox" id="slider4sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('slider4')">Blink</button>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Slider-5</div>
+                <div class="unitstatusindicator" id="slider5indicator"></div>
+                <div class="unitsidetextbox" id="slider5sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('slider5')">Blink</button>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Slider-6</div>
+                <div class="unitstatusindicator" id="slider6indicator"></div>
+                <div class="unitsidetextbox" id="slider6sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('slider6')">Blink</button>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Basket-1</div>
+                <div class="unitstatusindicator" id="basket1indicator"></div>
+                <div class="unitsidetextbox" id="basket1sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('basket1')">Blink</button>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="uintstatusbox">
+                <div class="unitstatuslabel">Basket-2</div>
+                <div class="unitstatusindicator" id="basket2indicator"></div>
+                <div class="unitsidetextbox" id="basket2sidetextbox">None</div>
+                <div class="unitsideblink">
+                  <button class="unitblinkbtn" onclick="blink('basket2')">Blink</button>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+            </div>
+            <div id="endgamearea">
+              <div id="bluesidecontrolarea" class="sidescorearea">
+                <div class="sidescorelabel">BLUE</div>
+                <div class="sidescorecontrols">
+                  <div class="sidetextbox">
+                    <div class="sidetextboxlabel">Rake:</div>
+                    <input type="text" class="raketextbox" id="blueraketextbox" onkeypress='make_dirty("blueraketextbox")'> 
+                  </div>
+                  <div class="sidetextbox">
+                    <div class="sidetextboxlabel">Adj:</div>
+                    <input type="text" class="adjtextbox" id="blueadjtextbox" onkeypress='make_dirty("blueadjtextbox")'> 
+                  </div>
+                  <div class="sidecheckbox">
+                      <div class="sidecblabel">AutoPass:</div>
+                      <input type="checkbox" id="blueautopasscb" class="sidecb" onchange='update_score()'>
+                  </div>
+                  <div class="sidecheckbox">
+                      <div class="sidecblabel">AutoFail:</div>
+                      <input type="checkbox" id="blueautofailcb" class="sidecb" onchange='update_score()'>
+                  </div>
+                  <div class="sidecheckbox">
+                    <div class="sidecblabel">Win:</div>
+                    <input type="checkbox" id="bluewincb" class="sidecb" onchange='update_score()'>
+                  </div>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div id="redsidecontrolarea" class="sidescorearea">
+                <div class="sidescorelabel">RED</div>
+                <div class="sidescorecontrols">
+                  <div class="sidetextbox">
+                    <div class="sidetextboxlabel">Rake:</div>
+                    <input type="text" class="raketextbox" id="redraketextbox" onkeypress='make_dirty("redraketextbox")'> 
+                  </div>
+                  <div class="sidetextbox">
+                    <div class="sidetextboxlabel">Adj:</div>
+                    <input type="text" class="adjtextbox" id="redadjtextbox" onkeypress='make_dirty("redadjtextbox")'> 
+                  </div>
+                  <div class="sidecheckbox">
+                      <div class="sidecblabel">AutoPass:</div>
+                      <input type="checkbox" id="redautopasscb" class="sidecb" onchange='update_score()'>
+                  </div>
+                  <div class="sidecheckbox">
+                      <div class="sidecblabel">AutoFail:</div>
+                      <input type="checkbox" id="redautofailcb" class="sidecb" onchange='update_score()'>
+                  </div>
+                  <div class="sidecheckbox">
+                    <div class="sidecblabel">Win:</div>
+                    <input type="checkbox" id="redwincb" class="sidecb" onchange='update_score()'>
+                  </div>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div id="submitgamescorebtndiv">
+                <button class="scbutton" id="gamescoresubmitbtn" onclick="submitrefvalues()">Submit</button>
+              </div>
+            </div>
+            <div style="clear: both;"></div>
+            <div id="gamestatusmsgarea">
+               <div id="gamestatusmsg">(no message from the server...)</div>
+            </div>
+          </div>
+
+          <div id="setuptab" class="tabcontent">
+            <div class="tabtitle">Setup</div>
+            <div style="clear: both;"></div>
+            <div id="scoreboardtestdiv">
+              <div id="scoreboardtestlabel" class="cblabel">Run scoreboard test:</div> 
+              <input class="cbinput" id="testscoreboard" type="checkbox" onchange="update_scoreboare_test()">
+            </div>
+            <div id="teamdiv">
+              <div class="teamnamediv">
+                <div id="teamnamebluelabel" class="teamnamelabel gplabel">Blue:</div>
+                <input type="text" class="teamnametextbox" id="blueteamname" onchange='make_dirty("blueteamname")'>
+              </div>
+              <div style="clear: both;"></div>
+              <div class="teamnamediv">
+                <div id="teamnameredlabel" class="teamnamelabel gplabel">Red:</div>
+                <input type="text" class="teamnametextbox" id="redteamname" onchange='make_dirty("redteamname")'>
+              </div>  
+              <div style="clear: both;"></div>
+              <div id="teamnameupdatediv">
+                <button class="updatebutton" id="teamnamesubmit" onclick="update_teamnames()">Submit</button>
+              </div>
+              <div id="teamnameswapdiv">
+                <button class="updatebutton" id="teamnameswap" onclick="swap_teamnames()">Swap</button>
+              </div>
+            </div>
+            <div id="unitsetuparea">
+              <button class="updatebutton" id="unitselectionsubmit" onclick="update_unit_sides()">Submit</button>
+              <div style="clear: both;"></div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Mover-1</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot1" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('mover1')">Blink</button>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Mover-2</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot2" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('mover2')">Blink</button>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Slider-1</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot3" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('slider1')">Blink</button>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Slider-2</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot4" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('slider2')">Blink</button>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Slider-3</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot5" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('slider3')">Blink</button>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Slider-4</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot6" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('slider4')">Blink</button>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Slider-5</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot7" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('slider5')">Blink</button>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Slider-6</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot8" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('slider6')">Blink</button>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Basket-1</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot9" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('basket1')">Blink</button>
+                </div>
+              </div>
+              <div class="unitsetupline">
+                <div class="unitsetuplabel" id="unitslot1">Basket-2</div>
+                <div class="unitsetupsel">
+                  <select id="unitselslot10" class="unitselection" onchange="unit_side_changed()">
+                    <option value="Blue">Blue</option> <option value="Red">Red</option> <option value="None">None</option></select>
+                </div>
+                <div class="unitsideblink">
+                    <button class="unitblinkbtn.setup" onclick="blink('basket2')">Blink</button>
+                </div>
+              </div>
+            </div>
+            <div id="gamenamearea">
+              <div class="gamenamediv">
+                <div class="gamenamelabel">Game Title:</div>
+                <input type="text" id="gamenametextbox" onchange='make_dirty("gamenametextbox")'>
+              </div>
+              <div style="clear: both;"></div>
+              <div id="gamenameupdatediv">
+                <button class="updatebutton" id="gamenamesubmit" onclick="update_gamename()">Submit</button>
+              </div>
+            </div>
+          </div>
+
+          <div id="baskettab" class="tabcontent">
+            <div class="tabtitle">Baskets</div>
+            <div class="unitbar">
+              <div class="unitselectiondiv">
+                <div class="unittitle gplabel">Unit:</div>
+                <select id="basketunitsel" class="unitsel" onchange="fill_basket_elements()">
+                  <option value="1">1</option>
+                  <option value="1">2</option>
+                </select>
+              </div>
+              <div class="unitiptextdiv">
+                <div class="iplabel gplabel">IP Addr:</div>
+                <input type="text" class="iptextbox" id="basketip" onchange='make_dirty("basketip")'>
+              </div>
+              <div class="unitnamediv">
+                <div class="namelabel gplabel">Name:</div>
+                <input type="text" class="nametextbox" id="basketname" onchange='make_dirty("basketname")'>
+              </div>
+              <div class="unitenablediv">
+                <div class="enablelabel gplabel">Enable:</div> 
+                <input type="checkbox" id="basketenablecb" class="cbinput" onchange='make_dirty("basketenablecb")'>
+              </div>
+              <div class="uintchangerefreshdiv">
+                <button class="gpbutton" id="basketchangebutton" onclick="basket_configure()">Change</button>
+                <button class="gpbutton" id="basketrefreshbutton" onclick="load_config()">Refresh</button>
+              </div>
+            </div>
+            <div style="clear: both;"></div>
+            <div id="basketstatusdiv">
+              <div class=gplabel id="basketstatuslabel">Basket Status</div>
+              <button class="updatebutton" id="basketstatusupdate" onclick="update_basketstatus()">Update</button>
+              <textarea class="gptextarea" id="basketstatus"></textarea>
+            </div>
+            <div id="basketcontrolarea">
+              <div id="basketcontrolbuttons">
+                <button id="motoron" class="scbutton" onclick="set_basket_motor(1)">Motor On</button>
+                <button id="motoroff" class="scbutton" onclick="set_basket_motor(0)">Motor Off</button>
+                <button id="motorselftest" class="scbutton" onclick="basket_selftest()">Selftest</button>
+                <button id="motorresethits" class="scbutton" onclick="basket_resethits()">Reset</button>
+              </div>
+               <div class="selcontrol">
+                <div class="seltitle">GameMode</div>
+                <select id="basketgamemode" name="gamemode" class="selvalue" onchange="set_basket_mode()">
+                    <option value="none">none</option>
+                    <option value="powerup">powerup</option>
+                    <option value="uniterror">uniterror</option>
+                    <option value="wifiwait">wifiwait</option>   
+                    <option value="practice">practice</option>
+                    <option value="standby">standby</option>
+                    <option value="countdown">countdown</option>
+                    <option value="auto">auto</option>
+                    <option value="teleop">teleop</option>
+                    <option value="matchfinal">matchfinal</option>
+                    <option value="postwait">postwait</option>
+                    <option value="postresult">postresult</option>
+                    <option value="fmserror">fmserror</option>
+                    <option value="fmslost">fmslost</option>
+                    <option value="blink">blink</option>
+                </select> 
+              </div>
+              <div id="baskethitbox">
+                <div class="gplabel" id="baskethitboxlabel">Hits</div>
+                <div id="baskethitboxvalue">00</div>
+              </div>
+            </div>  
+            <div id="basketpwmbox">
+              <div id="basketpwmboxlabel">PWM Setting</div>
+              <div class="pwmbar">
+                <div class="pwmlabel">Run</div>
+                <div class="pwmtextboxdiv">
+                  <input type="text" class="pwmtextbox" id="basketrunpwm" onchange='make_dirty("basketrunpwm")'>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div id="basketsavechangebuttons">
+                <button class="gpbutton" id="basketchangepwmbutton" onclick='basket_set_pwm()'>Change</button>
+                <button class="gpbutton" id="basketsavebutton" onclick="basket_save_pwm()">Save</button>
+              </div>
+            </div>
+            <div style="clear: both;"></div>
+          </div>
+          
+          <div id="slidertab" class="tabcontent">
+            <div class="tabtitle">Sliders</div>
+            <div class="unitbar">
+              <div class="unitselectiondiv">
+                <div class="unittitle gplabel">Unit:</div>
+                <select id="sliderunitsel" class="unitsel" onchange="fill_slider_elements()">
+                  <option value="1">1</option>
+                  <option value="1">2</option>
+                </select>
+              </div>
+              <div class="unitiptextdiv">
+                <div class="iplabel gplabel">IP Addr:</div>
+                <input type="text" class="iptextbox" id="sliderip" onchange='make_dirty("sliderip")'>
+              </div>
+              <div class="unitnamediv">
+                <div class="namelabel gplabel">Name:</div>
+                <input type="text" class="nametextbox" id="slidername" onchange='make_dirty("slidername")'>
+              </div>
+              <div class="unitenablediv">
+                <div class="enablelabel gplabel">Enable:</div> 
+                <input type="checkbox" id="sliderenablecb" class="cbinput" onchange='make_dirty("sliderenablecb")'>
+              </div>
+              <div class="uintchangerefreshdiv">
+                <button class="gpbutton" id="sliderchangebutton" onclick="slider_configure()">Change</button>
+                <button class="gpbutton" id="sliderrefreshbutton" onclick="load_config()">Refresh</button>
+              </div>
+            </div>
+            <div style="clear: both;"></div>
+            <div id="slidercontrolbuttons">
+              <button class="scbutton" id="slideropenbutton" onclick="move_slider(1)">Open</button>
+              <button class="scbutton" id="slideropenbutton" onclick="move_slider(0)">Close</button>
+              <button class="scbutton" id="slideropenbutton" onclick="move_slider(-1)">Center</button>
+              <button class="scbutton" id="sliderselftestbutton" onclick="slider_selftest()">Selftest</button>
+              <button class="scbutton" id="sliderresetbutton" onclick="slider_resethits()">Reset</button>
+            </div>
+            <div style="clear: both;"></div>
+            <div id="sliderstatusdiv">
+              <div class=gplabel id="sliderstatuslabel">Slider Status</div>
+              <button class="updatebutton" id="sliderstatusupdate" onclick="update_sliderstatus()">Update</button>
+              <textarea class="gptextarea" id="sliderstatus"></textarea>
+            </div>
+            <div id="sliderhitbox">
+              <div class="gplabel" id="sliderhitboxlabel">Hits</div>
+              <div id="sliderhitboxvalue">00</div>
+            </div>
+            <div id="sliderpwmbox">
+              <div id="sliderpwmboxlabel">PWM Settings</div>
+              <div class="pwmbar">
+                <div class="pwmlabel">Open</div>
+                <div class="pwmtextboxdiv">
+                  <input type="text" class="pwmtextbox" id="slideropenpwm" onchange='make_dirty("slideropenpwm")'>
+                </div>
+              </div>
+              <div class="pwmbar">
+                <div class="pwmlabel">Close</div>
+                <div class="pwmtextboxdiv">
+                  <input type="text" class="pwmtextbox" id="sliderclosepwm" onchange='make_dirty("sliderclosepwm")'>
+                </div>
+              </div>
+              <div style="clear: both;"></div>
+              <div id="slidersavechangebuttons">
+                <button class="gpbutton" id="sliderchangepwmbutton" onclick='slider_set_pwm()'>Change</button>
+                <button class="gpbutton" id="slidersavebutton" onclick="slider_save_pwm()">Save</button>
+              </div>
+            </div>
+            <div id="slidergamemodebox" class="selcontrol">
+              <div class="seltitle">GameMode</div>
+              <select id="slidergamemode" name="gamemode" class="selvalue" onchange="set_slider_mode()">
+                  <option value="none">none</option>
+                  <option value="powerup">powerup</option>
+                  <option value="uniterror">uniterror</option>
+                  <option value="wifiwait">wifiwait</option>   
+                  <option value="practice">practice</option>
+                  <option value="standby">standby</option>
+                  <option value="countdown">countdown</option>
+                  <option value="auto">auto</option>
+                  <option value="teleop">teleop</option>
+                  <option value="matchfinal">matchfinal</option>
+                  <option value="postwait">postwait</option>
+                  <option value="postresult">postresult</option>
+                  <option value="fmserror">fmserror</option>
+                  <option value="fmslost">fmslost</option>
+                  <option value="blink">blink</option>
+              </select> 
+            </div>
+          </div>
+          
+          <div id="movertab" class="tabcontent">
+            <div class="tabtitle">Movers</div>
+            <div class="unitbar">
+              <div class="unitselectiondiv">
+                <div class="unittitle gplabel">Unit:</div>
+                <select id="moverunitsel" class="unitsel" onchange="fill_mover_elements()">
+                  <option value="1">1</option>
+                </select>
+              </div>
+              <div class="unitiptextdiv">
+                <div class="iplabel gplabel">IP Addr:</div>
+                <input type="text" class="iptextbox" id="moverip" onchange='make_dirty("moverip")'>
+              </div>
+              <div class="unitnamediv">
+                <div class="namelabel gplabel">Name:</div>
+                <input type="text" class="nametextbox" id="movername" onchange='make_dirty("movername")'>
+              </div>
+              <div class="unitenablediv">
+                <div class="enablelabel gplabel">Enable:</div> 
+                <input type="checkbox" id="moverenablecb" class="cbinput" onchange='make_dirty("moverenablecb")'>
+              </div>
+              <div class="uintchangerefreshdiv">
+                <button class="gpbutton" id="moverchangebutton" onclick="mover_configure()">Change</button>
+                <button class="gpbutton" id="moverrefreshbutton" onclick="load_config()">Refresh</button>
+              </div>
+            </div>
+            <div style="clear: both;"></div>
+            <div id="movercontrolbuttons">
+              <button class="scbutton" id="moverselftestbutton" onclick="mover_selftest()">Selftest</button>
+              <button class="scbutton" id="moverresetbutton" onclick="mover_resethits()">Reset</button>
+            </div>
+            <div style="clear: both;"></div>
+            <div id="moverstatusdiv">
+              <div class=gplabel id="moverstatuslabel">Mover Status</div>
+              <button class="updatebutton" id="moverstatusupdate" onclick="update_moverstatus()">Update</button>
+              <textarea class="gptextarea" id="moverstatus"></textarea>
+            </div>
+            <div id="moverhitbox">
+              <div class="gplabel" id="moverhitboxlabel">Hits</div>
+              <div id="moverhitboxvalue">00</div>
+            </div>
+            <div id="movergamemodebox" class="selcontrol">
+              <div class="seltitle">GameMode</div>
+              <select id="movergamemode" name="gamemode" class="selvalue" onchange="set_mover_mode()">
+                  <option value="none">none</option>
+                  <option value="powerup">powerup</option>
+                  <option value="uniterror">uniterror</option>
+                  <option value="wifiwait">wifiwait</option>   
+                  <option value="practice">practice</option>
+                  <option value="standby">standby</option>
+                  <option value="countdown">countdown</option>
+                  <option value="auto">auto</option>
+                  <option value="teleop">teleop</option>
+                  <option value="matchfinal">matchfinal</option>
+                  <option value="postwait">postwait</option>
+                  <option value="postresult">postresult</option>
+                  <option value="fmserror">fmserror</option>
+                  <option value="fmslost">fmslost</option>
+                  <option value="blink">blink</option>
+              </select> 
+            </div>
+          </div>
+       </div>
+      </div>
+    </div>
+  </body>
+</html>
